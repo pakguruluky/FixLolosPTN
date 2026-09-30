@@ -26,14 +26,6 @@ import {
   DATA_PTN_SNBP,
   DATA_PTN_SNBT,
   SAMPLE_MODUL,
-  SEED_SISWA,
-  SEED_RAPOR_HILMAN,
-  SEED_TKA_HILMAN,
-  SEED_PRESTASI_HILMAN,
-  SEED_TAMBAHAN_HILMAN,
-  SEED_PILIHAN_SNBP_HILMAN,
-  SEED_TO_HILMAN,
-  SEED_PILIHAN_SNBT_HILMAN,
 } from '../data/mockPTN';
 import {
   calcPeluangSNBP,
@@ -111,15 +103,15 @@ export function initDB(): void {
   if (!localStorage.getItem(K_MODUL)) save(K_MODUL, SAMPLE_MODUL);
   if (!localStorage.getItem(K_PTN_SNBP)) save(K_PTN_SNBP, DATA_PTN_SNBP);
   if (!localStorage.getItem(K_PTN_SNBT)) save(K_PTN_SNBT, DATA_PTN_SNBT);
-  if (!localStorage.getItem(K_SISWA)) save(K_SISWA, SEED_SISWA);
+  if (!localStorage.getItem(K_SISWA)) save(K_SISWA, []);
 
-  if (!localStorage.getItem(K_RAPOR)) save(K_RAPOR, SEED_RAPOR_HILMAN);
-  if (!localStorage.getItem(K_TKA)) save(K_TKA, [SEED_TKA_HILMAN]);
-  if (!localStorage.getItem(K_PRESTASI)) save(K_PRESTASI, SEED_PRESTASI_HILMAN);
-  if (!localStorage.getItem(K_TAMBAHAN)) save(K_TAMBAHAN, [SEED_TAMBAHAN_HILMAN]);
-  if (!localStorage.getItem(K_PILIHAN_SNBP)) save(K_PILIHAN_SNBP, SEED_PILIHAN_SNBP_HILMAN);
-  if (!localStorage.getItem(K_TO)) save(K_TO, SEED_TO_HILMAN);
-  if (!localStorage.getItem(K_PILIHAN_SNBT)) save(K_PILIHAN_SNBT, SEED_PILIHAN_SNBT_HILMAN);
+  if (!localStorage.getItem(K_RAPOR)) save(K_RAPOR, []);
+  if (!localStorage.getItem(K_TKA)) save(K_TKA, []);
+  if (!localStorage.getItem(K_PRESTASI)) save(K_PRESTASI, []);
+  if (!localStorage.getItem(K_TAMBAHAN)) save(K_TAMBAHAN, []);
+  if (!localStorage.getItem(K_PILIHAN_SNBP)) save(K_PILIHAN_SNBP, []);
+  if (!localStorage.getItem(K_TO)) save(K_TO, []);
+  if (!localStorage.getItem(K_PILIHAN_SNBT)) save(K_PILIHAN_SNBT, []);
   if (!localStorage.getItem(K_LOG)) {
     save(K_LOG, [
       {
@@ -128,10 +120,21 @@ export function initDB(): void {
         actor: 'SYSTEM',
         role: 'ADMIN',
         aksi: 'INITIALIZE',
-        detail: 'Sistem AnalisaKu 2027 berhasil diinisialisasi & terhubung ke Firebase fixlolosptn',
+        detail: 'Sistem AnalisaKu 2027 siap digunakan & terhubung ke Firebase fixlolosptn',
       },
     ]);
   }
+
+  // Bersihkan data dummy lama di browser lokal jika ada
+  try {
+    const currentSiswa = load<Siswa[]>(K_SISWA, []);
+    const cleanSiswa = currentSiswa.filter(
+      (s) => !['USR2027001', 'USR2027002', 'USR2027003'].includes(s.nis)
+    );
+    if (cleanSiswa.length !== currentSiswa.length) {
+      save(K_SISWA, cleanSiswa);
+    }
+  } catch {}
 
   // Trigger sinkronisasi Firebase background
   syncFirebaseInitial().catch((e) => {
@@ -153,16 +156,14 @@ export async function syncFirebaseInitial(): Promise<void> {
       await fsSetDoc('settings', 'app_settings', localSettings);
     }
 
-    // 2. Sinkronisasi Siswa
+    // 2. Sinkronisasi Siswa Nyata dari Cloud Firestore
     const cloudSiswa = await fsGetCollection<Siswa>('siswa');
-    if (cloudSiswa && cloudSiswa.length > 0) {
-      save(K_SISWA, cloudSiswa);
-    } else {
-      // Seed data siswa ke Firestore jika di cloud masih kosong
-      const localSiswa = load<Siswa[]>(K_SISWA, SEED_SISWA);
-      for (const s of localSiswa) {
-        await fsSetDoc('siswa', s.nis, s);
-      }
+    if (cloudSiswa) {
+      // Filter agar tidak ada record demo lama
+      const realSiswa = cloudSiswa.filter(
+        (s) => !['USR2027001', 'USR2027002', 'USR2027003'].includes(s.nis)
+      );
+      save(K_SISWA, realSiswa);
     }
 
     // 3. Sinkronisasi Modul
@@ -335,7 +336,7 @@ export async function loginSiswa(
   pass: string
 ): Promise<{ success: boolean; message?: string; siswa?: Siswa; akses_valid?: boolean }> {
   const cleanId = identifier.trim().toLowerCase();
-  let siswaList = load<Siswa[]>(K_SISWA, SEED_SISWA);
+  let siswaList = load<Siswa[]>(K_SISWA, []);
 
   let found = siswaList.find(
     (s) => s.nis.toLowerCase() === cleanId || s.username.toLowerCase() === cleanId
@@ -392,7 +393,7 @@ export async function loginOrtu(
   nis: string,
   passOrtu: string
 ): Promise<{ success: boolean; message?: string; siswa?: Siswa }> {
-  let siswaList = load<Siswa[]>(K_SISWA, SEED_SISWA);
+  let siswaList = load<Siswa[]>(K_SISWA, []);
   let found = siswaList.find((s) => s.nis.toLowerCase() === nis.trim().toLowerCase());
 
   // Jika tidak ditemukan di cache lokal, cari ke Firestore
@@ -434,7 +435,7 @@ export async function loginAdmin(password: string): Promise<{ success: boolean; 
 }
 
 export async function changePassword(nis: string, oldPass: string, newPass: string): Promise<{ success: boolean; message?: string }> {
-  const siswaList = load<Siswa[]>(K_SISWA, SEED_SISWA);
+  const siswaList = load<Siswa[]>(K_SISWA, []);
   const idx = siswaList.findIndex((s) => s.nis === nis);
   if (idx === -1) return { success: false, message: 'Siswa tidak ditemukan' };
 
@@ -450,7 +451,7 @@ export async function changePassword(nis: string, oldPass: string, newPass: stri
 }
 
 export async function changePasswordOrtu(nis: string, newPass: string): Promise<{ success: boolean }> {
-  const siswaList = load<Siswa[]>(K_SISWA, SEED_SISWA);
+  const siswaList = load<Siswa[]>(K_SISWA, []);
   const idx = siswaList.findIndex((s) => s.nis === nis);
   if (idx !== -1) {
     siswaList[idx].password_ortu_hash = newPass;
@@ -577,7 +578,7 @@ export async function daftarSiswa(
   }
 
   const cleanUsername = data.username.toLowerCase().replace(/\s+/g, '');
-  const siswaList = load<Siswa[]>(K_SISWA, SEED_SISWA);
+  const siswaList = load<Siswa[]>(K_SISWA, []);
 
   if (siswaList.some((s) => s.username.toLowerCase() === cleanUsername)) {
     return { success: false, message: 'Username sudah digunakan, silakan pilih username lain.' };
@@ -661,7 +662,7 @@ export async function getDaftarPending(): Promise<Siswa[]> {
 }
 
 export async function approveDaftar(nis: string, paket: PaketAkses): Promise<{ success: boolean }> {
-  const siswaList = load<Siswa[]>(K_SISWA, SEED_SISWA);
+  const siswaList = load<Siswa[]>(K_SISWA, []);
   const idx = siswaList.findIndex((s) => s.nis === nis);
   if (idx === -1) return { success: false };
 
@@ -691,7 +692,7 @@ export async function approveDaftar(nis: string, paket: PaketAkses): Promise<{ s
 }
 
 export async function tolakDaftar(nis: string, alasan?: string): Promise<{ success: boolean }> {
-  const siswaList = load<Siswa[]>(K_SISWA, SEED_SISWA);
+  const siswaList = load<Siswa[]>(K_SISWA, []);
   const idx = siswaList.findIndex((s) => s.nis === nis);
   if (idx === -1) return { success: false };
 
@@ -715,11 +716,11 @@ export async function getSiswaList(): Promise<Siswa[]> {
       return cloud;
     }
   } catch {}
-  return load<Siswa[]>(K_SISWA, SEED_SISWA);
+  return load<Siswa[]>(K_SISWA, []);
 }
 
 export async function addSiswa(data: { nis: string; nama_siswa: string }): Promise<Siswa> {
-  const siswaList = load<Siswa[]>(K_SISWA, SEED_SISWA);
+  const siswaList = load<Siswa[]>(K_SISWA, []);
   const now = new Date();
   const exp = new Date(now.getTime() + 86400000);
 
@@ -754,7 +755,7 @@ export async function addSiswa(data: { nis: string; nama_siswa: string }): Promi
 }
 
 export async function updateSiswaStatus(nis: string, status: UserStatus): Promise<void> {
-  const siswaList = load<Siswa[]>(K_SISWA, SEED_SISWA);
+  const siswaList = load<Siswa[]>(K_SISWA, []);
   const idx = siswaList.findIndex((s) => s.nis === nis);
   if (idx !== -1) {
     siswaList[idx].status = status;
@@ -765,7 +766,7 @@ export async function updateSiswaStatus(nis: string, status: UserStatus): Promis
 }
 
 export async function updateSiswaAkses(nis: string, paket: PaketAkses): Promise<void> {
-  const siswaList = load<Siswa[]>(K_SISWA, SEED_SISWA);
+  const siswaList = load<Siswa[]>(K_SISWA, []);
   const idx = siswaList.findIndex((s) => s.nis === nis);
   if (idx !== -1) {
     const durasiMap: Record<PaketAkses, number> = {
@@ -790,7 +791,7 @@ export async function updateSiswaAkses(nis: string, paket: PaketAkses): Promise<
 }
 
 export async function updateDataSiswa(nis: string, update: Partial<Siswa>): Promise<void> {
-  const siswaList = load<Siswa[]>(K_SISWA, SEED_SISWA);
+  const siswaList = load<Siswa[]>(K_SISWA, []);
   const idx = siswaList.findIndex((s) => s.nis === nis);
   if (idx !== -1) {
     siswaList[idx] = { ...siswaList[idx], ...update };
@@ -801,7 +802,7 @@ export async function updateDataSiswa(nis: string, update: Partial<Siswa>): Prom
 }
 
 export async function updatePilihanProgram(nis: string, program: ProgramType): Promise<void> {
-  const siswaList = load<Siswa[]>(K_SISWA, SEED_SISWA);
+  const siswaList = load<Siswa[]>(K_SISWA, []);
   const idx = siswaList.findIndex((s) => s.nis === nis);
   if (idx !== -1) {
     siswaList[idx].pilihan_program = program;
@@ -812,7 +813,7 @@ export async function updatePilihanProgram(nis: string, program: ProgramType): P
 }
 
 export async function resetPassword(nis: string): Promise<string> {
-  const siswaList = load<Siswa[]>(K_SISWA, SEED_SISWA);
+  const siswaList = load<Siswa[]>(K_SISWA, []);
   const idx = siswaList.findIndex((s) => s.nis === nis);
   if (idx !== -1) {
     siswaList[idx].password_hash = '123456';
@@ -824,7 +825,7 @@ export async function resetPassword(nis: string): Promise<string> {
 }
 
 export async function resetPasswordOrtu(nis: string): Promise<string> {
-  const siswaList = load<Siswa[]>(K_SISWA, SEED_SISWA);
+  const siswaList = load<Siswa[]>(K_SISWA, []);
   const idx = siswaList.findIndex((s) => s.nis === nis);
   let defaultPass = '1234';
   if (idx !== -1) {
@@ -840,7 +841,7 @@ export async function resetPasswordOrtu(nis: string): Promise<string> {
 
 export async function deleteSiswa(nis: string): Promise<void> {
   // Hapus cascade lokal
-  let siswaList = load<Siswa[]>(K_SISWA, SEED_SISWA);
+  let siswaList = load<Siswa[]>(K_SISWA, []);
   siswaList = siswaList.filter((s) => s.nis !== nis);
   save(K_SISWA, siswaList);
 
@@ -899,7 +900,7 @@ export async function getAdminSummary(): Promise<{
   snbtCount: number;
   modulCount: number;
 }> {
-  const siswaList = load<Siswa[]>(K_SISWA, SEED_SISWA);
+  const siswaList = load<Siswa[]>(K_SISWA, []);
   const modulList = load<Modul[]>(K_MODUL, SAMPLE_MODUL);
 
   const totalSiswa = siswaList.length;
