@@ -1,0 +1,6 @@
+{
+  "name": "AnalisaKu 2027 - Rasionalisasi SNBP & SNBT",
+  "description": "Platform analisa rasionalisasi peluang lolos SNBP (jalur rapor) dan SNBT (jalur tes/UTBK) 2027 terlengkap dan akurat.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

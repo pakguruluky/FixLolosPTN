@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    background-color: #fbf9ff;
+    color: #1e1b4b;
+  }
+}
+
+/* Teenage Active & Creative Glow Utilities */
+.teen-gradient-purple {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+}
+
+.teen-gradient-fire {
+  background: linear-gradient(135deg, #f43f5e 0%, #fb923c 50%, #facc15 100%);
+}
+
+.teen-gradient-cyber {
+  background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 50%, #8b5cf6 100%);
+}
+
+.teen-card-glow {
+  box-shadow: 0 10px 30px -10px rgba(124, 58, 237, 0.15);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.teen-card-glow:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px -15px rgba(124, 58, 237, 0.25);
+}
+
+/* Keyframes for subtle active bounce & pulse */
+@keyframes teen-float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.animate-teen-float {
+  animation: teen-float 4s ease-in-out infinite;
+}
+
+/* Print Rules - Bagian 8 & 9 */
+@media print {
+  body {
+    background-color: #ffffff !important;
+    color: #111827 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .print\:page-break-after-always {
+    page-break-after: always !important;
+    break-after: page !important;
+  }
+
+  /* Watermark protection on module viewer during print */
+  .select-none {
+    user-select: none !important;
+  }
+}
+
+/* Custom scrollbars with youthful violet touch */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.3);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.6);
+}
