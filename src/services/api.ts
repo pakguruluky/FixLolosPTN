@@ -60,6 +60,13 @@ import {
   MAPEL_PEMINATAN_K13,
   MAPEL_PEMINATAN_MERDEKA,
 } from '../lib/calc';
+import {
+  fsSetDoc,
+  fsGetDoc,
+  fsGetCollection,
+  fsDeleteDoc,
+  checkFirebaseConnection,
+} from './firebaseDb';
 
 // Helper storage keys
 const K_SISWA = 'analisaku_siswa';
@@ -97,7 +104,7 @@ function save<T>(key: string, value: T): void {
   }
 }
 
-// Inisialisasi awal database
+// Inisialisasi awal database lokal & sinkronisasi dengan Firebase Cloud Firestore
 export function initDB(): void {
   if (!localStorage.getItem(K_SETTINGS)) save(K_SETTINGS, DEFAULT_SETTINGS);
   if (!localStorage.getItem(K_CABANG)) save(K_CABANG, DEFAULT_CABANG);
@@ -121,10 +128,61 @@ export function initDB(): void {
         actor: 'SYSTEM',
         role: 'ADMIN',
         aksi: 'INITIALIZE',
-        detail: 'Sistem AnalisaKu 2027 berhasil diinisialisasi',
+        detail: 'Sistem AnalisaKu 2027 berhasil diinisialisasi & terhubung ke Firebase fixlolosptn',
       },
     ]);
   }
+
+  // Trigger sinkronisasi Firebase background
+  syncFirebaseInitial().catch((e) => {
+    console.warn('[Firebase] Background sync error:', e);
+  });
+}
+
+/**
+ * Sinkronisasi dua arah awal dengan Firebase Firestore
+ */
+export async function syncFirebaseInitial(): Promise<void> {
+  try {
+    // 1. Sinkronisasi Settings
+    const cloudSettings = await fsGetDoc<AppSettings>('settings', 'app_settings');
+    if (cloudSettings) {
+      save(K_SETTINGS, cloudSettings);
+    } else {
+      const localSettings = load<AppSettings>(K_SETTINGS, DEFAULT_SETTINGS);
+      await fsSetDoc('settings', 'app_settings', localSettings);
+    }
+
+    // 2. Sinkronisasi Siswa
+    const cloudSiswa = await fsGetCollection<Siswa>('siswa');
+    if (cloudSiswa && cloudSiswa.length > 0) {
+      save(K_SISWA, cloudSiswa);
+    } else {
+      // Seed data siswa ke Firestore jika di cloud masih kosong
+      const localSiswa = load<Siswa[]>(K_SISWA, SEED_SISWA);
+      for (const s of localSiswa) {
+        await fsSetDoc('siswa', s.nis, s);
+      }
+    }
+
+    // 3. Sinkronisasi Modul
+    const cloudModul = await fsGetCollection<Modul>('modul');
+    if (cloudModul && cloudModul.length > 0) {
+      save(K_MODUL, cloudModul);
+    } else {
+      const localModul = load<Modul[]>(K_MODUL, SAMPLE_MODUL);
+      for (const m of localModul) {
+        await fsSetDoc('modul', m.id, m);
+      }
+    }
+  } catch (err) {
+    console.warn('[Firebase] Gagal sinkronisasi awal:', err);
+  }
+}
+
+export async function getFirebaseStatus(): Promise<{ connected: boolean; projectId: string }> {
+  const connected = await checkFirebaseConnection();
+  return { connected, projectId: 'fixlolosptn' };
 }
 
 // Format tanggal WIB
@@ -157,9 +215,20 @@ export async function addLog(actor: string, role: 'ADMIN' | 'SISWA' | 'ORTU', ak
   logs.unshift(newLog);
   if (logs.length > 500) logs.pop();
   save(K_LOG, logs);
+
+  // Sync to Firebase Cloud
+  fsSetDoc('logs', newLog.id, newLog).catch(() => {});
 }
 
 export async function getHistoryLog(): Promise<HistoryLog[]> {
+  try {
+    const cloud = await fsGetCollection<HistoryLog>('logs');
+    if (cloud && cloud.length > 0) {
+      cloud.sort((a, b) => b.id.localeCompare(a.id));
+      save(K_LOG, cloud.slice(0, 500));
+      return cloud;
+    }
+  } catch {}
   return load<HistoryLog[]>(K_LOG, []);
 }
 
@@ -178,6 +247,13 @@ export async function getProvinsiList(): Promise<string[]> {
 }
 
 export async function getCabangList(): Promise<Cabang[]> {
+  try {
+    const cloud = await fsGetDoc<{ items: Cabang[] }>('cabang', 'list_cabang');
+    if (cloud && Array.isArray(cloud.items) && cloud.items.length > 0) {
+      save(K_CABANG, cloud.items);
+      return cloud.items;
+    }
+  } catch {}
   return load<Cabang[]>(K_CABANG, DEFAULT_CABANG);
 }
 
@@ -187,6 +263,7 @@ export async function addCabang(nama: string): Promise<Cabang[]> {
   if (!list.some((c) => c.nama_cabang === formatted)) {
     list.push({ nama_cabang: formatted });
     save(K_CABANG, list);
+    fsSetDoc('cabang', 'list_cabang', { items: list }).catch(() => {});
     await addLog('ADMIN', 'ADMIN', 'TAMBAH_CABANG', `Menambahkan cabang ${formatted}`);
   }
   return list;
@@ -196,6 +273,7 @@ export async function deleteCabang(nama: string): Promise<Cabang[]> {
   let list = load<Cabang[]>(K_CABANG, DEFAULT_CABANG);
   list = list.filter((c) => c.nama_cabang !== nama);
   save(K_CABANG, list);
+  fsSetDoc('cabang', 'list_cabang', { items: list }).catch(() => {});
   await addLog('ADMIN', 'ADMIN', 'HAPUS_CABANG', `Menghapus cabang ${nama}`);
   return list;
 }
@@ -207,12 +285,20 @@ export async function updateCabang(oldNama: string, newNama: string): Promise<Ca
   if (idx !== -1 && formattedNew) {
     list[idx].nama_cabang = formattedNew;
     save(K_CABANG, list);
+    fsSetDoc('cabang', 'list_cabang', { items: list }).catch(() => {});
     await addLog('ADMIN', 'ADMIN', 'UPDATE_CABANG', `Mengubah nama cabang ${oldNama} menjadi ${formattedNew}`);
   }
   return list;
 }
 
 export async function getSettings(): Promise<AppSettings> {
+  try {
+    const cloud = await fsGetDoc<AppSettings>('settings', 'app_settings');
+    if (cloud) {
+      save(K_SETTINGS, cloud);
+      return cloud;
+    }
+  } catch {}
   return load<AppSettings>(K_SETTINGS, DEFAULT_SETTINGS);
 }
 
@@ -220,6 +306,7 @@ export async function saveSetting(key: keyof AppSettings, val: string): Promise<
   const settings = load<AppSettings>(K_SETTINGS, DEFAULT_SETTINGS);
   (settings as any)[key] = val;
   save(K_SETTINGS, settings);
+  fsSetDoc('settings', 'app_settings', settings).catch(() => {});
   await addLog('ADMIN', 'ADMIN', 'UPDATE_SETTINGS', `Mengubah pengaturan ${key} = ${val}`);
   return settings;
 }
@@ -247,12 +334,22 @@ export async function loginSiswa(
   identifier: string,
   pass: string
 ): Promise<{ success: boolean; message?: string; siswa?: Siswa; akses_valid?: boolean }> {
-  const siswaList = load<Siswa[]>(K_SISWA, SEED_SISWA);
   const cleanId = identifier.trim().toLowerCase();
+  let siswaList = load<Siswa[]>(K_SISWA, SEED_SISWA);
 
-  const found = siswaList.find(
+  let found = siswaList.find(
     (s) => s.nis.toLowerCase() === cleanId || s.username.toLowerCase() === cleanId
   );
+
+  // Jika tidak ditemukan di cache lokal, cek langsung ke Firebase Cloud Firestore
+  if (!found) {
+    try {
+      const cloudSiswa = await getSiswaList();
+      found = cloudSiswa.find(
+        (s) => s.nis.toLowerCase() === cleanId || s.username.toLowerCase() === cleanId
+      );
+    } catch {}
+  }
 
   if (!found) {
     await addLog(identifier, 'SISWA', 'LOGIN_GAGAL', 'Identifier NIS/Username tidak ditemukan');
@@ -295,8 +392,16 @@ export async function loginOrtu(
   nis: string,
   passOrtu: string
 ): Promise<{ success: boolean; message?: string; siswa?: Siswa }> {
-  const siswaList = load<Siswa[]>(K_SISWA, SEED_SISWA);
-  const found = siswaList.find((s) => s.nis.toLowerCase() === nis.trim().toLowerCase());
+  let siswaList = load<Siswa[]>(K_SISWA, SEED_SISWA);
+  let found = siswaList.find((s) => s.nis.toLowerCase() === nis.trim().toLowerCase());
+
+  // Jika tidak ditemukan di cache lokal, cari ke Firestore
+  if (!found) {
+    try {
+      const cloudSiswa = await getSiswaList();
+      found = cloudSiswa.find((s) => s.nis.toLowerCase() === nis.trim().toLowerCase());
+    } catch {}
+  }
 
   if (!found) {
     await addLog(nis, 'ORTU', 'LOGIN_GAGAL', 'NIS anak tidak ditemukan');
@@ -339,6 +444,7 @@ export async function changePassword(nis: string, oldPass: string, newPass: stri
 
   siswaList[idx].password_hash = newPass;
   save(K_SISWA, siswaList);
+  await fsSetDoc('siswa', nis, siswaList[idx]);
   await addLog(nis, 'SISWA', 'GANTI_PASSWORD', 'Siswa mengubah password');
   return { success: true };
 }
@@ -349,6 +455,7 @@ export async function changePasswordOrtu(nis: string, newPass: string): Promise<
   if (idx !== -1) {
     siswaList[idx].password_ortu_hash = newPass;
     save(K_SISWA, siswaList);
+    await fsSetDoc('siswa', nis, siswaList[idx]);
     await addLog(nis, 'ORTU', 'GANTI_PASSWORD', 'Password ortu diubah');
   }
   return { success: true };
@@ -358,7 +465,7 @@ export async function changePasswordOrtu(nis: string, newPass: string): Promise<
 // 4. PENDAFTARAN & TOKEN
 // ------------------------------------------
 export async function validateTokenDaftar(tokenStr: string): Promise<{ valid: boolean; token?: TokenDaftar; message?: string }> {
-  const tokens = load<TokenDaftar[]>(K_TOKENS, []);
+  const tokens = await getTokenList();
   const clean = tokenStr.replace(/-/g, '').trim().toUpperCase();
 
   const found = tokens.find((t) => t.token.replace(/-/g, '').toUpperCase() === clean);
@@ -379,19 +486,20 @@ export async function validateTokenDaftar(tokenStr: string): Promise<{ valid: bo
 }
 
 export async function markTokenUsed(tokenStr: string, usedBy: string): Promise<void> {
-  const tokens = load<TokenDaftar[]>(K_TOKENS, []);
+  const tokens = await getTokenList();
   const clean = tokenStr.replace(/-/g, '').trim().toUpperCase();
   const idx = tokens.findIndex((t) => t.token.replace(/-/g, '').toUpperCase() === clean);
   if (idx !== -1) {
     tokens[idx].digunakan = 'YA';
     tokens[idx].digunakan_oleh = usedBy;
     save(K_TOKENS, tokens);
+    await fsSetDoc('tokens', 'all_tokens', { items: tokens });
   }
 }
 
 export async function generateTokenDaftar(program: ProgramType, count: number): Promise<TokenDaftar[]> {
   const charset = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  const tokens = load<TokenDaftar[]>(K_TOKENS, []);
+  const tokens = await getTokenList();
   const createdList: TokenDaftar[] = [];
 
   for (let i = 0; i < count; i++) {
@@ -415,16 +523,24 @@ export async function generateTokenDaftar(program: ProgramType, count: number): 
   }
 
   save(K_TOKENS, tokens);
+  await fsSetDoc('tokens', 'all_tokens', { items: tokens });
   await addLog('ADMIN', 'ADMIN', 'GENERATE_TOKEN', `Generate ${count} token untuk ${program}`);
   return createdList;
 }
 
 export async function getTokenList(): Promise<TokenDaftar[]> {
+  try {
+    const cloud = await fsGetDoc<{ items: TokenDaftar[] }>('tokens', 'all_tokens');
+    if (cloud && Array.isArray(cloud.items) && cloud.items.length > 0) {
+      save(K_TOKENS, cloud.items);
+      return cloud.items;
+    }
+  } catch {}
   return load<TokenDaftar[]>(K_TOKENS, []);
 }
 
 export async function clearOldTokens(): Promise<number> {
-  const tokens = load<TokenDaftar[]>(K_TOKENS, []);
+  const tokens = await getTokenList();
   const now = new Date().getTime();
   const remaining = tokens.filter((t) => {
     const exp = new Date(t.expired).getTime();
@@ -432,6 +548,7 @@ export async function clearOldTokens(): Promise<number> {
   });
   const removed = tokens.length - remaining.length;
   save(K_TOKENS, remaining);
+  await fsSetDoc('tokens', 'all_tokens', { items: remaining });
   await addLog('ADMIN', 'ADMIN', 'CLEAR_TOKEN', `Membersihkan ${removed} token kadaluarsa/digunakan`);
   return removed;
 }
@@ -522,6 +639,9 @@ export async function daftarSiswa(
   siswaList.unshift(newSiswa);
   save(K_SISWA, siswaList);
 
+  // Sync Siswa Baru ke Firestore (Wajib Await)
+  await fsSetDoc('siswa', newSiswa.nis, newSiswa);
+
   if (data.token_daftar) {
     await markTokenUsed(data.token_daftar, `${nis} | ${data.nama_siswa}`);
   }
@@ -536,7 +656,7 @@ export async function daftarSiswa(
 }
 
 export async function getDaftarPending(): Promise<Siswa[]> {
-  const siswaList = load<Siswa[]>(K_SISWA, SEED_SISWA);
+  const siswaList = await getSiswaList();
   return siswaList.filter((s) => s.status_daftar === 'PENDING');
 }
 
@@ -565,6 +685,7 @@ export async function approveDaftar(nis: string, paket: PaketAkses): Promise<{ s
   siswaList[idx].akses_akhir = exp.toISOString();
 
   save(K_SISWA, siswaList);
+  await fsSetDoc('siswa', nis, siswaList[idx]);
   await addLog('ADMIN', 'ADMIN', 'APPROVE_DAFTAR', `Menyetujui pendaftaran ${nis} (${siswaList[idx].nama_siswa}) dengan paket ${paket}`);
   return { success: true };
 }
@@ -577,6 +698,7 @@ export async function tolakDaftar(nis: string, alasan?: string): Promise<{ succe
   siswaList[idx].status = 'NONAKTIF';
   siswaList[idx].status_daftar = 'DITOLAK';
   save(K_SISWA, siswaList);
+  await fsSetDoc('siswa', nis, siswaList[idx]);
 
   await addLog('ADMIN', 'ADMIN', 'TOLAK_DAFTAR', `Menolak pendaftaran ${nis}. Alasan: ${alasan || '-'}`);
   return { success: true };
@@ -586,6 +708,13 @@ export async function tolakDaftar(nis: string, alasan?: string): Promise<{ succe
 // 5. MANAJEMEN SISWA (ADMIN)
 // ------------------------------------------
 export async function getSiswaList(): Promise<Siswa[]> {
+  try {
+    const cloud = await fsGetCollection<Siswa>('siswa');
+    if (cloud && cloud.length > 0) {
+      save(K_SISWA, cloud);
+      return cloud;
+    }
+  } catch {}
   return load<Siswa[]>(K_SISWA, SEED_SISWA);
 }
 
@@ -619,6 +748,7 @@ export async function addSiswa(data: { nis: string; nama_siswa: string }): Promi
 
   siswaList.unshift(newSiswa);
   save(K_SISWA, siswaList);
+  await fsSetDoc('siswa', newSiswa.nis, newSiswa);
   await addLog('ADMIN', 'ADMIN', 'TAMBAH_SISWA', `Menambah siswa manual: ${data.nama_siswa} (${data.nis})`);
   return newSiswa;
 }
@@ -629,6 +759,7 @@ export async function updateSiswaStatus(nis: string, status: UserStatus): Promis
   if (idx !== -1) {
     siswaList[idx].status = status;
     save(K_SISWA, siswaList);
+    await fsSetDoc('siswa', nis, siswaList[idx]);
     await addLog('ADMIN', 'ADMIN', 'UBAH_STATUS', `Mengubah status ${nis} menjadi ${status}`);
   }
 }
@@ -653,6 +784,7 @@ export async function updateSiswaAkses(nis: string, paket: PaketAkses): Promise<
     siswaList[idx].akses_mulai = now.toISOString();
     siswaList[idx].akses_akhir = exp.toISOString();
     save(K_SISWA, siswaList);
+    await fsSetDoc('siswa', nis, siswaList[idx]);
     await addLog('ADMIN', 'ADMIN', 'UBAH_AKSES', `Mengubah akses ${nis} menjadi ${paket}`);
   }
 }
@@ -663,6 +795,7 @@ export async function updateDataSiswa(nis: string, update: Partial<Siswa>): Prom
   if (idx !== -1) {
     siswaList[idx] = { ...siswaList[idx], ...update };
     save(K_SISWA, siswaList);
+    await fsSetDoc('siswa', nis, siswaList[idx]);
     await addLog(nis, 'SISWA', 'UPDATE_PROFIL', `Update profil siswa ${nis}`);
   }
 }
@@ -673,6 +806,7 @@ export async function updatePilihanProgram(nis: string, program: ProgramType): P
   if (idx !== -1) {
     siswaList[idx].pilihan_program = program;
     save(K_SISWA, siswaList);
+    await fsSetDoc('siswa', nis, siswaList[idx]);
     await addLog('ADMIN', 'ADMIN', 'UPDATE_PROGRAM', `Mengubah program ${nis} menjadi ${program}`);
   }
 }
@@ -683,6 +817,7 @@ export async function resetPassword(nis: string): Promise<string> {
   if (idx !== -1) {
     siswaList[idx].password_hash = '123456';
     save(K_SISWA, siswaList);
+    await fsSetDoc('siswa', nis, siswaList[idx]);
     await addLog('ADMIN', 'ADMIN', 'RESET_PASSWORD', `Reset password siswa ${nis} ke 123456`);
   }
   return '123456';
@@ -697,13 +832,14 @@ export async function resetPasswordOrtu(nis: string): Promise<string> {
     defaultPass = cleanHP.length >= 4 ? cleanHP.slice(-4) : '1234';
     siswaList[idx].password_ortu_hash = defaultPass;
     save(K_SISWA, siswaList);
+    await fsSetDoc('siswa', nis, siswaList[idx]);
     await addLog('ADMIN', 'ADMIN', 'RESET_PASS_ORTU', `Reset password ortu ${nis} ke ${defaultPass}`);
   }
   return defaultPass;
 }
 
 export async function deleteSiswa(nis: string): Promise<void> {
-  // Hapus cascade
+  // Hapus cascade lokal
   let siswaList = load<Siswa[]>(K_SISWA, SEED_SISWA);
   siswaList = siswaList.filter((s) => s.nis !== nis);
   save(K_SISWA, siswaList);
@@ -739,6 +875,17 @@ export async function deleteSiswa(nis: string): Promise<void> {
   let chats = load<ChatMessage[]>(K_CHAT, []);
   chats = chats.filter((c) => c.from !== nis && c.to !== nis);
   save(K_CHAT, chats);
+
+  // Hapus cascade di Firebase Firestore
+  fsDeleteDoc('siswa', nis).catch(() => {});
+  fsDeleteDoc('nilai_rapor', nis).catch(() => {});
+  fsDeleteDoc('nilai_tka', nis).catch(() => {});
+  fsDeleteDoc('prestasi', nis).catch(() => {});
+  fsDeleteDoc('nilai_tambahan', nis).catch(() => {});
+  fsDeleteDoc('pilihan_snbp', nis).catch(() => {});
+  fsDeleteDoc('to_data', nis).catch(() => {});
+  fsDeleteDoc('pilihan_snbt', nis).catch(() => {});
+  fsDeleteDoc('chats', nis).catch(() => {});
 
   await addLog('ADMIN', 'ADMIN', 'HAPUS_SISWA', `Menghapus seluruh data siswa ${nis} (cascade)`);
 }
@@ -851,10 +998,23 @@ export async function saveNilaiRapor(
 
   list.push(...validItems);
   save(K_RAPOR, list);
+
+  // Sync to Firebase Cloud Firestore (Wajib Await)
+  await fsSetDoc('nilai_rapor', nis, { items: validItems, kurikulum, jurusan });
   await addLog(nis, 'SISWA', 'SIMPAN_RAPOR', `Menyimpan ${validItems.length} mata pelajaran rapor`);
 }
 
 export async function getNilaiRapor(nis: string): Promise<NilaiRapor[]> {
+  try {
+    const cloud = await fsGetDoc<{ items: NilaiRapor[] }>('nilai_rapor', nis);
+    if (cloud && Array.isArray(cloud.items) && cloud.items.length > 0) {
+      let list = load<NilaiRapor[]>(K_RAPOR, []);
+      list = list.filter((r) => r.nis !== nis);
+      list.push(...cloud.items);
+      save(K_RAPOR, list);
+      return cloud.items;
+    }
+  } catch {}
   const list = load<NilaiRapor[]>(K_RAPOR, []);
   return list.filter((r) => r.nis === nis);
 }
@@ -864,10 +1024,17 @@ export async function saveTKA(data: TKAData): Promise<void> {
   list = list.filter((t) => t.nis !== data.nis);
   list.push(data);
   save(K_TKA, list);
+
+  // Sync to Firebase Cloud Firestore (Wajib Await)
+  await fsSetDoc('nilai_tka', data.nis, data);
   await addLog(data.nis, 'SISWA', 'SIMPAN_TKA', 'Menyimpan nilai TKA (skala IRT 200–800)');
 }
 
 export async function getTKA(nis: string): Promise<TKAData | null> {
+  try {
+    const cloud = await fsGetDoc<TKAData>('nilai_tka', nis);
+    if (cloud) return cloud;
+  } catch {}
   const list = load<TKAData[]>(K_TKA, []);
   return list.find((t) => t.nis === nis) || null;
 }
@@ -885,10 +1052,17 @@ export async function savePrestasi(nis: string, prestasiList: Prestasi[]): Promi
 
   list.push(...toAdd);
   save(K_PRESTASI, list);
+
+  // Sync to Firebase Cloud Firestore (Wajib Await)
+  await fsSetDoc('prestasi', nis, { items: toAdd });
   await addLog(nis, 'SISWA', 'SIMPAN_PRESTASI', `Menyimpan data prestasi (${toAdd.length} slot terisi)`);
 }
 
 export async function getPrestasi(nis: string): Promise<Prestasi[]> {
+  try {
+    const cloud = await fsGetDoc<{ items: Prestasi[] }>('prestasi', nis);
+    if (cloud && Array.isArray(cloud.items)) return cloud.items;
+  } catch {}
   const list = load<Prestasi[]>(K_PRESTASI, []);
   return list.filter((p) => p.nis === nis);
 }
@@ -898,10 +1072,17 @@ export async function saveTambahan(data: Tambahan): Promise<void> {
   list = list.filter((t) => t.nis !== data.nis);
   list.push(data);
   save(K_TAMBAHAN, list);
+
+  // Sync to Firebase Cloud Firestore (Wajib Await)
+  await fsSetDoc('nilai_tambahan', data.nis, data);
   await addLog(data.nis, 'SISWA', 'SIMPAN_TAMBAHAN', 'Menyimpan data ranking & alumni sekolah');
 }
 
 export async function getTambahan(nis: string): Promise<Tambahan | null> {
+  try {
+    const cloud = await fsGetDoc<Tambahan>('nilai_tambahan', nis);
+    if (cloud) return cloud;
+  } catch {}
   const list = load<Tambahan[]>(K_TAMBAHAN, []);
   return list.find((t) => t.nis === nis) || null;
 }
@@ -926,10 +1107,17 @@ export async function savePilihanPTN(nis: string, pilihanList: PilihanPTNSNBP[])
 
   list.push(...uniqueList);
   save(K_PILIHAN_SNBP, list);
+
+  // Sync to Firebase Cloud Firestore (Wajib Await)
+  await fsSetDoc('pilihan_snbp', nis, { items: uniqueList });
   await addLog(nis, 'SISWA', 'SIMPAN_PILIHAN_SNBP', `Menyimpan ${uniqueList.length} pilihan PTN SNBP`);
 }
 
 export async function getPilihanPTN(nis: string): Promise<PilihanPTNSNBP[]> {
+  try {
+    const cloud = await fsGetDoc<{ items: PilihanPTNSNBP[] }>('pilihan_snbp', nis);
+    if (cloud && Array.isArray(cloud.items) && cloud.items.length > 0) return cloud.items;
+  } catch {}
   const list = load<PilihanPTNSNBP[]>(K_PILIHAN_SNBP, []);
   const found = list.filter((p) => p.nis === nis);
   found.sort((a, b) => a.pilihan_ke - b.pilihan_ke);
@@ -937,7 +1125,7 @@ export async function getPilihanPTN(nis: string): Promise<PilihanPTNSNBP[]> {
 }
 
 export async function getAnalisaLengkap(nis: string) {
-  const siswaList = load<Siswa[]>(K_SISWA, SEED_SISWA);
+  const siswaList = await getSiswaList();
   const siswa = siswaList.find((s) => s.nis === nis);
   if (!siswa) throw new Error('Siswa tidak ditemukan');
 
@@ -1002,10 +1190,20 @@ export async function saveTOData(data: TOData): Promise<void> {
   list.sort((a, b) => a.to_ke - b.to_ke);
   save(K_TO, list);
 
+  // Sync to Firebase Cloud Firestore (Wajib Await)
+  const studentTOs = list.filter((t) => t.nis === data.nis);
+  await fsSetDoc('to_data', data.nis, { items: studentTOs });
   await addLog(data.nis, 'SISWA', 'INPUT_TO', `Menyimpan data Try Out ke-${data.to_ke} (Skor: ${calculated.skor_tertimbang})`);
 }
 
 export async function getTOData(nis: string): Promise<TOData[]> {
+  try {
+    const cloud = await fsGetDoc<{ items: TOData[] }>('to_data', nis);
+    if (cloud && Array.isArray(cloud.items) && cloud.items.length > 0) {
+      cloud.items.sort((a, b) => a.to_ke - b.to_ke);
+      return cloud.items;
+    }
+  } catch {}
   const list = load<TOData[]>(K_TO, []);
   const found = list.filter((t) => t.nis === nis);
   found.sort((a, b) => a.to_ke - b.to_ke);
@@ -1029,10 +1227,17 @@ export async function savePilihanSNBT(nis: string, pilihanList: PilihanPTNSNBT[]
 
   list.push(...uniqueList);
   save(K_PILIHAN_SNBT, list);
+
+  // Sync to Firebase Cloud Firestore (Wajib Await)
+  await fsSetDoc('pilihan_snbt', nis, { items: uniqueList });
   await addLog(nis, 'SISWA', 'SIMPAN_PILIHAN_SNBT', `Menyimpan ${uniqueList.length} pilihan PTN SNBT`);
 }
 
 export async function getPilihanSNBT(nis: string): Promise<PilihanPTNSNBT[]> {
+  try {
+    const cloud = await fsGetDoc<{ items: PilihanPTNSNBT[] }>('pilihan_snbt', nis);
+    if (cloud && Array.isArray(cloud.items) && cloud.items.length > 0) return cloud.items;
+  } catch {}
   const list = load<PilihanPTNSNBT[]>(K_PILIHAN_SNBT, []);
   const found = list.filter((p) => p.nis === nis);
   found.sort((a, b) => a.pilihan_ke - b.pilihan_ke);
@@ -1056,7 +1261,7 @@ export async function recalcSkorSNBTForSiswa(nis: string): Promise<void> {
 }
 
 export async function getAnalisaSNBT(nis: string) {
-  const siswaList = load<Siswa[]>(K_SISWA, SEED_SISWA);
+  const siswaList = await getSiswaList();
   const siswa = siswaList.find((s) => s.nis === nis);
   if (!siswa) throw new Error('Siswa tidak ditemukan');
 
@@ -1122,13 +1327,21 @@ export async function getAnalisaSNBT(nis: string) {
 // 9. MODUL BELAJAR
 // ------------------------------------------
 export async function getModulList(): Promise<Modul[]> {
+  try {
+    const cloud = await fsGetCollection<Modul>('modul');
+    if (cloud && cloud.length > 0) {
+      cloud.sort((a, b) => a.urutan - b.urutan);
+      save(K_MODUL, cloud);
+      return cloud;
+    }
+  } catch {}
   const list = load<Modul[]>(K_MODUL, SAMPLE_MODUL);
   list.sort((a, b) => a.urutan - b.urutan);
   return list;
 }
 
 export async function getModulById(id: string): Promise<Modul | undefined> {
-  const list = load<Modul[]>(K_MODUL, SAMPLE_MODUL);
+  const list = await getModulList();
   return list.find((m) => m.id === id);
 }
 
@@ -1141,6 +1354,9 @@ export async function addModul(modul: Omit<Modul, 'id' | 'timestamp'>): Promise<
   };
   list.push(newModul);
   save(K_MODUL, list);
+
+  // Sync to Firebase Cloud Firestore (Wajib Await)
+  await fsSetDoc('modul', newModul.id, newModul);
   await addLog(modul.created_by || 'ADMIN', 'ADMIN', 'TAMBAH_MODUL', `Menambahkan modul: ${modul.judul}`);
   return newModul;
 }
@@ -1151,6 +1367,7 @@ export async function editModul(id: string, data: Partial<Modul>): Promise<void>
   if (idx !== -1) {
     list[idx] = { ...list[idx], ...data };
     save(K_MODUL, list);
+    await fsSetDoc('modul', id, list[idx]);
     await addLog('ADMIN', 'ADMIN', 'EDIT_MODUL', `Mengedit modul ${list[idx].judul}`);
   }
 }
@@ -1160,6 +1377,7 @@ export async function deleteModul(id: string): Promise<void> {
   const found = list.find((m) => m.id === id);
   list = list.filter((m) => m.id !== id);
   save(K_MODUL, list);
+  await fsDeleteDoc('modul', id);
   await addLog('ADMIN', 'ADMIN', 'HAPUS_MODUL', `Menghapus modul ${found ? found.judul : id}`);
 }
 
@@ -1169,16 +1387,17 @@ export async function toggleStatusModul(id: string): Promise<void> {
   if (idx !== -1) {
     list[idx].status = list[idx].status === 'AKTIF' ? 'DRAFT' : 'AKTIF';
     save(K_MODUL, list);
+    await fsSetDoc('modul', id, list[idx]);
     await addLog('ADMIN', 'ADMIN', 'TOGGLE_MODUL', `Ubah status modul ${list[idx].judul} -> ${list[idx].status}`);
   }
 }
 
 export async function getModulSiswa(nis: string): Promise<Modul[]> {
-  const siswaList = load<Siswa[]>(K_SISWA, SEED_SISWA);
+  const siswaList = await getSiswaList();
   const siswa = siswaList.find((s) => s.nis === nis);
   if (!siswa) return [];
 
-  const list = load<Modul[]>(K_MODUL, SAMPLE_MODUL);
+  const list = await getModulList();
   return list.filter((m) => {
     if (m.status !== 'AKTIF') return false;
     return isModulVisibleForSiswa(m.kelas_target, m.target_program, siswa.kelas, siswa.pilihan_program);
@@ -1186,7 +1405,7 @@ export async function getModulSiswa(nis: string): Promise<Modul[]> {
 }
 
 export async function getModulUrl(id: string, nis: string): Promise<{ embed_url: string; judul: string }> {
-  const list = load<Modul[]>(K_MODUL, SAMPLE_MODUL);
+  const list = await getModulList();
   const modul = list.find((m) => m.id === id);
   if (!modul) throw new Error('Modul tidak ditemukan');
 
@@ -1212,11 +1431,23 @@ export async function sendChat(from: string, to: string, pesan: string): Promise
   };
   chats.push(msg);
   save(K_CHAT, chats);
+
+  // Sync to Firebase Cloud Firestore (Wajib Await)
+  await fsSetDoc('chats', msg.id, msg);
   await addLog(from, from === 'ADMIN' ? 'ADMIN' : 'SISWA', 'KIRIM_CHAT', `Pesan dari ${from} ke ${to}`);
   return msg;
 }
 
 export async function getChat(nis: string): Promise<ChatMessage[]> {
+  try {
+    const cloud = await fsGetCollection<ChatMessage>('chats');
+    if (cloud && cloud.length > 0) {
+      save(K_CHAT, cloud);
+      return cloud.filter(
+        (c) => (c.from === nis && c.to === 'ADMIN') || (c.from === 'ADMIN' && c.to === nis)
+      );
+    }
+  } catch {}
   const chats = load<ChatMessage[]>(K_CHAT, []);
   return chats.filter(
     (c) => (c.from === nis && c.to === 'ADMIN') || (c.from === 'ADMIN' && c.to === nis)
@@ -1244,10 +1475,15 @@ export function exportToGoogleSheetsJSON(): string {
   return JSON.stringify(data, null, 2);
 }
 
-export function importFromGoogleSheetsJSON(jsonStr: string): { success: boolean; message: string } {
+export async function importFromGoogleSheetsJSON(jsonStr: string): Promise<{ success: boolean; message: string }> {
   try {
     const data = JSON.parse(jsonStr);
-    if (data.SISWA && Array.isArray(data.SISWA)) save(K_SISWA, data.SISWA);
+    if (data.SISWA && Array.isArray(data.SISWA)) {
+      save(K_SISWA, data.SISWA);
+      for (const s of data.SISWA) {
+        if (s.nis) await fsSetDoc('siswa', s.nis, s);
+      }
+    }
     if (data.NILAI_RAPOR && Array.isArray(data.NILAI_RAPOR)) save(K_RAPOR, data.NILAI_RAPOR);
     if (data.TKA_DATA && Array.isArray(data.TKA_DATA)) save(K_TKA, data.TKA_DATA);
     if (data.PRESTASI && Array.isArray(data.PRESTASI)) save(K_PRESTASI, data.PRESTASI);
@@ -1255,9 +1491,17 @@ export function importFromGoogleSheetsJSON(jsonStr: string): { success: boolean;
     if (data.PILIHAN_PTN_SNBP && Array.isArray(data.PILIHAN_PTN_SNBP)) save(K_PILIHAN_SNBP, data.PILIHAN_PTN_SNBP);
     if (data.TO_DATA && Array.isArray(data.TO_DATA)) save(K_TO, data.TO_DATA);
     if (data.PILIHAN_PTN_SNBT && Array.isArray(data.PILIHAN_PTN_SNBT)) save(K_PILIHAN_SNBT, data.PILIHAN_PTN_SNBT);
-    if (data.MODUL && Array.isArray(data.MODUL)) save(K_MODUL, data.MODUL);
-    if (data.SETTINGS) save(K_SETTINGS, data.SETTINGS);
-    return { success: true, message: 'Sinkronisasi data Google Sheets berhasil!' };
+    if (data.MODUL && Array.isArray(data.MODUL)) {
+      save(K_MODUL, data.MODUL);
+      for (const m of data.MODUL) {
+        if (m.id) await fsSetDoc('modul', m.id, m);
+      }
+    }
+    if (data.SETTINGS) {
+      save(K_SETTINGS, data.SETTINGS);
+      await fsSetDoc('settings', 'app_settings', data.SETTINGS);
+    }
+    return { success: true, message: 'Sinkronisasi data Google Sheets & Firebase berhasil!' };
   } catch (e) {
     return { success: false, message: `Format data tidak valid: ${(e as Error).message}` };
   }

@@ -350,11 +350,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-black text-gray-900 dark:text-white">
-                  Ringkasan Eksekutif Bimbingan Belajar
-                </h2>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-xl font-black text-gray-900 dark:text-white">
+                    Ringkasan Eksekutif Bimbingan Belajar
+                  </h2>
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 flex items-center gap-1 border border-emerald-200 dark:border-emerald-800">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Firebase Cloud: fixlolosptn
+                  </span>
+                </div>
                 <p className="text-xs text-gray-500 dark:text-purple-300">
-                  Data statistik real-time persiapan seleksi PTN tahun 2027.
+                  Data statistik real-time persiapan seleksi PTN 2027 tersinkronisasi otomatis dengan Cloud Firestore.
                 </p>
               </div>
 
@@ -1032,12 +1038,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   Tempel data JSON dari Google Sheets untuk menimpa atau memperbarui tabel aplikasi ini secara instan.
                 </p>
                 <button
-                  onClick={() => {
+                  onClick={async () => {
                     if (!sheetsJSON.trim()) {
                       alert('Tempel teks JSON pada kotak di bawah terlebih dahulu.');
                       return;
                     }
-                    const res = importFromGoogleSheetsJSON(sheetsJSON);
+                    const res = await importFromGoogleSheetsJSON(sheetsJSON);
                     setSheetsMsg(res.message);
                     if (res.success) loadAll();
                   }}

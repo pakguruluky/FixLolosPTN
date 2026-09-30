@@ -54,8 +54,9 @@ Konfigurasi `firebase.json` dan `.firebaserc` telah disiapkan.
    ```bash
    npm run build
    ```
-5. Deploy ke Firebase Hosting:
+5. Deploy ke Firebase (Rules Database & Hosting):
    ```bash
-   firebase deploy --only hosting
+   firebase deploy
    ```
+   *(Atau `firebase deploy --only firestore,hosting`)*
 6. Selesai! Aplikasi Anda akan aktif di `https://fixlolosptn.web.app` atau `https://fixlolosptn.firebaseapp.com`

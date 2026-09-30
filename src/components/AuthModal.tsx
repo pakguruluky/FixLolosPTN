@@ -862,11 +862,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               </div>
 
               <div>
-                <div className="flex justify-between items-center mb-1.5">
+                <div className="mb-1.5">
                   <label className="block text-xs font-bold text-gray-700 dark:text-purple-200">
                     Kata Sandi Admin
                   </label>
-                  <span className="text-[11px] text-gray-400">Default: bajuri39</span>
                 </div>
                 <div className="relative">
                   <Lock className="w-4 h-4 text-gray-400 absolute left-3 top-3.5" />
