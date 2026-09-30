@@ -73,6 +73,7 @@ import {
   getAnalisaLengkap,
   getAnalisaSNBT,
 } from '../services/api';
+import { subscribeToCollection } from '../services/firebaseDb';
 import { SNBPAnalisa } from './student/SNBPAnalisa';
 import { SNBTAnalisa } from './student/SNBTAnalisa';
 
@@ -144,6 +145,19 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   useEffect(() => {
     loadAll();
+
+    // Listener realtime Firestore agar pendaftar baru dari device lain langsung muncul di laptop admin
+    const unsub = subscribeToCollection<Siswa>('siswa', (cloudSiswa) => {
+      if (cloudSiswa && cloudSiswa.length > 0) {
+        setSiswaList(cloudSiswa);
+        const pend = cloudSiswa.filter((s) => s.status_daftar === 'PENDING');
+        setPendingList(pend);
+      }
+    });
+
+    return () => {
+      unsub();
+    };
   }, []);
 
   const loadAll = async () => {

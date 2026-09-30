@@ -8,20 +8,24 @@ import {
   writeBatch,
   query,
   limit,
+  onSnapshot,
+  Unsubscribe,
 } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 
 /**
  * Menyimpan atau memperbarui dokumen di Firestore
  */
-export async function fsSetDoc(colName: string, docId: string, data: any): Promise<void> {
+export async function fsSetDoc(colName: string, docId: string, data: any): Promise<boolean> {
   try {
     // Sanitasi data agar tidak ada undefined yang ditolak Firestore
     const cleanData = JSON.parse(JSON.stringify(data));
     const ref = doc(db, colName, docId);
     await setDoc(ref, cleanData, { merge: true });
+    return true;
   } catch (err) {
-    console.warn(`[Firebase] Gagal menyimpan ke ${colName}/${docId}:`, err);
+    console.error(`[Firebase] Gagal menyimpan ke ${colName}/${docId}:`, err);
+    throw err;
   }
 }
 
@@ -56,6 +60,28 @@ export async function fsGetCollection<T>(colName: string): Promise<T[] | null> {
   } catch (err) {
     console.warn(`[Firebase] Gagal membaca koleksi ${colName}:`, err);
     return null;
+  }
+}
+
+/**
+ * Mendengarkan perubahan data secara realtime (multi-device listener)
+ */
+export function subscribeToCollection<T>(colName: string, callback: (items: T[]) => void): Unsubscribe {
+  try {
+    const colRef = collection(db, colName);
+    return onSnapshot(
+      colRef,
+      (snap) => {
+        const items = snap.docs.map((d) => d.data() as T);
+        callback(items);
+      },
+      (err) => {
+        console.warn(`[Firebase] Realtime listener error pada koleksi ${colName}:`, err);
+      }
+    );
+  } catch (err) {
+    console.warn(`[Firebase] Gagal pasang realtime listener ${colName}:`, err);
+    return () => {};
   }
 }
 
