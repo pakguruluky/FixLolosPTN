@@ -73,6 +73,8 @@ import {
   getAnalisaLengkap,
   getAnalisaSNBT,
 } from '../services/api';
+import { SNBPAnalisa } from './student/SNBPAnalisa';
+import { SNBTAnalisa } from './student/SNBTAnalisa';
 
 interface AdminDashboardProps {
   settings: AppSettings;
@@ -249,18 +251,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     await loadAll();
   };
 
-  const handlePreviewStudent = async (s: Siswa, type: 'snbp' | 'snbt') => {
-    try {
-      if (type === 'snbp') {
-        const res = await getAnalisaLengkap(s.nis);
-        setPreviewStudent({ type: 'snbp', data: res, siswa: s });
-      } else {
-        const res = await getAnalisaSNBT(s.nis);
-        setPreviewStudent({ type: 'snbt', data: res, siswa: s });
-      }
-    } catch {
-      alert('Data analisis siswa belum lengkap.');
-    }
+  const handlePreviewStudent = (s: Siswa, type: 'snbp' | 'snbt') => {
+    setPreviewStudent({ type, data: null, siswa: s });
   };
 
   const filteredSiswa = siswaList.filter((s) => {
@@ -1511,93 +1503,85 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </div>
       )}
 
-      {/* MODAL PREVIEW SNBP / SNBT SISWA */}
+      {/* MODAL HASIL ANALISA LENGKAP SISWA (SNBP & SNBT) */}
       {previewStudent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm overflow-y-auto">
-          <div className="bg-white dark:bg-[#160E2E] rounded-3xl p-6 max-w-2xl w-full border shadow-2xl space-y-4 my-8 max-h-[85vh] overflow-y-auto">
-            <div className="flex justify-between items-center border-b pb-3">
-              <div>
-                <h3 className="font-extrabold text-base text-gray-900 dark:text-white">
-                  Pratinjau Hasil Evaluasi {previewStudent.type.toUpperCase()}: {previewStudent.siswa.nama_siswa}
-                </h3>
-                <p className="text-xs text-purple-700 dark:text-purple-300 font-mono">
-                  NIS: {previewStudent.siswa.nis} • {previewStudent.siswa.asal_sekolah}
-                </p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/75 backdrop-blur-md overflow-hidden animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-[#160E2E] rounded-3xl max-w-6xl w-full h-[94vh] border border-purple-100 dark:border-purple-900 shadow-2xl flex flex-col overflow-hidden my-auto">
+            {/* Modal Header */}
+            <div className="p-4 sm:p-5 border-b border-purple-100 dark:border-purple-900/60 bg-gradient-to-r from-purple-50 via-white to-indigo-50 dark:from-[#1E1540] dark:to-[#160E2E] flex flex-col sm:flex-row sm:items-center justify-between gap-3 flex-shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-700 to-indigo-600 text-white flex items-center justify-center text-lg font-black shadow-md shadow-purple-600/20">
+                  👨‍🎓
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-extrabold text-base sm:text-lg text-gray-900 dark:text-white">
+                      Hasil Analisis Lengkap: {previewStudent.siswa.nama_siswa}
+                    </h3>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300">
+                      {previewStudent.siswa.pilihan_program}
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-500 dark:text-purple-300 font-mono">
+                    NIS: {previewStudent.siswa.nis} • {previewStudent.siswa.asal_sekolah} ({previewStudent.siswa.provinsi_sekolah || 'Provinsi Sekolah'})
+                  </p>
+                </div>
               </div>
-              <button
-                onClick={() => setPreviewStudent(null)}
-                className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600"
-              >
-                ✕
-              </button>
+
+              {/* Navigation Switcher between SNBP & SNBT and Close */}
+              <div className="flex items-center gap-2 self-end sm:self-auto">
+                <div className="bg-gray-100 dark:bg-[#1E1540] p-1 rounded-2xl flex items-center gap-1 text-xs font-bold border border-gray-200 dark:border-purple-900/50">
+                  <button
+                    onClick={() => setPreviewStudent({ ...previewStudent, type: 'snbp' })}
+                    className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 ${
+                      previewStudent.type === 'snbp'
+                        ? 'bg-purple-700 text-white shadow-sm shadow-purple-700/30'
+                        : 'text-gray-600 dark:text-purple-300 hover:text-purple-700'
+                    }`}
+                  >
+                    <span>📊 Hasil SNBP</span>
+                  </button>
+                  <button
+                    onClick={() => setPreviewStudent({ ...previewStudent, type: 'snbt' })}
+                    className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 ${
+                      previewStudent.type === 'snbt'
+                        ? 'bg-red-700 text-white shadow-sm shadow-red-700/30'
+                        : 'text-gray-600 dark:text-purple-300 hover:text-red-700'
+                    }`}
+                  >
+                    <span>🎯 Hasil SNBT</span>
+                  </button>
+                </div>
+
+                <button
+                  onClick={() => setPreviewStudent(null)}
+                  className="w-9 h-9 rounded-2xl border border-gray-200 dark:border-purple-900 bg-white dark:bg-[#1E1540] text-gray-500 hover:text-gray-900 dark:hover:text-white flex items-center justify-center font-bold text-sm shadow-sm"
+                  title="Tutup Modal"
+                >
+                  ✕
+                </button>
+              </div>
             </div>
 
-            {previewStudent.type === 'snbp' ? (
-              <div className="space-y-3 text-xs">
-                <div className="p-4 rounded-xl bg-purple-50 dark:bg-purple-950/40 flex justify-between items-center">
-                  <div>
-                    <span className="text-[10px] font-bold text-gray-500">Peluang Kelulusan Total:</span>
-                    <div className="text-2xl font-black text-purple-900 dark:text-purple-100">
-                      {previewStudent.data.peluang.peluang_total}%
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-[10px] font-bold text-gray-500">Nilai Akhir SNBP (NAS):</span>
-                    <div className="text-2xl font-black font-mono text-purple-700">
-                      {previewStudent.data.nilaiAkhir.nilaiAkhir}
-                    </div>
-                  </div>
-                </div>
+            {/* Modal Body - Exact Same Student Analysis Component */}
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-gray-50/40 dark:bg-[#120B27]/40">
+              {previewStudent.type === 'snbp' ? (
+                <SNBPAnalisa siswa={previewStudent.siswa} />
+              ) : (
+                <SNBTAnalisa siswa={previewStudent.siswa} />
+              )}
+            </div>
 
-                <div className="space-y-2">
-                  <strong className="block text-gray-800 dark:text-white">Pilihan Prodi:</strong>
-                  {previewStudent.data.peluang.pilihanAnalisa.map((p: any) => (
-                    <div key={p.pilihan_ke} className="p-2.5 rounded-lg border flex justify-between items-center">
-                      <div>
-                        <strong>Pilihan {p.pilihan_ke}:</strong> {p.prodi} ({p.ptn})
-                      </div>
-                      <span className="font-bold text-purple-700">{p.peluang_prodi}%</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-3 text-xs">
-                <div className="p-4 rounded-xl bg-red-50 dark:bg-red-950/40 flex justify-between items-center">
-                  <div>
-                    <span className="text-[10px] font-bold text-gray-500">Rata-rata Skor Tertimbang:</span>
-                    <div className="text-2xl font-black text-red-900 dark:text-red-100">
-                      {previewStudent.data.stats.avgTert}
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-[10px] font-bold text-gray-500">Tren Capaian:</span>
-                    <div className="text-sm font-bold text-red-700">
-                      {previewStudent.data.stats.trendLabel}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <strong className="block text-gray-800 dark:text-white">Pilihan Prodi UTBK:</strong>
-                  {previewStudent.data.pilihanDetail.map((p: any) => (
-                    <div key={p.pilihan_ke} className="p-2.5 rounded-lg border flex justify-between items-center">
-                      <div>
-                        <strong>Pil {p.pilihan_ke}:</strong> {p.prodi} ({p.singk_ptn})
-                      </div>
-                      <span className="font-bold">{p.ketercapaian.statusLabel}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div className="flex justify-end gap-2 pt-2 border-t">
+            {/* Modal Footer */}
+            <div className="p-3.5 px-6 border-t border-purple-100 dark:border-purple-900/60 bg-white dark:bg-[#160E2E] flex justify-between items-center flex-shrink-0 text-xs">
+              <span className="text-gray-500 dark:text-purple-300">
+                Mode Tinjauan Instruktur &amp; Konselor Admin • Sinkronisasi Data Real-Time
+              </span>
               <button
                 onClick={() => setPreviewStudent(null)}
-                className="px-4 py-2 rounded-xl bg-purple-700 hover:bg-purple-800 text-white text-xs font-bold"
+                className="px-5 py-2 rounded-xl bg-purple-700 hover:bg-purple-800 text-white font-bold transition-all shadow-md shadow-purple-700/20"
               >
-                Tutup Pratinjau
+                Tutup Analisis
               </button>
             </div>
           </div>

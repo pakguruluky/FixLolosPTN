@@ -225,8 +225,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ settings, onOpenLogin 
               {
                 icon: ShieldCheck,
                 color: 'text-teal-600 bg-teal-100 dark:bg-teal-900/40',
-                title: 'Laporan A4 Resmi',
-                desc: 'Cetak PDF dan unduh laporan 3 halaman komprehensif siap presentasi ke orang tua dan sekolah.',
+                title: 'Rangkuman Analisis Digital',
+                desc: 'Dashboard analisis komprehensif real-time dengan rekomendasi strategi taktis untuk siswa, orang tua, dan sekolah.',
               },
             ].map((f, i) => {
               const Icon = f.icon;
@@ -324,7 +324,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ settings, onOpenLogin 
               <span className="text-3xl mb-3 block">🔐</span>
               <h3 className="font-bold text-lg text-gray-900 dark:text-white">Admin Sekolah / Bimbel</h3>
               <p className="text-xs text-gray-600 dark:text-purple-200/80 mt-2">
-                Verifikasi pendaftaran, generate token instan, manajemen modul, log aktivitas, hingga ekspor data ke Google Sheets.
+                Verifikasi pendaftaran, generate token instan, manajemen modul, dan log aktivitas sistem.
               </p>
               <button
                 onClick={() => onOpenLogin('admin')}

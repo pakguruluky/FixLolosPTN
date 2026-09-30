@@ -314,7 +314,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     required
                     value={siswaId}
                     onChange={(e) => setSiswaId(e.target.value)}
-                    placeholder="Contoh: USR2027001 atau hilman27"
+                    placeholder="Masukkan NIS atau Username"
                     className="w-full pl-9 pr-3 py-2.5 text-xs sm:text-sm rounded-xl border border-gray-200 dark:border-purple-900 bg-white dark:bg-[#1E1540] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-600"
                   />
                 </div>
@@ -325,7 +325,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   <label className="block text-xs font-bold text-gray-700 dark:text-purple-200">
                     Kata Sandi
                   </label>
-                  <span className="text-[11px] text-gray-400">Default: 123456</span>
                 </div>
                 <div className="relative">
                   <Lock className="w-4 h-4 text-gray-400 absolute left-3 top-3.5" />
@@ -334,7 +333,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     required
                     value={siswaPass}
                     onChange={(e) => setSiswaPass(e.target.value)}
-                    placeholder="Masukkan password"
+                    placeholder="Masukkan kata sandi"
                     className="w-full pl-9 pr-10 py-2.5 text-xs sm:text-sm rounded-xl border border-gray-200 dark:border-purple-900 bg-white dark:bg-[#1E1540] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-600"
                   />
                   <button
@@ -375,7 +374,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           {activeTab === 'ortu' && (
             <form onSubmit={handleLoginOrtu} className="space-y-4">
               <div className="p-3 rounded-xl bg-purple-50 dark:bg-purple-950/40 text-purple-800 dark:text-purple-300 text-xs">
-                Portal pantau orang tua. Password standar orang tua adalah <strong>4 digit terakhir nomor HP orang tua</strong> yang didaftarkan (atau <code className="bg-purple-100 dark:bg-purple-900 px-1 py-0.5 rounded">1234</code> jika belum diatur).
+                Portal pantau orang tua. Gunakan NIS anak dan kata sandi yang telah didaftarkan (4 digit terakhir nomor HP orang tua).
               </div>
 
               <div>
@@ -387,7 +386,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   required
                   value={ortuNis}
                   onChange={(e) => setOrtuNis(e.target.value)}
-                  placeholder="Contoh: USR2027001"
+                  placeholder="Masukkan NIS Anak"
                   className="w-full px-3 py-2.5 text-xs sm:text-sm rounded-xl border border-gray-200 dark:border-purple-900 bg-white dark:bg-[#1E1540] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-600"
                 />
               </div>
@@ -402,7 +401,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     required
                     value={ortuPass}
                     onChange={(e) => setOrtuPass(e.target.value)}
-                    placeholder="Contoh: 7890 atau 1234"
+                    placeholder="Masukkan password orang tua"
                     className="w-full px-3 pr-10 py-2.5 text-xs sm:text-sm rounded-xl border border-gray-200 dark:border-purple-900 bg-white dark:bg-[#1E1540] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-600"
                   />
                   <button
@@ -867,7 +866,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   <label className="block text-xs font-bold text-gray-700 dark:text-purple-200">
                     Kata Sandi Admin
                   </label>
-                  <span className="text-[11px] text-gray-400">Default: admin2027</span>
+                  <span className="text-[11px] text-gray-400">Default: bajuri39</span>
                 </div>
                 <div className="relative">
                   <Lock className="w-4 h-4 text-gray-400 absolute left-3 top-3.5" />

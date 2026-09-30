@@ -319,8 +319,8 @@ export async function loginOrtu(
 
 export async function loginAdmin(password: string): Promise<{ success: boolean; message?: string }> {
   // Verifikasi password admin di server-side abstraction
-  // Default admin pass: 'admin2027' atau 'admin'
-  if (password === 'admin2027' || password === 'admin') {
+  // Default admin pass: 'bajuri39'
+  if (password === 'bajuri39') {
     await addLog('ADMIN', 'ADMIN', 'LOGIN', 'Admin berhasil masuk ke sistem');
     return { success: true };
   }
