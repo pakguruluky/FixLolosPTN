@@ -578,6 +578,8 @@ export interface BreakdownKomponenSNBP {
   status: 'Baik' | 'Cukup' | 'Tingkatkan';
 }
 
+export type KategoriKeketatan = 'Sangat Ketat' | 'Ketat' | 'Sedang / Cukup Ketat' | 'Tidak Ketat';
+
 export interface AnalisaSNBPPilihan {
   pilihan_ke: number;
   ptn: string;
@@ -587,6 +589,8 @@ export interface AnalisaSNBPPilihan {
   mapelPendukung: [string, string];
   statusMapel: { mapel1Ada: boolean; mapel2Ada: boolean };
   skor_keketatan: number;
+  kategori_keketatan?: KategoriKeketatan;
+  keketatan?: string;
   peluang_prodi: number;
   label_peluang: string;
   color_peluang: string;
@@ -877,6 +881,59 @@ export function calcSkalaPrediksiSNBT(skorTertimbang: number, namTarget: number,
   return { gap, chancePct, label, badgeColor, gradientColor, advice };
 }
 
+export function parseKeketatanNumber(keketatanStr?: string | number): number {
+  if (typeof keketatanStr === 'number') return keketatanStr;
+  if (!keketatanStr) return 5.0;
+  const clean = String(keketatanStr).replace('%', '').trim().replace(',', '.');
+  const parsed = parseFloat(clean);
+  return isNaN(parsed) ? 5.0 : parsed;
+}
+
+export function evaluasiKeketatanProdi(
+  keketatanVal: number | string,
+  rata_rapor: number,
+  nrm: number
+): {
+  kategori: KategoriKeketatan;
+  poin: number;
+  persenVal: number;
+  keterangan: string;
+} {
+  const persenVal = parseKeketatanNumber(keketatanVal);
+  let kategori: KategoriKeketatan = 'Sedang / Cukup Ketat';
+  let basePoin = 4.0;
+  let keterangan = '';
+
+  if (persenVal < 2.5) {
+    kategori = 'Sangat Ketat';
+    // Rentang < 2.5%: Sangat Ketat (Prodi Super Favorit Nasional). Poin 2.0 (atau 2.5 jika rapor >= NRM)
+    basePoin = rata_rapor >= nrm && nrm > 0 ? 2.5 : 2.0;
+    keterangan = `< 2.5% (Sangat Ketat / Super Favorit)`;
+  } else if (persenVal >= 2.5 && persenVal < 5.0) {
+    kategori = 'Ketat';
+    // Rentang 2.5% - <5.0%: Ketat (Prodi Favorit Tinggi). Poin 3.0 (atau 3.5 jika rapor >= NRM)
+    basePoin = rata_rapor >= nrm && nrm > 0 ? 3.5 : 3.0;
+    keterangan = `2.5% – 5.0% (Ketat / Favorit Tinggi)`;
+  } else if (persenVal >= 5.0 && persenVal <= 10.0) {
+    kategori = 'Sedang / Cukup Ketat';
+    // Rentang 5.0% - 10.0%: Sedang / Cukup Ketat. Poin 4.0 (atau 4.5 jika rapor >= NRM)
+    basePoin = rata_rapor >= nrm && nrm > 0 ? 4.5 : 4.0;
+    keterangan = `5.0% – 10.0% (Sedang / Cukup Ketat)`;
+  } else {
+    kategori = 'Tidak Ketat';
+    // Rentang > 10.0%: Tidak Ketat. Poin maksimal 5.0
+    basePoin = 5.0;
+    keterangan = `> 10.0% (Tidak Ketat / Peluang Maksimal)`;
+  }
+
+  return {
+    kategori,
+    poin: Number(Math.min(5, Math.max(1, basePoin)).toFixed(1)),
+    persenVal,
+    keterangan,
+  };
+}
+
 export function calcPeluangSNBP(
   siswa: Siswa,
   nilaiRaporList: NilaiRapor[],
@@ -891,6 +948,8 @@ export function calcPeluangSNBP(
   color_total: string;
   peluang_tanpa_keketatan: number;
   skor_keketatan_final: number;
+  kategori_keketatan_final: KategoriKeketatan;
+  keterangan_keketatan_final: string;
   rata_rapor: number;
   hasTKA: boolean;
   total_gap: number;
@@ -922,7 +981,6 @@ export function calcPeluangSNBP(
   // Final score = average across all choices.
   const pilihanAnalisa: AnalisaSNBPPilihan[] = [];
   let sumSkorMapel = 0;
-  let sumSkorKeketatan = 0;
 
   for (const pil of pilihanList) {
     const ptnItem = allPTN.find(
@@ -959,9 +1017,10 @@ export function calcPeluangSNBP(
     else if (mapel1Ada || mapel2Ada) poinMapelProdi = 5;
     sumSkorMapel += poinMapelProdi;
 
-    // Keketatan
-    const skor_keketatan = nrm > 0 && rata_rapor >= nrm ? 5 : 3;
-    sumSkorKeketatan += skor_keketatan;
+    // Evaluasi Keketatan per prodi pilihan (Sangat Ketat, Ketat, Sedang / Cukup Ketat, Tidak Ketat)
+    const rawKeketatanStr = pil.keketatanTarget || (ptnItem ? ptnItem.keketatan : predictedTier.keketatan);
+    const keketatanEval = evaluasiKeketatanProdi(rawKeketatanStr, rata_rapor, nrm);
+    const skor_keketatan = keketatanEval.poin;
 
     pilihanAnalisa.push({
       pilihan_ke: pil.pilihan_ke,
@@ -972,6 +1031,8 @@ export function calcPeluangSNBP(
       mapelPendukung: mapels,
       statusMapel: { mapel1Ada, mapel2Ada },
       skor_keketatan,
+      kategori_keketatan: keketatanEval.kategori,
+      keketatan: rawKeketatanStr,
       peluang_prodi: 0, // calculated below
       label_peluang: '',
       color_peluang: '',
@@ -1032,8 +1093,17 @@ export function calcPeluangSNBP(
 
   const peluang_tanpa_keketatan = Math.min(Math.max(rawSum, 0), 95);
 
-  const skor_keketatan_final =
-    pilihanList.length > 0 ? Number((sumSkorKeketatan / pilihanList.length).toFixed(2)) : 3;
+  // Penentuan Skor Keketatan berdasarkan Prodi Favorit (Pilihan 1 adalah prioritas utama siswa)
+  const prodiFavorit = pilihanAnalisa.find((p) => p.pilihan_ke === 1) || pilihanAnalisa[0];
+  const skor_keketatan_final = prodiFavorit
+    ? prodiFavorit.skor_keketatan
+    : 4.0;
+  const kategori_keketatan_final: KategoriKeketatan = prodiFavorit
+    ? prodiFavorit.kategori_keketatan || 'Sedang / Cukup Ketat'
+    : 'Sedang / Cukup Ketat';
+  const keterangan_keketatan_final = prodiFavorit
+    ? `${prodiFavorit.prodi} (${prodiFavorit.keketatan || 'Terukur'})`
+    : 'Belum memilih prodi target';
 
   const peluang_total = Math.min(Number((peluang_tanpa_keketatan + skor_keketatan_final).toFixed(2)), 100);
 
@@ -1139,12 +1209,25 @@ export function calcPeluangSNBP(
     });
   }
 
+  // 10. Komponen Poin Keketatan Prodi Pilihan Favorit (Bobot Maksimal 5 Poin -> Menjadikan Total Penilaian Maksimal 100 Poin)
+  breakdown.push({
+    key: 'keketatan_prodi',
+    nama: 'Poin Keketatan Prodi Favorit',
+    bobotMaks: 5,
+    poin: skor_keketatan_final,
+    persen: Math.round((skor_keketatan_final / 5) * 100),
+    keterangan: `${kategori_keketatan_final} • ${keterangan_keketatan_final}`,
+    status: skor_keketatan_final >= 4 ? 'Baik' : skor_keketatan_final >= 3 ? 'Cukup' : 'Tingkatkan',
+  });
+
   return {
     peluang_total,
     label_total,
     color_total,
     peluang_tanpa_keketatan,
     skor_keketatan_final,
+    kategori_keketatan_final,
+    keterangan_keketatan_final,
     rata_rapor,
     hasTKA,
     total_gap: tkaValidation.total_gap,

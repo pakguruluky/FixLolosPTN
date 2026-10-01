@@ -554,9 +554,20 @@ export const SNBPAnalisa: React.FC<SNBPAnalisaProps> = ({ siswa }) => {
 
       {/* Breakdown Komponen Table */}
       <div className="bg-white dark:bg-[#160E2E] rounded-2xl border border-purple-100 dark:border-purple-950/40 p-5 shadow-sm">
-        <h4 className="font-extrabold text-sm text-gray-900 dark:text-white mb-3">
-          Rincian Komponen Penilaian SNBP (Maksimal 95 Poin Pra-Keketatan)
-        </h4>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+          <div>
+            <h4 className="font-extrabold text-sm text-gray-900 dark:text-white flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-purple-600" />
+              <span>Rincian Komponen Penilaian SNBP (Maksimal 100 Poin)</span>
+            </h4>
+            <p className="text-xs text-gray-500 dark:text-purple-300/80 mt-0.5">
+              Akumulasi 95 Poin Pra-Keketatan + Bobot Maksimal 5 Poin Keketatan Prodi Favorit
+            </p>
+          </div>
+          <span className="self-start sm:self-auto px-2.5 py-1 rounded-full text-[11px] font-black bg-purple-100 dark:bg-purple-900/60 text-purple-800 dark:text-purple-200">
+            Total Bobot: 100 Poin
+          </span>
+        </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
@@ -572,8 +583,20 @@ export const SNBPAnalisa: React.FC<SNBPAnalisaProps> = ({ siswa }) => {
             </thead>
             <tbody className="divide-y divide-purple-50 dark:divide-purple-950/30">
               {peluang.breakdown.map((b: any) => (
-                <tr key={b.key} className="hover:bg-purple-50/30">
-                  <td className="py-2 px-3 font-semibold text-gray-800 dark:text-purple-200">{b.nama}</td>
+                <tr
+                  key={b.key}
+                  className={`hover:bg-purple-50/30 ${
+                    b.key === 'keketatan_prodi'
+                      ? 'bg-pink-50/40 dark:bg-pink-950/20 font-medium'
+                      : ''
+                  }`}
+                >
+                  <td className="py-2 px-3 font-semibold text-gray-800 dark:text-purple-200 flex items-center gap-1.5">
+                    {b.key === 'keketatan_prodi' && (
+                      <span className="w-2 h-2 rounded-full bg-pink-500 inline-block shrink-0" />
+                    )}
+                    <span>{b.nama}</span>
+                  </td>
                   <td className="py-2 px-2 text-center font-mono font-bold text-gray-400">{b.bobotMaks}</td>
                   <td className="py-2 px-2 text-center font-mono font-bold text-purple-700 dark:text-purple-300">
                     {b.poin}
@@ -582,22 +605,26 @@ export const SNBPAnalisa: React.FC<SNBPAnalisaProps> = ({ siswa }) => {
                     <div className="flex items-center gap-2">
                       <div className="flex-1 h-2 rounded-full bg-gray-100 dark:bg-purple-950 overflow-hidden">
                         <div
-                          className="h-full bg-purple-600 rounded-full transition-all duration-300"
+                          className={`h-full rounded-full transition-all duration-300 ${
+                            b.key === 'keketatan_prodi'
+                              ? 'bg-gradient-to-r from-pink-500 to-purple-600'
+                              : 'bg-purple-600'
+                          }`}
                           style={{ width: `${Math.min(100, b.persen)}%` }}
                         />
                       </div>
                       <span className="font-mono text-[10px]">{b.persen}%</span>
                     </div>
                   </td>
-                  <td className="py-2 px-3 text-gray-500 dark:text-purple-300/80">{b.keterangan}</td>
+                  <td className="py-2 px-3 text-gray-600 dark:text-purple-300/90">{b.keterangan}</td>
                   <td className="py-2 px-2 text-center">
                     <span
                       className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                         b.status === 'Baik'
-                          ? 'bg-emerald-100 text-emerald-700'
+                          ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300'
                           : b.status === 'Cukup'
-                          ? 'bg-amber-100 text-amber-700'
-                          : 'bg-rose-100 text-rose-700'
+                          ? 'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300'
+                          : 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300'
                       }`}
                     >
                       {b.status}
@@ -606,48 +633,73 @@ export const SNBPAnalisa: React.FC<SNBPAnalisaProps> = ({ siswa }) => {
                 </tr>
               ))}
             </tbody>
-            <tfoot className="bg-purple-100/70 dark:bg-purple-950/80 font-bold border-t-2 border-purple-200 dark:border-purple-800">
-              <tr>
-                <td className="py-3 px-3 text-purple-900 dark:text-purple-100 font-extrabold">
-                  TOTAL PRA-KEKETATAN (MAKS. 95 POIN)
+            <tfoot className="font-bold border-t-2 border-purple-200 dark:border-purple-800 divide-y divide-purple-200 dark:divide-purple-800">
+              {/* Baris 1: Subtotal Pra-Keketatan (Maks 95 Poin) */}
+              <tr className="bg-purple-50/80 dark:bg-purple-950/50 text-gray-700 dark:text-purple-200 text-xs">
+                <td className="py-2.5 px-3 font-bold text-purple-900 dark:text-purple-200">
+                  Subtotal Pra-Keketatan (9 Pilar Rapor &amp; Sekolah)
                 </td>
-                <td className="py-3 px-2 text-center font-mono font-black text-purple-900 dark:text-purple-200">
+                <td className="py-2.5 px-2 text-center font-mono font-bold text-gray-500 dark:text-gray-400">
                   95
                 </td>
-                <td className="py-3 px-2 text-center font-mono font-black text-purple-700 dark:text-purple-300 text-sm">
+                <td className="py-2.5 px-2 text-center font-mono font-bold text-purple-700 dark:text-purple-300">
                   {peluang.peluang_tanpa_keketatan}
+                </td>
+                <td className="py-2.5 px-3">
+                  <span className="font-mono text-[11px]">
+                    {Math.round((peluang.peluang_tanpa_keketatan / 95) * 100)}%
+                  </span>
+                </td>
+                <td className="py-2.5 px-3 text-[11px] text-gray-500">
+                  Nilai sebelum ditambah poin keketatan prodi
+                </td>
+                <td className="py-2.5 px-2 text-center">
+                  <span className="text-[10px] text-gray-500 font-semibold">Subtotal</span>
+                </td>
+              </tr>
+
+              {/* Baris 2: TOTAL AKHIR (MAKSIMAL 100 POIN) */}
+              <tr className="bg-purple-100/90 dark:bg-purple-950/90 text-sm">
+                <td className="py-3 px-3 text-purple-950 dark:text-purple-100 font-black">
+                  TOTAL KOMPONEN PENILAIAN SNBP (MAKS. 100 POIN)
+                </td>
+                <td className="py-3 px-2 text-center font-mono font-black text-purple-900 dark:text-purple-200">
+                  100
+                </td>
+                <td className="py-3 px-2 text-center font-mono font-black text-purple-700 dark:text-purple-300 text-base">
+                  {peluang.peluang_total}
                 </td>
                 <td className="py-3 px-3">
                   <div className="flex items-center gap-2">
-                    <div className="flex-1 h-2.5 rounded-full bg-purple-200 dark:bg-purple-900 overflow-hidden">
+                    <div className="flex-1 h-3 rounded-full bg-purple-200 dark:bg-purple-900 overflow-hidden">
                       <div
-                        className="h-full bg-gradient-to-r from-purple-600 to-pink-600 rounded-full"
+                        className="h-full bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 rounded-full"
                         style={{
-                          width: `${Math.min(100, Math.round((peluang.peluang_tanpa_keketatan / 95) * 100))}%`,
+                          width: `${Math.min(100, Math.round(peluang.peluang_total))}%`,
                         }}
                       />
                     </div>
-                    <span className="font-mono text-[11px] font-black">
-                      {Math.round((peluang.peluang_tanpa_keketatan / 95) * 100)}%
+                    <span className="font-mono text-xs font-black">
+                      {Math.round(peluang.peluang_total)}%
                     </span>
                   </div>
                 </td>
-                <td className="py-3 px-3 text-[11px] text-purple-800 dark:text-purple-200 font-semibold">
-                  Akumulasi seluruh pilar rapor, prestasi &amp; sekolah
+                <td className="py-3 px-3 text-[11px] text-purple-900 dark:text-purple-200 font-bold">
+                  Akumulasi Final: 95 Pra-Keketatan + {peluang.skor_keketatan_final} Keketatan
                 </td>
                 <td className="py-3 px-2 text-center">
                   <span
-                    className={`px-2.5 py-1 rounded-full text-[10px] font-black ${
-                      peluang.peluang_tanpa_keketatan >= 76
+                    className={`px-3 py-1 rounded-full text-[11px] font-black shadow-sm ${
+                      peluang.peluang_total >= 76
                         ? 'bg-emerald-200 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200'
-                        : peluang.peluang_tanpa_keketatan >= 50
+                        : peluang.peluang_total >= 50
                         ? 'bg-amber-200 text-amber-800 dark:bg-amber-900 dark:text-amber-200'
                         : 'bg-rose-200 text-rose-800 dark:bg-rose-900 dark:text-rose-200'
                     }`}
                   >
-                    {peluang.peluang_tanpa_keketatan >= 76
+                    {peluang.peluang_total >= 76
                       ? 'Baik'
-                      : peluang.peluang_tanpa_keketatan >= 50
+                      : peluang.peluang_total >= 50
                       ? 'Cukup'
                       : 'Tingkatkan'}
                   </span>
@@ -655,6 +707,95 @@ export const SNBPAnalisa: React.FC<SNBPAnalisaProps> = ({ siswa }) => {
               </tr>
             </tfoot>
           </table>
+        </div>
+
+        {/* Panduan & Info 4 Kategori Keketatan Prodi Favorit (Bobot Maksimal 5 Poin) */}
+        <div className="mt-4 p-4 rounded-2xl bg-gradient-to-r from-purple-50 via-pink-50/50 to-indigo-50 dark:from-[#1E1540] dark:to-[#160E2E] border border-purple-200 dark:border-purple-800/80 space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-purple-100 dark:border-purple-900/50 pb-2">
+            <div>
+              <span className="text-[10px] font-bold text-pink-600 dark:text-pink-400 uppercase tracking-wider block">
+                Parameter Tambahan 5 Poin Keketatan
+              </span>
+              <h5 className="font-extrabold text-xs sm:text-sm text-gray-900 dark:text-white">
+                Skala Keketatan Program Studi Favorit (Bobot Maks. 5 Poin)
+              </h5>
+            </div>
+            {peluang.kategori_keketatan_final && (
+              <span className="px-2.5 py-1 rounded-full text-[11px] font-black bg-pink-100 dark:bg-pink-900/60 text-pink-800 dark:text-pink-200 border border-pink-300 dark:border-pink-800 self-start sm:self-auto">
+                Prodi Favorit Anda: {peluang.kategori_keketatan_final} (+{peluang.skor_keketatan_final} Poin)
+              </span>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 text-xs">
+            {/* Kategori 1: Sangat Ketat */}
+            <div className={`p-3 rounded-xl border transition-all ${
+              peluang.kategori_keketatan_final === 'Sangat Ketat'
+                ? 'bg-rose-50 dark:bg-rose-950/40 border-rose-400 dark:border-rose-600 ring-2 ring-rose-400/30'
+                : 'bg-white/80 dark:bg-[#160E2E] border-rose-100 dark:border-rose-950/50'
+            }`}>
+              <div className="flex items-center justify-between font-bold mb-1">
+                <span className="text-rose-700 dark:text-rose-400 font-extrabold">🔴 Sangat Ketat</span>
+                <span className="font-mono text-xs px-1.5 py-0.5 rounded bg-rose-100 dark:bg-rose-900/60 text-rose-800 dark:text-rose-200 font-black">
+                  2.0 - 2.5 Poin
+                </span>
+              </div>
+              <p className="text-[11px] text-gray-600 dark:text-purple-300/80 leading-snug">
+                Keketatan <strong>&lt; 2.5%</strong>. Prodi super favorit (Kedokteran, TI UI/ITB/UGM). Persaingan sangat sengit.
+              </p>
+            </div>
+
+            {/* Kategori 2: Ketat */}
+            <div className={`p-3 rounded-xl border transition-all ${
+              peluang.kategori_keketatan_final === 'Ketat'
+                ? 'bg-orange-50 dark:bg-orange-950/40 border-orange-400 dark:border-orange-600 ring-2 ring-orange-400/30'
+                : 'bg-white/80 dark:bg-[#160E2E] border-orange-100 dark:border-orange-950/50'
+            }`}>
+              <div className="flex items-center justify-between font-bold mb-1">
+                <span className="text-orange-700 dark:text-orange-400 font-extrabold">🟠 Ketat</span>
+                <span className="font-mono text-xs px-1.5 py-0.5 rounded bg-orange-100 dark:bg-orange-900/60 text-orange-800 dark:text-orange-200 font-black">
+                  3.0 - 3.5 Poin
+                </span>
+              </div>
+              <p className="text-[11px] text-gray-600 dark:text-purple-300/80 leading-snug">
+                Keketatan <strong>2.5% – 5.0%</strong>. Prodi favorit tinggi dengan selektivitas ketat.
+              </p>
+            </div>
+
+            {/* Kategori 3: Sedang / Cukup Ketat */}
+            <div className={`p-3 rounded-xl border transition-all ${
+              peluang.kategori_keketatan_final === 'Sedang / Cukup Ketat'
+                ? 'bg-amber-50 dark:bg-amber-950/40 border-amber-400 dark:border-amber-600 ring-2 ring-amber-400/30'
+                : 'bg-white/80 dark:bg-[#160E2E] border-amber-100 dark:border-amber-950/50'
+            }`}>
+              <div className="flex items-center justify-between font-bold mb-1">
+                <span className="text-amber-700 dark:text-amber-400 font-extrabold">🟡 Sedang / Cukup Ketat</span>
+                <span className="font-mono text-xs px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200 font-black">
+                  4.0 - 4.5 Poin
+                </span>
+              </div>
+              <p className="text-[11px] text-gray-600 dark:text-purple-300/80 leading-snug">
+                Keketatan <strong>5.0% – 10.0%</strong>. Persaingan proporsional dengan peluang kompetisi terukur.
+              </p>
+            </div>
+
+            {/* Kategori 4: Tidak Ketat */}
+            <div className={`p-3 rounded-xl border transition-all ${
+              peluang.kategori_keketatan_final === 'Tidak Ketat'
+                ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-400 dark:border-emerald-600 ring-2 ring-emerald-400/30'
+                : 'bg-white/80 dark:bg-[#160E2E] border-emerald-100 dark:border-emerald-950/50'
+            }`}>
+              <div className="flex items-center justify-between font-bold mb-1">
+                <span className="text-emerald-700 dark:text-emerald-400 font-extrabold">🟢 Tidak Ketat</span>
+                <span className="font-mono text-xs px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 font-black">
+                  5.0 Poin (Maks)
+                </span>
+              </div>
+              <p className="text-[11px] text-gray-600 dark:text-purple-300/80 leading-snug">
+                Keketatan <strong>&gt; 10.0%</strong>. Daya tampung longgar, peluang kelulusan dari faktor keketatan optimal.
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Info Ringkasan 95 Poin Pra-Keketatan + 5 Poin Keketatan */}
@@ -667,19 +808,19 @@ export const SNBPAnalisa: React.FC<SNBPAnalisaProps> = ({ siswa }) => {
               {peluang.peluang_tanpa_keketatan} <span className="text-xs font-bold text-gray-400">/ 95 Poin</span>
             </div>
             <p className="text-[10px] text-gray-500 mt-1">
-              Rapor, mapel prodi, prestasi, dan rekam jejak sekolah.
+              Rapor, mapel prodi, ranking kelas &amp; sekolah, prestasi, akreditasi, dan alumni.
             </p>
           </div>
 
           <div className="p-3 rounded-xl bg-white/80 dark:bg-[#160E2E] border border-purple-100 dark:border-purple-900/50">
             <span className="text-[10px] text-gray-500 dark:text-purple-300 font-bold block">
-              Skor Keketatan Prodi Tujuan
+              Skor Keketatan Prodi Favorit
             </span>
             <div className="text-xl font-black text-pink-600 dark:text-pink-400 font-mono mt-0.5">
               +{peluang.skor_keketatan_final} <span className="text-xs font-bold text-gray-400">/ 5 Poin</span>
             </div>
             <p className="text-[10px] text-gray-500 mt-1">
-              Diperoleh jika rata-rata rapor Anda memenuhi ambang batas NRM prodi pilihan.
+              Kategori <strong>{peluang.kategori_keketatan_final || 'Sedang / Cukup Ketat'}</strong> berdasarkan daya tampung &amp; peminat prodi pilihan.
             </p>
           </div>
 
@@ -691,7 +832,7 @@ export const SNBPAnalisa: React.FC<SNBPAnalisaProps> = ({ siswa }) => {
               {peluang.peluang_total}% <span className="text-xs font-bold text-purple-200">/ 100%</span>
             </div>
             <p className="text-[10px] text-purple-200/90 mt-1">
-              Total kumulatif akhir (Pra-keketatan + keketatan prodi pilihan).
+              Total kumulatif akhir (95 Poin Pra-keketatan + {peluang.skor_keketatan_final} Poin Keketatan).
             </p>
           </div>
         </div>
