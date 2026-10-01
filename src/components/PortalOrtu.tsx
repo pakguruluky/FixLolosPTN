@@ -1,17 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
-  Users,
   LogOut,
   Compass,
   TrendingUp,
-  Award,
-  Sparkles,
-  BookOpen,
-  Calendar,
+  RefreshCw,
+  GraduationCap,
+  ShieldCheck,
+  UserCheck,
+  Building,
+  School,
+  IdCard,
 } from 'lucide-react';
 import { Siswa, AppSettings } from '../types';
-import { getAnalisaLengkap, getAnalisaSNBT } from '../services/api';
-import { RatioBar6040, BarChartSVG, ChartJSLine } from './charts/SVGCharts';
+import { SNBPAnalisa } from './student/SNBPAnalisa';
+import { SNBTAnalisa } from './student/SNBTAnalisa';
 
 interface PortalOrtuProps {
   siswa: Siswa;
@@ -24,64 +26,70 @@ export const PortalOrtu: React.FC<PortalOrtuProps> = ({
   settings,
   onLogout,
 }) => {
-  const [snbpData, setSnbpData] = useState<any>(null);
-  const [snbtData, setSnbtData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    loadData();
-  }, [siswa]);
-
-  const loadData = async () => {
-    setLoading(true);
-    try {
-      if (siswa.pilihan_program !== 'SNBT') {
-        const snbp = await getAnalisaLengkap(siswa.nis);
-        setSnbpData(snbp);
-      }
-      if (siswa.pilihan_program !== 'SNBP') {
-        const snbt = await getAnalisaSNBT(siswa.nis);
-        setSnbtData(snbt);
-      }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const showSNBP = siswa.pilihan_program === 'SNBP' || siswa.pilihan_program === 'SNBP+SNBT';
   const showSNBT = siswa.pilihan_program === 'SNBT' || siswa.pilihan_program === 'SNBP+SNBT';
 
+  // Default active tab sesuai pilihan program siswa
+  const [activeTab, setActiveTab] = useState<'snbp' | 'snbt'>(
+    siswa.pilihan_program === 'SNBT' ? 'snbt' : 'snbp'
+  );
+
+  // Key untuk force remount komponen analisa saat tombol refresh ditekan
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    setRefreshKey((prev) => prev + 1);
+    setTimeout(() => {
+      setIsRefreshing(false);
+    }, 600);
+  };
+
   return (
-    <div className="min-h-screen bg-[#F7F4FF] dark:bg-[#0D0920] text-[#1A0835] dark:text-[#EDE8FF] py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#F7F4FF] dark:bg-[#0D0920] text-[#1A0835] dark:text-[#EDE8FF] py-6 px-3 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto space-y-6">
-        {/* Top Header Card */}
-        <div className="bg-gradient-to-r from-purple-800 via-indigo-700 to-purple-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-5">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-white/15 backdrop-blur-md flex items-center justify-center text-3xl">
+        {/* Top Header Card Portal Orang Tua */}
+        <div className="bg-gradient-to-r from-purple-800 via-indigo-700 to-purple-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-5 relative overflow-hidden">
+          <div className="absolute -right-8 -top-8 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none" />
+          <div className="flex items-center gap-4 relative z-10">
+            <div className="w-16 h-16 rounded-2xl bg-white/15 backdrop-blur-md flex items-center justify-center text-3xl shadow-inner border border-white/20">
               👨‍👩‍👧
             </div>
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 text-purple-100 text-xs font-bold mb-1">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 text-purple-100 text-xs font-bold mb-1 border border-white/20">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-300" />
                 <span>Portal Orang Tua Siswa</span>
                 <span>•</span>
-                <span>Mode Pemantauan</span>
+                <span>Hasil Analisa Lengkap</span>
               </div>
-              <h1 className="text-xl sm:text-2xl font-black">
+              <h1 className="text-xl sm:text-2xl font-black tracking-tight">
                 Selamat Datang, {siswa.nama_ortu || 'Bapak/Ibu Orang Tua'}
               </h1>
               <p className="text-xs sm:text-sm text-purple-100/90 mt-0.5">
-                Memantau perkembangan persiapan seleksi masuk perguruan tinggi ananda{' '}
-                <strong>{siswa.nama_siswa}</strong>.
+                Memantau hasil evaluasi dan analisa persiapan seleksi masuk perguruan tinggi ananda{' '}
+                <strong className="text-white underline decoration-purple-300 underline-offset-2">
+                  {siswa.nama_siswa}
+                </strong>
+                .
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 relative z-10 self-end md:self-center">
+            <button
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              className="px-3.5 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 active:scale-95 text-white font-bold text-xs transition-all flex items-center gap-1.5 border border-white/20 shadow-sm"
+              title="Perbarui analisa dari database cloud"
+            >
+              <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-purple-200' : ''}`} />
+              <span>{isRefreshing ? 'Memuat...' : 'Sinkronkan'}</span>
+            </button>
+
             <button
               onClick={onLogout}
-              className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs transition-all flex items-center gap-1.5"
+              className="px-4 py-2.5 rounded-xl bg-red-600/80 hover:bg-red-600 active:scale-95 text-white font-bold text-xs transition-all flex items-center gap-1.5 shadow-md"
             >
               <LogOut className="w-4 h-4" />
               <span>Keluar</span>
@@ -89,132 +97,125 @@ export const PortalOrtu: React.FC<PortalOrtuProps> = ({
           </div>
         </div>
 
-        {/* Profil Siswa Card */}
+        {/* Profil Singkat Siswa Card */}
         <div className="bg-white dark:bg-[#160E2E] rounded-2xl border border-purple-100 dark:border-purple-950/40 p-5 shadow-sm">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-xs">
-            <div>
-              <span className="text-gray-400 block text-[10px] font-bold uppercase">Nama Siswa</span>
-              <strong className="text-gray-900 dark:text-white">{siswa.nama_siswa}</strong>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 text-xs">
+            <div className="flex items-start gap-2.5">
+              <UserCheck className="w-4 h-4 text-purple-600 mt-0.5 shrink-0" />
+              <div>
+                <span className="text-gray-400 block text-[10px] font-bold uppercase tracking-wider">Nama Ananda</span>
+                <strong className="text-gray-900 dark:text-white font-bold text-sm truncate block">{siswa.nama_siswa}</strong>
+              </div>
             </div>
-            <div>
-              <span className="text-gray-400 block text-[10px] font-bold uppercase">NIS Siswa</span>
-              <strong className="font-mono text-purple-700 dark:text-purple-300">{siswa.nis}</strong>
+
+            <div className="flex items-start gap-2.5">
+              <IdCard className="w-4 h-4 text-purple-600 mt-0.5 shrink-0" />
+              <div>
+                <span className="text-gray-400 block text-[10px] font-bold uppercase tracking-wider">NIS Siswa</span>
+                <strong className="font-mono text-purple-700 dark:text-purple-300 font-bold block">{siswa.nis}</strong>
+              </div>
             </div>
-            <div>
-              <span className="text-gray-400 block text-[10px] font-bold uppercase">Kelas</span>
-              <strong className="text-gray-900 dark:text-white">{siswa.kelas}</strong>
+
+            <div className="flex items-start gap-2.5">
+              <School className="w-4 h-4 text-purple-600 mt-0.5 shrink-0" />
+              <div>
+                <span className="text-gray-400 block text-[10px] font-bold uppercase tracking-wider">Kelas & Jurusan</span>
+                <strong className="text-gray-900 dark:text-white font-bold block">{siswa.kelas}</strong>
+              </div>
             </div>
-            <div>
-              <span className="text-gray-400 block text-[10px] font-bold uppercase">Sekolah Asal</span>
-              <strong className="text-gray-900 dark:text-white truncate block">{siswa.asal_sekolah}</strong>
+
+            <div className="flex items-start gap-2.5">
+              <Building className="w-4 h-4 text-purple-600 mt-0.5 shrink-0" />
+              <div>
+                <span className="text-gray-400 block text-[10px] font-bold uppercase tracking-wider">Asal Sekolah</span>
+                <strong className="text-gray-900 dark:text-white font-bold truncate block">{siswa.asal_sekolah}</strong>
+              </div>
             </div>
-            <div>
-              <span className="text-gray-400 block text-[10px] font-bold uppercase">Cabang Bimbel</span>
-              <strong className="text-gray-900 dark:text-white">{siswa.cabang}</strong>
+
+            <div className="flex items-start gap-2.5">
+              <GraduationCap className="w-4 h-4 text-purple-600 mt-0.5 shrink-0" />
+              <div>
+                <span className="text-gray-400 block text-[10px] font-bold uppercase tracking-wider">Program Bimbingan</span>
+                <span className="inline-block mt-0.5 px-2 py-0.5 rounded-full text-[10px] font-black bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-200">
+                  {siswa.pilihan_program}
+                </span>
+              </div>
             </div>
-            <div>
-              <span className="text-gray-400 block text-[10px] font-bold uppercase">Program Pilihan</span>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-200">
-                {siswa.pilihan_program}
-              </span>
+
+            <div className="flex items-start gap-2.5">
+              <ShieldCheck className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
+              <div>
+                <span className="text-gray-400 block text-[10px] font-bold uppercase tracking-wider">Paket Akses</span>
+                <strong className="text-emerald-700 dark:text-emerald-400 font-bold block">{siswa.akses || 'AKTIF'}</strong>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* SEKSI ANALISA SNBP (RINGKAS) */}
-        {showSNBP && snbpData && (
-          <div className="bg-white dark:bg-[#160E2E] rounded-3xl border border-purple-100 dark:border-purple-950/40 p-6 space-y-5 shadow-sm">
-            <div className="flex items-center justify-between border-b border-purple-50 dark:border-purple-950/40 pb-4">
-              <div>
-                <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400 uppercase">
-                  Evaluasi Jalur Rapor
-                </span>
-                <h3 className="text-lg font-black text-gray-900 dark:text-white flex items-center gap-2">
-                  <Compass className="w-5 h-5 text-purple-600" />
-                  <span>Rasionalisasi Peluang SNBP: {snbpData.peluang.peluang_total}%</span>
-                  <span className={`text-xs px-2.5 py-0.5 rounded-full ${snbpData.peluang.color_total} bg-purple-50 dark:bg-purple-950 font-bold`}>
-                    {snbpData.peluang.label_total}
-                  </span>
-                </h3>
-              </div>
-            </div>
+        {/* Tab Navigasi Khusus Hasil Analisa untuk Orang Tua */}
+        {showSNBP && showSNBT && (
+          <div className="flex items-center gap-2 p-1.5 bg-white dark:bg-[#160E2E] rounded-2xl border border-purple-100 dark:border-purple-950/40 shadow-sm">
+            <button
+              onClick={() => setActiveTab('snbp')}
+              className={`flex-1 py-3 px-4 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 transition-all ${
+                activeTab === 'snbp'
+                  ? 'bg-purple-700 text-white shadow-md shadow-purple-700/25'
+                  : 'text-gray-600 dark:text-purple-200 hover:bg-purple-50 dark:hover:bg-purple-950/40'
+              }`}
+            >
+              <Compass className="w-4 h-4" />
+              <span>Hasil Analisa SNBP (Jalur Prestasi Rapor)</span>
+            </button>
 
-            {/* Pilihan Prodi SNBP */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {snbpData.peluang.pilihanAnalisa.map((pil: any) => (
-                <div
-                  key={pil.pilihan_ke}
-                  className="p-4 rounded-2xl bg-purple-50/50 dark:bg-purple-950/30 border border-purple-100 dark:border-purple-900/40 space-y-2"
-                >
-                  <div className="flex justify-between items-center text-xs">
-                    <span className="font-extrabold text-purple-800 dark:text-purple-300">
-                      Pilihan {pil.pilihan_ke}
-                    </span>
-                    <span className={`font-bold ${pil.color_peluang}`}>
-                      {pil.label_peluang} ({pil.peluang_prodi}%)
-                    </span>
-                  </div>
-                  <div className="font-bold text-sm text-gray-900 dark:text-white">{pil.prodi}</div>
-                  <div className="text-xs text-gray-500">{pil.ptn}</div>
-                </div>
-              ))}
-            </div>
-
-            {/* Breakdown Komponen SNBP */}
-            <BarChartSVG
-              title="Capaian Komponen Peluang SNBP"
-              labels={snbpData.peluang.breakdown.map((b: any) => b.nama)}
-              values={snbpData.peluang.breakdown.map((b: any) => b.poin)}
-              maxVal={25}
-            />
+            <button
+              onClick={() => setActiveTab('snbt')}
+              className={`flex-1 py-3 px-4 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 transition-all ${
+                activeTab === 'snbt'
+                  ? 'bg-red-600 text-white shadow-md shadow-red-600/25'
+                  : 'text-gray-600 dark:text-purple-200 hover:bg-red-50 dark:hover:bg-red-950/40'
+              }`}
+            >
+              <TrendingUp className="w-4 h-4" />
+              <span>Hasil Analisa SNBT (Jalur Tes UTBK)</span>
+            </button>
           </div>
         )}
 
-        {/* SEKSI PROGRESS SNBT (RINGKAS) */}
-        {showSNBT && snbtData && (
-          <div className="bg-white dark:bg-[#160E2E] rounded-3xl border border-red-100 dark:border-red-950/40 p-6 space-y-5 shadow-sm">
-            <div className="flex items-center justify-between border-b border-red-50 dark:border-red-950/40 pb-4">
-              <div>
-                <span className="text-[10px] font-bold text-red-600 dark:text-red-400 uppercase">
-                  Evaluasi Jalur Tes UTBK
-                </span>
-                <h3 className="text-lg font-black text-gray-900 dark:text-white flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-red-600" />
-                  <span>Rata-rata Skor Tertimbang: {snbtData.stats.avgTert}</span>
-                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-red-100 dark:bg-red-950/60 text-red-700 dark:text-red-300 font-bold">
-                    Tren: {snbtData.stats.trendLabel}
-                  </span>
-                </h3>
-              </div>
-            </div>
-
-            <RatioBar6040
-              tpsScore={snbtData.stats.avgTPS}
-              literasiScore={snbtData.stats.avgLit}
-              tertimbang={snbtData.stats.avgTert}
-            />
-
-            <ChartJSLine
-              title="Perjalanan Try Out UTBK Ananda"
-              labels={snbtData.toList.map((t: any) => `TO ${t.to_ke} (${t.bulan})`)}
-              datasets={[
-                {
-                  label: 'Skor Tertimbang',
-                  data: snbtData.toList.map((t: any) => t.skor_tertimbang),
-                  borderColor: '#DC2626',
-                  backgroundColor: 'rgba(220, 38, 38, 0.1)',
-                },
-              ]}
-              minVal={500}
-              maxVal={800}
-            />
+        {/* Info Banner Mode Read-Only Orang Tua */}
+        <div className="p-3.5 rounded-2xl bg-indigo-50/70 dark:bg-indigo-950/30 border border-indigo-200/60 dark:border-indigo-900/40 flex items-center justify-between text-xs text-indigo-900 dark:text-indigo-200">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+            <span>
+              Menampilkan laporan lengkap hasil kalkulasi peluang kelulusan ananda{' '}
+              <strong>{siswa.nama_siswa}</strong> berdasarkan data nilai akademik terbaru yang terhubung ke cloud.
+            </span>
           </div>
-        )}
+          <span className="hidden sm:inline-block px-2.5 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-900/60 text-indigo-800 dark:text-indigo-200 font-bold text-[11px]">
+            Mode Orang Tua: Laporan Penuh
+          </span>
+        </div>
+
+        {/* KONTEN ANALISA LENGKAP / FULL */}
+        <div key={refreshKey} className="space-y-6">
+          {/* Tampilkan SNBP Analisa Full jika aktif */}
+          {showSNBP && (!showSNBT || activeTab === 'snbp') && (
+            <div className="space-y-4">
+              <SNBPAnalisa siswa={siswa} />
+            </div>
+          )}
+
+          {/* Tampilkan SNBT Analisa Full jika aktif */}
+          {showSNBT && (!showSNBP || activeTab === 'snbt') && (
+            <div className="space-y-4">
+              <SNBTAnalisa siswa={siswa} />
+            </div>
+          )}
+        </div>
 
         {/* Footer */}
         <footer className="text-center text-xs text-gray-400 py-6 border-t border-purple-100 dark:border-purple-950/40">
           <div>AnalisaKu 2027 by {settings.NAMA_LEMBAGA} © 2027</div>
-          <div className="mt-0.5">@Copyright Pak Guru AI 2026</div>
+          <div className="mt-0.5">Portal Pendampingan Orang Tua • Terhubung ke Database Cloud</div>
         </footer>
       </div>
     </div>
