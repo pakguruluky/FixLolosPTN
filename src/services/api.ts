@@ -1154,6 +1154,28 @@ export async function getAnalisaLengkap(nis: string) {
   const kesesuaianMapel = calcKesesuaianMapelRaporTKA(pilihan, nilaiRapor, tka);
   const kesimpulanStrategi = generateKesimpulanStrategiSNBP(peluangResult, kesesuaianMapel, siswa, pilihan);
 
+  // Simpan snapshot hasil analisa SNBP ke Cloud Firestore backend
+  try {
+    fsSetDoc('analisa_snbp', nis, {
+      nis,
+      nama_siswa: siswa.nama_siswa,
+      peluang_total: peluangResult.peluang_total,
+      peluang_tanpa_keketatan: peluangResult.peluang_tanpa_keketatan,
+      skor_keketatan_final: peluangResult.skor_keketatan_final,
+      kategori_keketatan_final: peluangResult.kategori_keketatan_final,
+      nilaiAkhir: nilaiAkhirResult.nilaiAkhir,
+      statusKelayakan: nilaiAkhirResult.label,
+      rata_rapor: peluangResult.rata_rapor,
+      pilihan: pilihan.map((p) => ({
+        pilihan_ke: p.pilihan_ke,
+        ptn: p.ptn,
+        prodi: p.prodi,
+        peluang: peluangResult.pilihanAnalisa.find((pa) => pa.pilihan_ke === p.pilihan_ke)?.peluang_prodi || 0,
+      })),
+      updatedAt: new Date().toISOString(),
+    }).catch((err) => console.warn('[Firebase] Gagal simpan analisa_snbp:', err));
+  } catch {}
+
   return {
     siswa,
     nilaiRapor,
@@ -1312,6 +1334,27 @@ export async function getAnalisaSNBT(nis: string) {
 
   const alternatif = calcRekomendasiPTNSNBT(stats.avgTert, allPTN_SNBT, pilihanList);
   const kesimpulanStrategi = generateKesimpulanStrategiSNBT(stats, pilihanDetail, toList);
+
+  // Simpan snapshot hasil analisa SNBT ke Cloud Firestore backend
+  try {
+    fsSetDoc('analisa_snbt', nis, {
+      nis,
+      nama_siswa: siswa.nama_siswa,
+      avgTert: stats.avgTert,
+      avgTPS: stats.avgTPS,
+      avgLit: stats.avgLit,
+      trendLabel: stats.trendLabel,
+      jumlahTO: toList.length,
+      pilihan: pilihanDetail.map((pd) => ({
+        pilihan_ke: pd.pilihan_ke,
+        ptn: pd.ptn_nama,
+        prodi: pd.prodi,
+        namTarget: pd.namTarget,
+        status: pd.ketercapaian.status,
+      })),
+      updatedAt: new Date().toISOString(),
+    }).catch((err) => console.warn('[Firebase] Gagal simpan analisa_snbt:', err));
+  } catch {}
 
   return {
     siswa,

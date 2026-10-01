@@ -464,18 +464,20 @@ export const SNBPAnalisa: React.FC<SNBPAnalisaProps> = ({ siswa }) => {
             </span>
             <h3 className="text-xl font-black text-gray-900 dark:text-white flex items-center gap-2">
               <Award className="w-5 h-5 text-amber-500" />
-              <span>Nilai Akhir SNBP (Skala 0–100)</span>
+              <span>Nilai Akhir SNBP</span>
             </h3>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="text-right">
-              <div className="text-xs font-bold text-gray-500">Status Kelayakan:</div>
-              <div className={`text-base font-black ${nilaiAkhir.color}`}>
+          <div className="flex items-center gap-3 sm:gap-4 shrink-0 bg-purple-50/70 dark:bg-purple-950/40 px-4 py-2.5 rounded-2xl border border-purple-100 dark:border-purple-900/50 self-start sm:self-auto">
+            <div className="text-right shrink-0">
+              <div className="text-[11px] font-bold text-gray-500 dark:text-purple-300 uppercase tracking-wider">
+                Status Kelayakan:
+              </div>
+              <div className={`text-sm sm:text-base font-black ${nilaiAkhir.color}`}>
                 {nilaiAkhir.label}
               </div>
             </div>
-            <div className="w-16 h-16 rounded-2xl bg-purple-700 text-white font-mono font-black text-2xl flex items-center justify-center shadow-lg shadow-purple-600/25">
+            <div className="min-w-[5.2rem] px-3.5 py-2 rounded-xl bg-purple-700 text-white font-mono font-black text-xl sm:text-2xl text-center shadow-md shadow-purple-700/25 shrink-0">
               {nilaiAkhir.nilaiAkhir}
             </div>
           </div>
@@ -558,15 +560,12 @@ export const SNBPAnalisa: React.FC<SNBPAnalisaProps> = ({ siswa }) => {
           <div>
             <h4 className="font-extrabold text-sm text-gray-900 dark:text-white flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-purple-600" />
-              <span>Rincian Komponen Penilaian SNBP (Maksimal 100 Poin)</span>
+              <span>Rincian Komponen Penilaian SNBP</span>
             </h4>
             <p className="text-xs text-gray-500 dark:text-purple-300/80 mt-0.5">
-              Akumulasi 95 Poin Pra-Keketatan + Bobot Maksimal 5 Poin Keketatan Prodi Favorit
+              Evaluasi komprehensif pilar rapor, prestasi, rekam jejak sekolah, dan keketatan prodi pilihan
             </p>
           </div>
-          <span className="self-start sm:self-auto px-2.5 py-1 rounded-full text-[11px] font-black bg-purple-100 dark:bg-purple-900/60 text-purple-800 dark:text-purple-200">
-            Total Bobot: 100 Poin
-          </span>
         </div>
 
         <div className="overflow-x-auto">
@@ -661,7 +660,7 @@ export const SNBPAnalisa: React.FC<SNBPAnalisaProps> = ({ siswa }) => {
               {/* Baris 2: TOTAL AKHIR (MAKSIMAL 100 POIN) */}
               <tr className="bg-purple-100/90 dark:bg-purple-950/90 text-sm">
                 <td className="py-3 px-3 text-purple-950 dark:text-purple-100 font-black">
-                  TOTAL KOMPONEN PENILAIAN SNBP (MAKS. 100 POIN)
+                  TOTAL KOMPONEN PENILAIAN SNBP
                 </td>
                 <td className="py-3 px-2 text-center font-mono font-black text-purple-900 dark:text-purple-200">
                   100
