@@ -1161,7 +1161,7 @@ export async function getAnalisaLengkap(nis: string) {
 
   // Simpan snapshot hasil analisa SNBP ke Cloud Firestore backend
   try {
-    fsSetDoc('analisa_snbp', nis, {
+    await fsSetDoc('analisa_snbp', nis, {
       nis,
       nama_siswa: siswa.nama_siswa,
       peluang_total: peluangResult.peluang_total,
@@ -1178,8 +1178,10 @@ export async function getAnalisaLengkap(nis: string) {
         peluang: peluangResult.pilihanAnalisa.find((pa) => pa.pilihan_ke === p.pilihan_ke)?.peluang_prodi || 0,
       })),
       updatedAt: new Date().toISOString(),
-    }).catch((err) => console.warn('[Firebase] Gagal simpan analisa_snbp:', err));
-  } catch {}
+    });
+  } catch (err) {
+    console.warn('[Firebase] Gagal simpan analisa_snbp:', err);
+  }
 
   return {
     siswa,
@@ -1342,7 +1344,7 @@ export async function getAnalisaSNBT(nis: string) {
 
   // Simpan snapshot hasil analisa SNBT ke Cloud Firestore backend
   try {
-    fsSetDoc('analisa_snbt', nis, {
+    await fsSetDoc('analisa_snbt', nis, {
       nis,
       nama_siswa: siswa.nama_siswa,
       avgTert: stats.avgTert,
@@ -1358,8 +1360,10 @@ export async function getAnalisaSNBT(nis: string) {
         status: pd.ketercapaian.status,
       })),
       updatedAt: new Date().toISOString(),
-    }).catch((err) => console.warn('[Firebase] Gagal simpan analisa_snbt:', err));
-  } catch {}
+    });
+  } catch (err) {
+    console.warn('[Firebase] Gagal simpan analisa_snbt:', err);
+  }
 
   return {
     siswa,

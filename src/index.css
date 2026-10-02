@@ -3,9 +3,205 @@
 @layer base {
   body {
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-    background-color: #fbf9ff;
-    color: #1e1b4b;
+    background-color: #f3e8ff;
+    color: #0f172a;
   }
+}
+
+/* ========================================================
+   NEO-BRUTALISM HIGH SCHOOL EDITION DESIGN SYSTEM
+   ======================================================== */
+
+.neo-card {
+  background: #ffffff;
+  border: 3px solid #0f172a;
+  box-shadow: 5px 5px 0px #0f172a;
+  border-radius: 18px;
+}
+
+.neo-card-sm {
+  background: #ffffff;
+  border: 2.5px solid #0f172a;
+  box-shadow: 3px 3px 0px #0f172a;
+  border-radius: 14px;
+}
+
+.neo-card-dark {
+  background: #0f172a;
+  color: #ffffff;
+  border: 3px solid #0f172a;
+  box-shadow: 5px 5px 0px rgba(15, 23, 42, 0.4);
+  border-radius: 18px;
+}
+
+.neo-btn {
+  border: 3px solid #0f172a;
+  box-shadow: 3px 3px 0px #0f172a;
+  font-weight: 800;
+  border-radius: 14px;
+  transition: transform 0.12s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.12s cubic-bezier(0.2, 0, 0, 1);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.neo-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0px #0f172a;
+}
+
+.neo-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px #0f172a;
+}
+
+.neo-btn-sm {
+  border: 2.5px solid #0f172a;
+  box-shadow: 2.5px 2.5px 0px #0f172a;
+  font-weight: 800;
+  border-radius: 10px;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  cursor: pointer;
+}
+
+.neo-btn-sm:hover {
+  transform: translate(-1.5px, -1.5px);
+  box-shadow: 4px 4px 0px #0f172a;
+}
+
+.neo-btn-sm:active {
+  transform: translate(1.5px, 1.5px);
+  box-shadow: 1px 1px 0px #0f172a;
+}
+
+.neo-badge {
+  border: 2.5px solid #0f172a;
+  box-shadow: 2px 2px 0px #0f172a;
+  font-weight: 800;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.neo-input {
+  border: 2.5px solid #0f172a;
+  box-shadow: 2.5px 2.5px 0px #0f172a;
+  border-radius: 12px;
+  font-weight: 700;
+  background-color: #ffffff;
+  color: #0f172a;
+  transition: all 0.15s ease;
+}
+
+.neo-input:focus {
+  outline: none;
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px #7c3aed;
+  border-color: #7c3aed;
+}
+
+.neo-select {
+  border: 2.5px solid #0f172a;
+  box-shadow: 2.5px 2.5px 0px #0f172a;
+  border-radius: 12px;
+  font-weight: 700;
+  background-color: #ffffff;
+  color: #0f172a;
+  transition: all 0.15s ease;
+}
+
+.neo-select:focus {
+  outline: none;
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px #7c3aed;
+  border-color: #7c3aed;
+}
+
+/* Dark Mode Neo-Brutalism Overrides */
+.dark body {
+  background-color: #0f0a1f;
+  color: #f8fafc;
+}
+
+.dark .neo-card {
+  background: #181133;
+  border: 3px solid #cbd5e1;
+  box-shadow: 5px 5px 0px #9333ea;
+  color: #f8fafc;
+}
+
+.dark .neo-card-sm {
+  background: #181133;
+  border: 2.5px solid #cbd5e1;
+  box-shadow: 3px 3px 0px #9333ea;
+  color: #f8fafc;
+}
+
+.dark .neo-card-dark {
+  background: #090514;
+  border: 3px solid #cbd5e1;
+  box-shadow: 5px 5px 0px #9333ea;
+  color: #f8fafc;
+}
+
+.dark .neo-btn {
+  border: 3px solid #cbd5e1;
+  box-shadow: 3px 3px 0px #9333ea;
+}
+
+.dark .neo-btn:hover {
+  box-shadow: 5px 5px 0px #c084fc;
+}
+
+.dark .neo-btn:active {
+  box-shadow: 1px 1px 0px #9333ea;
+}
+
+.dark .neo-btn-sm {
+  border: 2.5px solid #cbd5e1;
+  box-shadow: 2.5px 2.5px 0px #9333ea;
+}
+
+.dark .neo-badge {
+  border: 2px solid #cbd5e1;
+  box-shadow: 2px 2px 0px #9333ea;
+}
+
+.dark .neo-input {
+  border: 2.5px solid #cbd5e1;
+  box-shadow: 2.5px 2.5px 0px #9333ea;
+  background-color: #1a1236;
+  color: #f8fafc;
+}
+
+.dark .neo-input:focus {
+  box-shadow: 4px 4px 0px #c084fc;
+  border-color: #c084fc;
+}
+
+.dark .neo-select {
+  border: 2.5px solid #cbd5e1;
+  box-shadow: 2.5px 2.5px 0px #9333ea;
+  background-color: #1a1236;
+  color: #f8fafc;
+}
+
+.dark .neo-select:focus {
+  box-shadow: 4px 4px 0px #c084fc;
+  border-color: #c084fc;
+}
+
+.neo-dot-grid {
+  background-image: radial-gradient(#0f172a 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+.neo-flip-box {
+  background: #1e1540;
+  border: 2.5px solid #0f172a;
+  box-shadow: 3px 3px 0px #0f172a;
+  border-radius: 12px;
 }
 
 /* Teenage Active & Creative Glow Utilities */
@@ -59,7 +255,6 @@
     break-after: page !important;
   }
 
-  /* Watermark protection on module viewer during print */
   .select-none {
     user-select: none !important;
   }
@@ -67,16 +262,18 @@
 
 /* Custom scrollbars with youthful violet touch */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: #f3e8ff;
+  border-left: 2px solid #0f172a;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(139, 92, 246, 0.3);
+  background: #8b5cf6;
+  border: 2px solid #0f172a;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(139, 92, 246, 0.6);
+  background: #7c3aed;
 }

@@ -109,7 +109,7 @@ export const StudentLayout: React.FC<StudentLayoutProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-[#F7F4FF] dark:bg-[#0D0920] text-[#1A0835] dark:text-[#EDE8FF] flex">
+    <div className="min-h-screen bg-[#f3e8ff] dark:bg-[#0f172a] text-[#0f172a] dark:text-[#f8fafc] flex">
       {/* Expired Access Blocking Overlay */}
       {!aksesCheck.valid && (
         <AccessExpiredOverlay siswa={siswa} settings={settings} onLogout={onLogout} />
@@ -119,67 +119,75 @@ export const StudentLayout: React.FC<StudentLayoutProps> = ({
       {isMobileMenuOpen && (
         <div
           onClick={() => setIsMobileMenuOpen(false)}
-          className="fixed inset-0 z-30 bg-black/50 md:hidden"
+          className="fixed inset-0 z-30 bg-black/60 md:hidden"
         />
       )}
 
-      {/* Sidebar (252px desktop, 220px tablet, off-canvas on mobile) */}
+      {/* Sidebar (260px desktop, off-canvas on mobile) */}
       <aside
-        className={`fixed md:sticky top-0 h-screen z-40 w-[252px] md:w-[220px] lg:w-[252px] bg-white dark:bg-[#160E2E] border-r border-purple-100 dark:border-purple-950/40 flex flex-col justify-between transition-transform duration-300 ${
+        className={`fixed md:sticky top-0 h-screen z-40 w-[260px] bg-white dark:bg-[#160E2E] border-r-3 border-[#0f172a] shadow-[4px_0px_0px_#0f172a] flex flex-col justify-between transition-transform duration-300 ${
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
       >
         <div>
           {/* Logo / Brand Header */}
-          <div className="p-5 border-b border-purple-100 dark:border-purple-950/40 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#7C3AED] via-purple-600 to-[#F59E0B] flex items-center justify-center text-white font-black text-lg shadow-md shadow-purple-500/20">
+          <div className="p-4 border-b-3 border-[#0f172a] bg-purple-100 dark:bg-purple-950/60 flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className="w-10 h-10 rounded-xl bg-purple-600 text-white border-2 border-[#0f172a] shadow-[2px_2px_0px_#0f172a] flex items-center justify-center font-black text-xl">
                 🎓
               </div>
               <div>
-                <div className="font-extrabold text-sm text-purple-900 dark:text-purple-100">
+                <div className="font-black text-sm text-[#0f172a] dark:text-white tracking-tight">
                   AnalisaKu 2027
                 </div>
-                <div className="text-[10px] text-gray-500 dark:text-purple-300 truncate max-w-[130px]">
-                  {settings.NAMA_LEMBAGA}
+                <div className="text-[10px] font-bold text-purple-700 dark:text-purple-300 truncate max-w-[140px]">
+                  Fix Lolos PTN • Cabang {siswa.cabang || 'ONLINE'}
                 </div>
               </div>
             </div>
 
             <button
               onClick={() => setIsMobileMenuOpen(false)}
-              className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 md:hidden"
+              className="p-1 rounded-lg border-2 border-[#0f172a] bg-rose-100 text-[#0f172a] md:hidden"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </button>
           </div>
 
-          {/* User Brief Card in Sidebar */}
-          <div className="p-4 mx-3 my-3 rounded-2xl bg-purple-50/70 dark:bg-purple-950/40 border border-purple-100 dark:border-purple-900/40">
-            <div className="font-bold text-xs text-gray-900 dark:text-white truncate">
-              {siswa.nama_siswa}
+          {/* Profile Card (Gamified Neo-Brutalism) */}
+          <div className="p-3.5 mx-3 my-3 rounded-2xl bg-purple-100 dark:bg-purple-950/40 border-2.5 border-[#0f172a] shadow-[3px_3px_0px_#0f172a]">
+            <div className="flex items-center gap-2.5">
+              <div className="w-11 h-11 rounded-xl bg-amber-200 border-2 border-[#0f172a] shadow-[2px_2px_0px_#0f172a] flex items-center justify-center text-2xl shrink-0">
+                👧🏻
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="font-black text-xs text-[#0f172a] dark:text-white truncate">
+                  {siswa.nama_siswa || 'Gita'}
+                </div>
+                <div className="text-[10px] font-bold text-gray-600 dark:text-purple-300 truncate">
+                  {siswa.kelas || 'Kelas 12'} • {siswa.asal_sekolah || 'SMA Negeri'}
+                </div>
+              </div>
             </div>
-            <div className="text-[11px] text-gray-500 dark:text-purple-300 truncate mt-0.5">
-              {siswa.kelas || 'Kelas 12'} • {siswa.cabang}
-            </div>
-            <div className="flex flex-wrap gap-1.5 mt-2">
-              <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-purple-200 dark:bg-purple-800 text-purple-800 dark:text-purple-100">
-                {siswa.pilihan_program}
+
+            <div className="flex flex-wrap items-center gap-1.5 mt-2.5 pt-2 border-t-2 border-[#0f172a]/20">
+              <span className="neo-badge px-2 py-0.5 bg-cyan-200 text-[#0f172a] text-[9px] font-black">
+                {siswa.pilihan_program || 'SNBP + SNBT'} ({siswa.akses || '1 BULAN'})
               </span>
               <span
-                className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
+                className={`neo-badge px-2 py-0.5 text-[9px] font-black ${
                   aksesCheck.valid
-                    ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300'
-                    : 'bg-rose-100 dark:bg-rose-900/40 text-rose-700 dark:text-rose-300'
+                    ? 'bg-emerald-300 text-[#0f172a]'
+                    : 'bg-rose-400 text-white'
                 }`}
               >
-                {siswa.akses} {aksesCheck.valid ? '' : '(EXPIRED)'}
+                {aksesCheck.valid ? '● AKTIF' : 'EXPIRED'}
               </span>
             </div>
           </div>
 
           {/* Navigation Items */}
-          <div className="px-3 overflow-y-auto max-h-[calc(100vh-270px)] space-y-1 text-xs font-semibold">
+          <div className="px-3 overflow-y-auto max-h-[calc(100vh-295px)] space-y-1.5 text-xs font-bold">
             {menuItems.map((item, idx) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -189,7 +197,7 @@ export const StudentLayout: React.FC<StudentLayoutProps> = ({
               return (
                 <React.Fragment key={item.id}>
                   {isNewSection && (
-                    <div className="pt-3 pb-1 px-3 text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-purple-400/60">
+                    <div className="pt-2 pb-0.5 px-2 text-[9px] font-black uppercase tracking-wider text-gray-500 dark:text-purple-300">
                       {item.section === 'snbp'
                         ? 'Jalur SNBP (Rapor)'
                         : item.section === 'snbt'
@@ -205,12 +213,12 @@ export const StudentLayout: React.FC<StudentLayoutProps> = ({
                       setActiveTab(item.id);
                       setIsMobileMenuOpen(false);
                     }}
-                    className={`w-full px-3 py-2.5 rounded-xl flex items-center gap-2.5 transition-all ${
+                    className={`w-full px-3 py-2 rounded-xl flex items-center gap-2.5 transition-all font-black text-xs ${
                       isActive
                         ? item.section === 'snbt'
-                          ? 'bg-red-600 text-white shadow-md shadow-red-500/20'
-                          : 'bg-purple-700 text-white shadow-md shadow-purple-600/20'
-                        : 'text-gray-600 dark:text-purple-200/80 hover:bg-purple-50 dark:hover:bg-purple-950/40'
+                          ? 'bg-rose-500 text-white border-2 border-[#0f172a] shadow-[3px_3px_0px_#0f172a] -translate-y-0.5'
+                          : 'bg-purple-600 text-white border-2 border-[#0f172a] shadow-[3px_3px_0px_#0f172a] -translate-y-0.5'
+                        : 'text-gray-700 dark:text-purple-200 border-2 border-transparent hover:border-[#0f172a] hover:bg-purple-50 dark:hover:bg-purple-950/40 hover:shadow-[2px_2px_0px_#0f172a]'
                     }`}
                   >
                     <Icon className="w-4 h-4 flex-shrink-0" />
@@ -223,67 +231,76 @@ export const StudentLayout: React.FC<StudentLayoutProps> = ({
         </div>
 
         {/* Sidebar Footer Controls */}
-        <div className="p-3 border-t border-purple-100 dark:border-purple-950/40 space-y-2">
+        <div className="p-3 border-t-3 border-[#0f172a] bg-purple-50 dark:bg-purple-950/60 space-y-2">
           <button
             onClick={onToggleDarkMode}
-            className="w-full px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between hover:bg-purple-50 dark:hover:bg-purple-950/40 text-gray-600 dark:text-purple-200"
+            className="w-full px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-between border-2 border-[#0f172a] bg-white dark:bg-[#1E1540] shadow-[2px_2px_0px_#0f172a] hover:translate-x-0.5"
           >
-            <span className="flex items-center gap-2">
-              {darkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-purple-600" />}
-              <span>{darkMode ? 'Mode Terang' : 'Mode Gelap'}</span>
+            <span className="flex items-center gap-2 font-black text-[#0f172a] dark:text-white">
+              {darkMode ? <Sun className="w-3.5 h-3.5 text-amber-500" /> : <Moon className="w-3.5 h-3.5 text-purple-600" />}
+              <span>{darkMode ? 'Mode Terang' : 'Mode Gelap Cyberpunk'}</span>
             </span>
           </button>
 
           <button
             onClick={onLogout}
-            className="w-full px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40"
+            className="w-full px-3 py-2 rounded-xl text-xs font-black flex items-center justify-center gap-2 border-2 border-[#0f172a] bg-rose-200 dark:bg-rose-950 text-rose-900 dark:text-rose-200 shadow-[2px_2px_0px_#0f172a] hover:bg-rose-300"
           >
-            <LogOut className="w-4 h-4" />
-            <span>Keluar Akun</span>
+            <LogOut className="w-3.5 h-3.5" />
+            <span>Keluar Sesi</span>
           </button>
         </div>
       </aside>
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Top Header */}
-        <header className="sticky top-0 z-30 backdrop-blur-md bg-white/80 dark:bg-[#160E2E]/80 border-b border-purple-100 dark:border-purple-950/40 h-16 px-4 sm:px-6 flex items-center justify-between">
+        {/* Top Header / Navbar Utama Neo-Brutalism */}
+        <header className="sticky top-0 z-30 bg-white dark:bg-[#160E2E] border-b-3 border-[#0f172a] shadow-[0_4px_0_#0f172a] px-4 sm:px-6 py-2.5 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsMobileMenuOpen(true)}
-              className="p-2 rounded-xl text-gray-600 dark:text-purple-200 md:hidden hover:bg-purple-50"
+              className="p-1.5 rounded-xl border-2 border-[#0f172a] bg-purple-100 text-[#0f172a] md:hidden shadow-[2px_2px_0px_#0f172a]"
             >
               <Menu className="w-5 h-5" />
             </button>
-            <div>
-              <h1 className="text-base sm:text-lg font-black text-gray-900 dark:text-white leading-none">
-                {getPageTitle()}
-              </h1>
-              <span className="text-[10px] text-purple-600 dark:text-purple-300 font-bold hidden sm:inline-block mt-0.5">
-                {settings.NAMA_LEMBAGA} • Cabang {siswa.cabang}
-              </span>
+
+            {/* Brand Logo in Header */}
+            <div className="flex items-center gap-2">
+              <div className="w-9 h-9 rounded-xl bg-purple-600 text-white border-2 border-[#0f172a] shadow-[2px_2px_0px_#0f172a] flex items-center justify-center font-black text-lg">
+                🎓
+              </div>
+              <div>
+                <h1 className="text-sm sm:text-base font-black text-[#0f172a] dark:text-white leading-tight">
+                  AnalisaKu 2027
+                </h1>
+                <div className="text-[10px] font-bold text-purple-700 dark:text-purple-300">
+                  Fix Lolos PTN • Cabang {siswa.cabang || 'ONLINE'}
+                </div>
+              </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            {/* Teenage Active Badge */}
-            <div className="hidden lg:flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-950 dark:to-pink-950/60 border border-purple-200 dark:border-purple-800 text-[11px] font-black text-purple-900 dark:text-purple-200">
-              <span className="text-amber-500 animate-pulse">🔥</span>
-              <span>Road to PTN 2027: Tetap Konsisten &amp; Juara! 🚀</span>
+          <div className="flex items-center gap-2.5">
+            {/* Top Status Badge Neo-Brutalism */}
+            <div className="hidden md:inline-flex neo-badge px-3 py-1 bg-amber-200 text-[#0f172a] text-xs font-black">
+              🚀 Road to PTN 2027: Konsisten &amp; Juara!
             </div>
 
             {/* Live WIB Clock */}
-            <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple-50 dark:bg-purple-950/50 border border-purple-100 dark:border-purple-900/40 text-xs font-bold font-mono text-purple-800 dark:text-purple-300">
-              <Clock className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
+            <div className="hidden sm:inline-flex neo-badge px-2.5 py-1 bg-purple-100 dark:bg-purple-950 text-[#0f172a] dark:text-purple-200 text-xs font-mono font-black">
+              <Clock className="w-3 h-3 text-purple-700 mr-1 inline" />
               <span>{wibTime}</span>
             </div>
 
+            {/* Action Button: Portal Ortu */}
             <button
-              onClick={() => window.location.reload()}
-              className="p-2 rounded-xl text-gray-500 hover:text-purple-700 hover:bg-purple-50 dark:hover:bg-purple-950/40 transition-colors"
-              title="Refresh Halaman"
+              onClick={() => {
+                alert(`Info Portal Orang Tua:\nNIS: ${siswa.nis}\nNama Siswa: ${siswa.nama_siswa}\nNama Orang Tua: ${siswa.nama_ortu}\nPassword Ortu: 4 digit terakhir no HP orang tua.\n\nAnda dapat membuka portal ortu melalui menu Login Orang Tua.`);
+              }}
+              className="neo-btn bg-cyan-200 hover:bg-cyan-300 text-[#0f172a] text-xs font-black px-3.5 py-1.5 shadow-[2px_2px_0px_#0f172a]"
+              title="Akses Portal Orang Tua"
             >
-              <RefreshCw className="w-4 h-4" />
+              👨‍👩‍👧 Portal Ortu
             </button>
           </div>
         </header>

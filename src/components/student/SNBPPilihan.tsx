@@ -278,26 +278,25 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
 
   return (
     <div className="space-y-6">
-      {/* Header Banner */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-purple-800 via-[#7C3AED] to-indigo-700 p-6 text-white shadow-xl">
-        <div className="absolute -right-6 -bottom-6 w-36 h-36 bg-white/10 rounded-full blur-2xl" />
+      {/* Header Banner Neo-Brutalism */}
+      <div className="neo-card p-6 sm:p-7 bg-purple-600 text-white relative overflow-hidden shadow-[6px_6px_0px_#0f172a]">
         <div className="relative z-10 space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-[11px] font-black uppercase tracking-wider">
-            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-            <span>Target Kampus Impian SNBP 2027 • Input Mandiri Cerdas</span>
+          <div className="inline-flex items-center gap-2 neo-badge px-3 py-1 bg-amber-300 text-[#0f172a] text-xs font-black">
+            <Sparkles className="w-3.5 h-3.5 text-[#0f172a]" />
+            <span>TARGET KAMPUS IMPIAN SNBP 2027</span>
           </div>
-          <h2 className="text-2xl font-black tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
             Pilihan PTN &amp; Rekam Jejak Sekolah
           </h2>
-          <p className="text-xs text-purple-100 max-w-2xl leading-relaxed">
-            Ketik langsung Nama PTN dan Program Studi pilihan Anda. <span className="font-extrabold text-amber-300">Tier PTN dan Tier Prodi terisi secara otomatis</span>, dan nilai NRM acuan serta estimasi keketatan diprediksikan langsung secara real-time!
+          <p className="text-xs sm:text-sm font-bold text-purple-100 max-w-2xl leading-relaxed">
+            Ketik langsung Nama PTN dan Program Studi pilihan Anda. <span className="font-black text-amber-300">Tier PTN dan Tier Prodi terisi secara otomatis</span>, dan nilai NRM acuan serta estimasi keketatan diprediksikan langsung secara real-time!
           </p>
           <div className="pt-2 flex flex-wrap items-center gap-2 text-xs">
-            <span className="px-3 py-1 rounded-xl bg-black/25 backdrop-blur-sm border border-white/20 font-bold">
-              📍 Provinsi Sekolah: <span className="text-amber-300 font-extrabold">{siswa.provinsi_sekolah || 'DKI Jakarta'}</span>
+            <span className="neo-badge px-3 py-1 bg-amber-300 text-[#0f172a] font-black text-xs">
+              📍 Provinsi Sekolah: {siswa.provinsi_sekolah || 'DKI Jakarta'}
             </span>
-            <span className="px-3 py-1 rounded-xl bg-black/25 backdrop-blur-sm border border-white/20 font-medium text-[11px]">
-              Aturan SNBP: Maks. 2 pilihan (Bila memilih 2 PTN, min. 1 PTN wajib seprovinsi dengan sekolah).
+            <span className="neo-badge px-3 py-1 bg-white text-[#0f172a] font-bold text-[11px]">
+              Aturan SNBP: Jika memilih 2 PTN, min. 1 PTN wajib seprovinsi dengan sekolah asal.
             </span>
           </div>
         </div>
@@ -305,18 +304,18 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
 
       {feedback && (
         <div
-          className={`p-4 rounded-2xl text-xs font-bold flex items-center gap-3 transition-all shadow-md ${
+          className={`p-4 rounded-2xl border-3 border-[#0f172a] text-xs font-black flex items-center gap-3 transition-all shadow-[3px_3px_0px_#0f172a] ${
             feedback.type === 'success'
-              ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-200 border-2 border-emerald-400'
+              ? 'bg-emerald-200 text-[#0f172a]'
               : feedback.type === 'warn'
-              ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-200 border-2 border-amber-400'
-              : 'bg-rose-50 dark:bg-rose-950/60 text-rose-800 dark:text-rose-200 border-2 border-rose-400'
+              ? 'bg-amber-200 text-[#0f172a]'
+              : 'bg-rose-200 text-[#0f172a]'
           }`}
         >
           {feedback.type === 'success' ? (
-            <CheckCircle2 className="w-5 h-5 flex-shrink-0 text-emerald-600" />
+            <CheckCircle2 className="w-5 h-5 flex-shrink-0 text-emerald-800" />
           ) : (
-            <AlertCircle className="w-5 h-5 flex-shrink-0 text-rose-600" />
+            <AlertCircle className="w-5 h-5 flex-shrink-0 text-rose-800" />
           )}
           <span className="flex-1">{feedback.message}</span>
         </div>
@@ -334,14 +333,14 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
       {/* 2 PILIHAN PTN CARDS (INPUT MANDIRI DENGAN AUTO-TIER) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* PILIHAN 1 */}
-        <div className="bg-white dark:bg-[#160E2E] rounded-3xl border-2 border-purple-200 dark:border-purple-900/60 p-6 flex flex-col justify-between space-y-4 shadow-sm hover:shadow-md transition-shadow">
+        <div className="neo-card p-6 bg-white dark:bg-[#181133] flex flex-col justify-between space-y-4">
           <div className="space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-purple-100 dark:border-purple-950/40">
-              <div className="flex items-center gap-2">
-                <span className="w-7 h-7 rounded-xl bg-purple-600 text-white font-black text-xs flex items-center justify-center shadow-md">
+            <div className="flex items-center justify-between pb-3 border-b-2 border-[#0f172a]/20">
+              <div className="flex items-center gap-2.5">
+                <span className="w-8 h-8 rounded-xl bg-purple-600 text-white font-black text-sm flex items-center justify-center border-2 border-[#0f172a] shadow-[2px_2px_0px_#0f172a]">
                   1
                 </span>
-                <span className="font-extrabold text-sm text-gray-900 dark:text-white">
+                <span className="font-black text-sm text-[#0f172a] dark:text-white">
                   Pilihan 1 (Prioritas Utama)
                 </span>
               </div>
@@ -349,7 +348,7 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
                 <button
                   type="button"
                   onClick={handleClearSlot1}
-                  className="px-2.5 py-1 rounded-xl text-xs font-bold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 flex items-center gap-1 transition-colors"
+                  className="neo-btn-sm px-2.5 py-1 text-xs font-black bg-rose-200 text-[#0f172a] flex items-center gap-1 shadow-[2px_2px_0px_#0f172a]"
                   title="Kosongkan Pilihan 1"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
@@ -361,7 +360,7 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
             {/* Form Input Mandiri Slot 1 */}
             <div className="space-y-3.5">
               <div>
-                <label className="block text-xs font-bold text-gray-700 dark:text-purple-200 mb-1">
+                <label className="block text-xs font-black text-[#0f172a] dark:text-purple-200 mb-1">
                   Nama Perguruan Tinggi Negeri (PTN)
                 </label>
                 <input
@@ -370,19 +369,19 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
                   value={ptn1}
                   onChange={(e) => handlePtn1Change(e.target.value)}
                   placeholder="Contoh: Universitas Indonesia, ITB, UGM, Unair..."
-                  className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-200 dark:border-purple-900 bg-gray-50 dark:bg-[#1E1540] text-gray-900 dark:text-white font-bold focus:bg-white focus:ring-2 focus:ring-purple-600"
+                  className="w-full px-3.5 py-2.5 text-xs neo-input font-bold"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 dark:text-purple-200 mb-1">
+                  <label className="block text-xs font-black text-[#0f172a] dark:text-purple-200 mb-1">
                     Provinsi Kampus
                   </label>
                   <select
                     value={prov1}
                     onChange={(e) => setProv1(e.target.value)}
-                    className="w-full px-3 py-2 text-xs rounded-xl border border-gray-200 dark:border-purple-900 bg-gray-50 dark:bg-[#1E1540] text-gray-900 dark:text-white font-medium"
+                    className="w-full px-3 py-2 text-xs neo-select"
                   >
                     {PROVINSI_LIST.map((pr) => (
                       <option key={pr} value={pr}>
@@ -393,13 +392,13 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 dark:text-purple-200 mb-1">
+                  <label className="block text-xs font-black text-[#0f172a] dark:text-purple-200 mb-1">
                     Jenjang
                   </label>
                   <select
                     value={jenjang1}
                     onChange={(e) => setJenjang1(e.target.value as any)}
-                    className="w-full px-3 py-2 text-xs rounded-xl border border-gray-200 dark:border-purple-900 bg-gray-50 dark:bg-[#1E1540] text-gray-900 dark:text-white font-semibold"
+                    className="w-full px-3 py-2 text-xs neo-select"
                   >
                     <option value="S1">S1 (Sarjana Akademik)</option>
                     <option value="D4">D4 (Sarjana Terapan)</option>
@@ -409,7 +408,7 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 dark:text-purple-200 mb-1">
+                <label className="block text-xs font-black text-[#0f172a] dark:text-purple-200 mb-1">
                   Nama Program Studi
                 </label>
                 <input
@@ -417,27 +416,27 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
                   value={prodi1}
                   onChange={(e) => handleProdi1Change(e.target.value)}
                   placeholder="Contoh: Pendidikan Dokter, Teknik Informatika, Ilmu Hukum..."
-                  className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-200 dark:border-purple-900 bg-gray-50 dark:bg-[#1E1540] text-gray-900 dark:text-white font-bold focus:bg-white focus:ring-2 focus:ring-purple-600"
+                  className="w-full px-3.5 py-2.5 text-xs neo-input font-bold"
                 />
               </div>
 
-              {/* Auto-detected Tier Controls (Locked & Automatic) */}
-              <div className="grid grid-cols-2 gap-3 p-3 rounded-2xl bg-purple-50/70 dark:bg-purple-950/40 border border-purple-100 dark:border-purple-900/50 text-xs">
+              {/* Auto-detected Tier Controls */}
+              <div className="grid grid-cols-2 gap-3 p-3 rounded-2xl bg-purple-100 dark:bg-purple-950/40 border-2 border-[#0f172a] text-xs">
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-[10px] font-bold text-purple-700 dark:text-purple-300 flex items-center gap-1">
-                      <Lock className="w-3 h-3 text-purple-600" />
-                      <span>Tier PTN (Otomatis)</span>
+                    <span className="text-[10px] font-black text-purple-900 dark:text-purple-200 flex items-center gap-1">
+                      <Lock className="w-3 h-3 text-purple-700" />
+                      <span>Tier PTN</span>
                     </span>
-                    <span className="text-[9px] px-1.5 py-0.2 rounded bg-purple-200 dark:bg-purple-900 text-purple-900 dark:text-purple-200 font-bold">
-                      Terkunci
+                    <span className="neo-badge px-1.5 py-0.2 bg-purple-600 text-white text-[9px] font-black">
+                      Otomatis
                     </span>
                   </div>
                   <select
                     value={ptnTier1}
                     disabled
                     aria-readonly="true"
-                    className="w-full px-2 py-1.5 text-xs rounded-lg border border-purple-200 dark:border-purple-800 bg-gray-100 dark:bg-[#130B29] font-bold text-purple-900 dark:text-purple-200 cursor-not-allowed opacity-90 shadow-inner"
+                    className="w-full px-2 py-1.5 text-xs neo-select opacity-90 cursor-not-allowed"
                   >
                     <option value="Tier 1">Tier 1 (Top Elite Nasional)</option>
                     <option value="Tier 2">Tier 2 (Unggulan Regional)</option>
@@ -448,19 +447,19 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
 
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-[10px] font-bold text-purple-700 dark:text-purple-300 flex items-center gap-1">
-                      <Lock className="w-3 h-3 text-purple-600" />
-                      <span>Tier Prodi (Otomatis)</span>
+                    <span className="text-[10px] font-black text-purple-900 dark:text-purple-200 flex items-center gap-1">
+                      <Lock className="w-3 h-3 text-purple-700" />
+                      <span>Tier Prodi</span>
                     </span>
-                    <span className="text-[9px] px-1.5 py-0.2 rounded bg-purple-200 dark:bg-purple-900 text-purple-900 dark:text-purple-200 font-bold">
-                      Terkunci
+                    <span className="neo-badge px-1.5 py-0.2 bg-purple-600 text-white text-[9px] font-black">
+                      Otomatis
                     </span>
                   </div>
                   <select
                     value={prodiTier1}
                     disabled
                     aria-readonly="true"
-                    className="w-full px-2 py-1.5 text-xs rounded-lg border border-purple-200 dark:border-purple-800 bg-gray-100 dark:bg-[#130B29] font-bold text-purple-900 dark:text-purple-200 cursor-not-allowed opacity-90 shadow-inner"
+                    className="w-full px-2 py-1.5 text-xs neo-select opacity-90 cursor-not-allowed"
                   >
                     {PRODI_TIER_OPTIONS.map((opt) => (
                       <option key={opt.tier} value={opt.tier}>
@@ -473,26 +472,26 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
             </div>
 
             {/* Live Preview Card Slot 1 */}
-            <div className="p-4 rounded-2xl bg-gradient-to-br from-purple-50 via-white to-pink-50 dark:from-[#1E1540] dark:to-[#160E2E] border-2 border-purple-300 dark:border-purple-800 space-y-2.5">
+            <div className="neo-card-sm p-4 bg-amber-100 dark:bg-[#1E1540] border-2 border-[#0f172a] space-y-2.5 shadow-[2.5px_2.5px_0px_#0f172a]">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-wider text-purple-700 dark:text-purple-300 flex items-center gap-1">
-                  <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-                  <span>Prediksi NRM Berdasarkan Tier Prodi &amp; PTN</span>
+                <span className="text-[10px] font-black uppercase tracking-wider text-[#0f172a] dark:text-purple-200 flex items-center gap-1">
+                  <Zap className="w-3.5 h-3.5 text-amber-600 fill-amber-600" />
+                  <span>Prediksi NRM Berdasarkan Tier</span>
                 </span>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-300">
+                <span className="neo-badge px-2 py-0.5 text-[10px] font-black bg-amber-300 text-[#0f172a]">
                   {ptnTier1} • {prodiTier1}
                 </span>
               </div>
 
               <div className="grid grid-cols-2 gap-2 text-xs">
-                <div className="p-2.5 rounded-xl bg-white/90 dark:bg-[#160E2E] border border-purple-100 dark:border-purple-900/60">
-                  <span className="text-[10px] text-gray-500 block">Prediksi NRM Acuan</span>
+                <div className="p-2.5 rounded-xl bg-white dark:bg-[#160E2E] border-2 border-[#0f172a]">
+                  <span className="text-[10px] text-gray-600 dark:text-purple-300 font-bold block">Prediksi NRM Acuan</span>
                   <span className="text-xl font-black text-purple-700 dark:text-purple-300 font-mono">
                     {pred1.nrm.toFixed(1)}
                   </span>
                 </div>
-                <div className="p-2.5 rounded-xl bg-white/90 dark:bg-[#160E2E] border border-purple-100 dark:border-purple-900/60">
-                  <span className="text-[10px] text-gray-500 block">Estimasi Keketatan</span>
+                <div className="p-2.5 rounded-xl bg-white dark:bg-[#160E2E] border-2 border-[#0f172a]">
+                  <span className="text-[10px] text-gray-600 dark:text-purple-300 font-bold block">Estimasi Keketatan</span>
                   <span className="text-xl font-black text-rose-600 font-mono">
                     {pred1.keketatan}
                   </span>
@@ -500,12 +499,12 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
               </div>
 
               {/* Mapel Pendukung Kepmendikdasmen 102/M/2025 */}
-              <div className="p-2.5 rounded-xl bg-purple-100/60 dark:bg-purple-950/60 border border-purple-200 dark:border-purple-800 text-[11px]">
-                <div className="text-[10px] font-bold text-purple-800 dark:text-purple-200 flex items-center gap-1">
-                  <BookOpen className="w-3 h-3 text-purple-600" />
+              <div className="p-2.5 rounded-xl bg-purple-200/80 dark:bg-purple-950/60 border-2 border-[#0f172a] text-[11px]">
+                <div className="text-[10px] font-black text-purple-900 dark:text-purple-200 flex items-center gap-1">
+                  <BookOpen className="w-3 h-3 text-purple-700" />
                   <span>Mapel Pendukung (Kepmendikdasmen 102/M/2025):</span>
                 </div>
-                <div className="font-extrabold text-purple-900 dark:text-purple-100 mt-0.5">
+                <div className="font-black text-[#0f172a] dark:text-white mt-0.5">
                   {mapels1[0] && mapels1[1]
                     ? `${mapels1[0]} & ${mapels1[1]}`
                     : mapels1[0] || 'Ketik nama prodi untuk mendeteksi'}
@@ -516,14 +515,14 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
         </div>
 
         {/* PILIHAN 2 */}
-        <div className="bg-white dark:bg-[#160E2E] rounded-3xl border-2 border-purple-200 dark:border-purple-900/60 p-6 flex flex-col justify-between space-y-4 shadow-sm hover:shadow-md transition-shadow">
+        <div className="neo-card p-6 bg-white dark:bg-[#181133] flex flex-col justify-between space-y-4">
           <div className="space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-purple-100 dark:border-purple-950/40">
-              <div className="flex items-center gap-2">
-                <span className="w-7 h-7 rounded-xl bg-indigo-600 text-white font-black text-xs flex items-center justify-center shadow-md">
+            <div className="flex items-center justify-between pb-3 border-b-2 border-[#0f172a]/20">
+              <div className="flex items-center gap-2.5">
+                <span className="w-8 h-8 rounded-xl bg-cyan-400 text-[#0f172a] font-black text-sm flex items-center justify-center border-2 border-[#0f172a] shadow-[2px_2px_0px_#0f172a]">
                   2
                 </span>
-                <span className="font-extrabold text-sm text-gray-900 dark:text-white">
+                <span className="font-black text-sm text-[#0f172a] dark:text-white">
                   Pilihan 2 (Cadangan / Alternatif)
                 </span>
               </div>
@@ -531,7 +530,7 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
                 <button
                   type="button"
                   onClick={handleClearSlot2}
-                  className="px-2.5 py-1 rounded-xl text-xs font-bold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 flex items-center gap-1 transition-colors"
+                  className="neo-btn-sm px-2.5 py-1 text-xs font-black bg-rose-200 text-[#0f172a] flex items-center gap-1 shadow-[2px_2px_0px_#0f172a]"
                   title="Kosongkan Pilihan 2"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
@@ -543,7 +542,7 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
             {/* Form Input Mandiri Slot 2 */}
             <div className="space-y-3.5">
               <div>
-                <label className="block text-xs font-bold text-gray-700 dark:text-purple-200 mb-1">
+                <label className="block text-xs font-black text-[#0f172a] dark:text-purple-200 mb-1">
                   Nama Perguruan Tinggi Negeri (PTN)
                 </label>
                 <input
@@ -552,19 +551,19 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
                   value={ptn2}
                   onChange={(e) => handlePtn2Change(e.target.value)}
                   placeholder="Contoh: Universitas Padjadjaran, Undip, UNS, UB..."
-                  className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-200 dark:border-purple-900 bg-gray-50 dark:bg-[#1E1540] text-gray-900 dark:text-white font-bold focus:bg-white focus:ring-2 focus:ring-indigo-600"
+                  className="w-full px-3.5 py-2.5 text-xs neo-input font-bold"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 dark:text-purple-200 mb-1">
+                  <label className="block text-xs font-black text-[#0f172a] dark:text-purple-200 mb-1">
                     Provinsi Kampus
                   </label>
                   <select
                     value={prov2}
                     onChange={(e) => setProv2(e.target.value)}
-                    className="w-full px-3 py-2 text-xs rounded-xl border border-gray-200 dark:border-purple-900 bg-gray-50 dark:bg-[#1E1540] text-gray-900 dark:text-white font-medium"
+                    className="w-full px-3 py-2 text-xs neo-select"
                   >
                     {PROVINSI_LIST.map((pr) => (
                       <option key={pr} value={pr}>
@@ -575,13 +574,13 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 dark:text-purple-200 mb-1">
+                  <label className="block text-xs font-black text-[#0f172a] dark:text-purple-200 mb-1">
                     Jenjang
                   </label>
                   <select
                     value={jenjang2}
                     onChange={(e) => setJenjang2(e.target.value as any)}
-                    className="w-full px-3 py-2 text-xs rounded-xl border border-gray-200 dark:border-purple-900 bg-gray-50 dark:bg-[#1E1540] text-gray-900 dark:text-white font-semibold"
+                    className="w-full px-3 py-2 text-xs neo-select"
                   >
                     <option value="S1">S1 (Sarjana Akademik)</option>
                     <option value="D4">D4 (Sarjana Terapan)</option>
@@ -591,7 +590,7 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 dark:text-purple-200 mb-1">
+                <label className="block text-xs font-black text-[#0f172a] dark:text-purple-200 mb-1">
                   Nama Program Studi
                 </label>
                 <input
@@ -599,27 +598,27 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
                   value={prodi2}
                   onChange={(e) => handleProdi2Change(e.target.value)}
                   placeholder="Contoh: Akuntansi, Manajemen, Psikologi, Ilmu Komunikasi..."
-                  className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-200 dark:border-purple-900 bg-gray-50 dark:bg-[#1E1540] text-gray-900 dark:text-white font-bold focus:bg-white focus:ring-2 focus:ring-indigo-600"
+                  className="w-full px-3.5 py-2.5 text-xs neo-input font-bold"
                 />
               </div>
 
-              {/* Auto-detected Tier Controls (Locked & Automatic) */}
-              <div className="grid grid-cols-2 gap-3 p-3 rounded-2xl bg-indigo-50/70 dark:bg-purple-950/40 border border-indigo-100 dark:border-purple-900/50 text-xs">
+              {/* Auto-detected Tier Controls */}
+              <div className="grid grid-cols-2 gap-3 p-3 rounded-2xl bg-cyan-100 dark:bg-purple-950/40 border-2 border-[#0f172a] text-xs">
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-[10px] font-bold text-indigo-700 dark:text-purple-300 flex items-center gap-1">
-                      <Lock className="w-3 h-3 text-indigo-600" />
-                      <span>Tier PTN (Otomatis)</span>
+                    <span className="text-[10px] font-black text-cyan-900 dark:text-purple-200 flex items-center gap-1">
+                      <Lock className="w-3 h-3 text-cyan-700" />
+                      <span>Tier PTN</span>
                     </span>
-                    <span className="text-[9px] px-1.5 py-0.2 rounded bg-indigo-200 dark:bg-purple-900 text-indigo-900 dark:text-purple-200 font-bold">
-                      Terkunci
+                    <span className="neo-badge px-1.5 py-0.2 bg-cyan-400 text-[#0f172a] text-[9px] font-black">
+                      Otomatis
                     </span>
                   </div>
                   <select
                     value={ptnTier2}
                     disabled
                     aria-readonly="true"
-                    className="w-full px-2 py-1.5 text-xs rounded-lg border border-indigo-200 dark:border-purple-800 bg-gray-100 dark:bg-[#130B29] font-bold text-indigo-900 dark:text-purple-200 cursor-not-allowed opacity-90 shadow-inner"
+                    className="w-full px-2 py-1.5 text-xs neo-select opacity-90 cursor-not-allowed"
                   >
                     <option value="Tier 1">Tier 1 (Top Elite Nasional)</option>
                     <option value="Tier 2">Tier 2 (Unggulan Regional)</option>
@@ -630,19 +629,19 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
 
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-[10px] font-bold text-indigo-700 dark:text-purple-300 flex items-center gap-1">
-                      <Lock className="w-3 h-3 text-indigo-600" />
-                      <span>Tier Prodi (Otomatis)</span>
+                    <span className="text-[10px] font-black text-cyan-900 dark:text-purple-200 flex items-center gap-1">
+                      <Lock className="w-3 h-3 text-cyan-700" />
+                      <span>Tier Prodi</span>
                     </span>
-                    <span className="text-[9px] px-1.5 py-0.2 rounded bg-indigo-200 dark:bg-purple-900 text-indigo-900 dark:text-purple-200 font-bold">
-                      Terkunci
+                    <span className="neo-badge px-1.5 py-0.2 bg-cyan-400 text-[#0f172a] text-[9px] font-black">
+                      Otomatis
                     </span>
                   </div>
                   <select
                     value={prodiTier2}
                     disabled
                     aria-readonly="true"
-                    className="w-full px-2 py-1.5 text-xs rounded-lg border border-indigo-200 dark:border-purple-800 bg-gray-100 dark:bg-[#130B29] font-bold text-indigo-900 dark:text-purple-200 cursor-not-allowed opacity-90 shadow-inner"
+                    className="w-full px-2 py-1.5 text-xs neo-select opacity-90 cursor-not-allowed"
                   >
                     {PRODI_TIER_OPTIONS.map((opt) => (
                       <option key={opt.tier} value={opt.tier}>
@@ -655,26 +654,26 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
             </div>
 
             {/* Live Preview Card Slot 2 */}
-            <div className="p-4 rounded-2xl bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-[#1E1540] dark:to-[#160E2E] border-2 border-indigo-300 dark:border-purple-800 space-y-2.5">
+            <div className="neo-card-sm p-4 bg-cyan-100 dark:bg-[#1E1540] border-2 border-[#0f172a] space-y-2.5 shadow-[2.5px_2.5px_0px_#0f172a]">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-wider text-indigo-700 dark:text-purple-300 flex items-center gap-1">
-                  <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-                  <span>Prediksi NRM Berdasarkan Tier Prodi &amp; PTN</span>
+                <span className="text-[10px] font-black uppercase tracking-wider text-[#0f172a] dark:text-purple-200 flex items-center gap-1">
+                  <Zap className="w-3.5 h-3.5 text-amber-600 fill-amber-600" />
+                  <span>Prediksi NRM Berdasarkan Tier</span>
                 </span>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-300">
+                <span className="neo-badge px-2 py-0.5 text-[10px] font-black bg-cyan-300 text-[#0f172a]">
                   {ptnTier2} • {prodiTier2}
                 </span>
               </div>
 
               <div className="grid grid-cols-2 gap-2 text-xs">
-                <div className="p-2.5 rounded-xl bg-white/90 dark:bg-[#160E2E] border border-indigo-100 dark:border-purple-900/60">
-                  <span className="text-[10px] text-gray-500 block">Prediksi NRM Acuan</span>
-                  <span className="text-xl font-black text-indigo-700 dark:text-purple-300 font-mono">
+                <div className="p-2.5 rounded-xl bg-white dark:bg-[#160E2E] border-2 border-[#0f172a]">
+                  <span className="text-[10px] text-gray-600 dark:text-purple-300 font-bold block">Prediksi NRM Acuan</span>
+                  <span className="text-xl font-black text-cyan-700 dark:text-cyan-300 font-mono">
                     {pred2.nrm.toFixed(1)}
                   </span>
                 </div>
-                <div className="p-2.5 rounded-xl bg-white/90 dark:bg-[#160E2E] border border-indigo-100 dark:border-purple-900/60">
-                  <span className="text-[10px] text-gray-500 block">Estimasi Keketatan</span>
+                <div className="p-2.5 rounded-xl bg-white dark:bg-[#160E2E] border-2 border-[#0f172a]">
+                  <span className="text-[10px] text-gray-600 dark:text-purple-300 font-bold block">Estimasi Keketatan</span>
                   <span className="text-xl font-black text-rose-600 font-mono">
                     {pred2.keketatan}
                   </span>
@@ -682,12 +681,12 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
               </div>
 
               {/* Mapel Pendukung Kepmendikdasmen 102/M/2025 */}
-              <div className="p-2.5 rounded-xl bg-indigo-100/60 dark:bg-purple-950/60 border border-indigo-200 dark:border-purple-800 text-[11px]">
-                <div className="text-[10px] font-bold text-indigo-800 dark:text-purple-200 flex items-center gap-1">
-                  <BookOpen className="w-3 h-3 text-indigo-600" />
+              <div className="p-2.5 rounded-xl bg-cyan-200/80 dark:bg-purple-950/60 border-2 border-[#0f172a] text-[11px]">
+                <div className="text-[10px] font-black text-cyan-900 dark:text-purple-200 flex items-center gap-1">
+                  <BookOpen className="w-3 h-3 text-cyan-700" />
                   <span>Mapel Pendukung (Kepmendikdasmen 102/M/2025):</span>
                 </div>
-                <div className="font-extrabold text-indigo-900 dark:text-purple-100 mt-0.5">
+                <div className="font-black text-[#0f172a] dark:text-white mt-0.5">
                   {mapels2[0] && mapels2[1]
                     ? `${mapels2[0]} & ${mapels2[1]}`
                     : mapels2[0] || 'Ketik nama prodi untuk mendeteksi'}
@@ -698,23 +697,23 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
         </div>
       </div>
 
-      {/* DATA SEKOLAH & REKAM JEJAK ALUMNI */}
-      <div className="bg-white dark:bg-[#160E2E] rounded-3xl border border-purple-100 dark:border-purple-950/40 p-6 space-y-4 shadow-sm">
-        <div className="flex items-center gap-2 border-b border-purple-50 dark:border-purple-950/40 pb-3">
-          <School className="w-5 h-5 text-purple-600" />
+      {/* DATA SEKOLAH & REKAM JEJAK ALUMNI Neo-Brutalism */}
+      <div className="neo-card p-6 bg-purple-100 dark:bg-[#181133] space-y-4">
+        <div className="flex items-center gap-2.5 border-b-2 border-[#0f172a]/20 pb-3">
+          <School className="w-5 h-5 text-purple-700" />
           <div>
-            <h3 className="font-extrabold text-sm text-gray-900 dark:text-white">
+            <h3 className="font-black text-sm text-[#0f172a] dark:text-white">
               Data Tambahan Sekolah &amp; Rekam Jejak Alumni
             </h3>
-            <p className="text-[11px] text-gray-500">
+            <p className="text-[11px] font-bold text-gray-700 dark:text-purple-300">
               Mempengaruhi bobot penilaian pilar rekam jejak sekolah (Maks. 35 Poin dalam kalkulasi SNBP).
             </p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="p-3.5 rounded-2xl bg-purple-50/40 dark:bg-purple-950/20 border border-purple-100 dark:border-purple-900/40">
-            <label className="block text-xs font-bold text-gray-800 dark:text-purple-200 mb-1">
+          <div className="neo-card-sm p-3.5 bg-white dark:bg-[#1E1540] border-2 border-[#0f172a]">
+            <label className="block text-xs font-black text-[#0f172a] dark:text-purple-200 mb-1">
               Ranking Kelas Paralel
             </label>
             <input
@@ -724,14 +723,14 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
               value={rankingKelas}
               onChange={(e) => setRankingKelas(e.target.value === '' ? '' : parseInt(e.target.value))}
               placeholder="Contoh: 1, 3, 10"
-              className="w-full px-3 py-2 text-xs rounded-xl border border-gray-200 dark:border-purple-900 bg-white dark:bg-[#1E1540] text-gray-900 dark:text-white font-mono"
+              className="w-full px-3 py-2 text-xs neo-input font-mono font-bold"
             />
-            <span className="text-[10px] text-gray-400 mt-1 block">1-10: 5 poin | 11-20: 3 poin</span>
+            <span className="text-[10px] font-bold text-gray-600 dark:text-purple-300 mt-1 block">1-10: 5 poin | 11-20: 3 poin</span>
           </div>
 
-          <div className="p-3.5 rounded-2xl bg-purple-50/40 dark:bg-purple-950/20 border border-purple-100 dark:border-purple-900/40">
-            <label className="block text-xs font-bold text-gray-800 dark:text-purple-200 mb-1">
-              Ranking Sekolah di Kota/Provinsi
+          <div className="neo-card-sm p-3.5 bg-white dark:bg-[#1E1540] border-2 border-[#0f172a]">
+            <label className="block text-xs font-black text-[#0f172a] dark:text-purple-200 mb-1">
+              Ranking Sekolah di Kota/Prov
             </label>
             <input
               type="number"
@@ -740,14 +739,14 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
               value={rankingSekolah}
               onChange={(e) => setRankingSekolah(e.target.value === '' ? '' : parseInt(e.target.value))}
               placeholder="Contoh: 5, 25"
-              className="w-full px-3 py-2 text-xs rounded-xl border border-gray-200 dark:border-purple-900 bg-white dark:bg-[#1E1540] text-gray-900 dark:text-white font-mono"
+              className="w-full px-3 py-2 text-xs neo-input font-mono font-bold"
             />
-            <span className="text-[10px] text-gray-400 mt-1 block">1-10: 10 poin | &gt;10: 5 poin</span>
+            <span className="text-[10px] font-bold text-gray-600 dark:text-purple-300 mt-1 block">1-10: 10 poin | &gt;10: 5 poin</span>
           </div>
 
-          <div className="p-3.5 rounded-2xl bg-purple-50/40 dark:bg-purple-950/20 border border-purple-100 dark:border-purple-900/40">
-            <label className="block text-xs font-bold text-gray-800 dark:text-purple-200 mb-1">
-              Alumni Diterima di Jurusan Pilihan
+          <div className="neo-card-sm p-3.5 bg-white dark:bg-[#1E1540] border-2 border-[#0f172a]">
+            <label className="block text-xs font-black text-[#0f172a] dark:text-purple-200 mb-1">
+              Alumni di Jurusan Pilihan
             </label>
             <input
               type="number"
@@ -756,14 +755,14 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
               value={alumniJurusan}
               onChange={(e) => setAlumniJurusan(e.target.value === '' ? '' : parseInt(e.target.value))}
               placeholder="Jumlah alumni tahun lalu"
-              className="w-full px-3 py-2 text-xs rounded-xl border border-gray-200 dark:border-purple-900 bg-white dark:bg-[#1E1540] text-gray-900 dark:text-white font-mono"
+              className="w-full px-3 py-2 text-xs neo-input font-mono font-bold"
             />
-            <span className="text-[10px] text-gray-400 mt-1 block">&gt;3: 10 poin | 1-3: 5 poin</span>
+            <span className="text-[10px] font-bold text-gray-600 dark:text-purple-300 mt-1 block">&gt;3: 10 poin | 1-3: 5 poin</span>
           </div>
 
-          <div className="p-3.5 rounded-2xl bg-purple-50/40 dark:bg-purple-950/20 border border-purple-100 dark:border-purple-900/40">
-            <label className="block text-xs font-bold text-gray-800 dark:text-purple-200 mb-1">
-              Alumni Diterima di PTN Pilihan
+          <div className="neo-card-sm p-3.5 bg-white dark:bg-[#1E1540] border-2 border-[#0f172a]">
+            <label className="block text-xs font-black text-[#0f172a] dark:text-purple-200 mb-1">
+              Alumni di PTN Pilihan
             </label>
             <input
               type="number"
@@ -772,9 +771,9 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
               value={alumniPTN}
               onChange={(e) => setAlumniPTN(e.target.value === '' ? '' : parseInt(e.target.value))}
               placeholder="Jumlah alumni di kampus ini"
-              className="w-full px-3 py-2 text-xs rounded-xl border border-gray-200 dark:border-purple-900 bg-white dark:bg-[#1E1540] text-gray-900 dark:text-white font-mono"
+              className="w-full px-3 py-2 text-xs neo-input font-mono font-bold"
             />
-            <span className="text-[10px] text-gray-400 mt-1 block">&gt;=30: 10 poin | 1-29: 5 poin</span>
+            <span className="text-[10px] font-bold text-gray-600 dark:text-purple-300 mt-1 block">&gt;=30: 10 poin | 1-29: 5 poin</span>
           </div>
         </div>
       </div>
@@ -784,10 +783,10 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
         <button
           onClick={handleSaveAll}
           disabled={saving}
-          className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-gradient-to-r from-purple-700 via-indigo-600 to-pink-600 hover:from-purple-800 hover:to-pink-700 text-white font-extrabold text-sm shadow-xl shadow-purple-600/30 transition-all flex items-center justify-center gap-2"
+          className="w-full sm:w-auto px-8 py-3.5 neo-btn bg-purple-600 hover:bg-purple-700 text-white font-black text-sm shadow-[3px_3px_0px_#0f172a] flex items-center justify-center gap-2 disabled:opacity-50"
         >
           <Save className="w-4 h-4" />
-          <span>{saving ? 'Menyimpan Pilihan...' : 'Simpan Pilihan PTN & Rekam Jejak Sekolah'}</span>
+          <span>{saving ? 'Menyimpan Pilihan...' : '💾 Simpan Pilihan PTN & Rekam Jejak Sekolah'}</span>
         </button>
       </div>
     </div>

@@ -182,47 +182,56 @@ export const SNBPRapor: React.FC<SNBPRaporProps> = ({ siswa, onRefreshData }) =>
 
   return (
     <div className="space-y-6">
-      {/* Top Header Card */}
-      <div className="bg-white dark:bg-[#160E2E] p-5 rounded-2xl border border-purple-100 dark:border-purple-950/40 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      {/* Top Header Card Neo-Brutalism */}
+      <div className="neo-card p-5 sm:p-6 bg-white dark:bg-[#181133] flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-black text-gray-900 dark:text-white flex items-center gap-2">
-            <BookOpen className="w-5 h-5 text-purple-600" />
+          <div className="inline-flex items-center gap-2 neo-badge px-3 py-1 bg-purple-200 text-[#0f172a] text-xs font-black mb-2">
+            <BookOpen className="w-3.5 h-3.5 text-purple-700" />
+            <span>NILAI RAPOR SEMESTER 1 - 5</span>
+          </div>
+          <h2 className="text-xl sm:text-2xl font-black text-[#0f172a] dark:text-white tracking-tight flex items-center gap-2">
             <span>Input Nilai Rapor Siswa</span>
+            <Sparkles className="w-5 h-5 text-amber-500 animate-pulse" />
           </h2>
-          <p className="text-xs text-gray-500 dark:text-purple-300 mt-1">
+          <p className="text-xs font-bold text-gray-700 dark:text-purple-300 mt-1">
             Bobot resmi SNBP: Sem 1 (10%), Sem 2 (10%), Sem 3 (15%), Sem 4 (15%),{' '}
-            <strong className="text-purple-700 dark:text-purple-300 font-extrabold">Sem 5 (50%)</strong>.
+            <strong className="text-purple-700 dark:text-purple-300 font-black underline decoration-amber-400 decoration-2">
+              Sem 5 (50%)
+            </strong>
+            .
           </p>
         </div>
 
-        {/* Live Rata-rata Widget */}
-        <div className="px-5 py-3 rounded-2xl bg-gradient-to-r from-purple-700 to-[#7C3AED] text-white flex items-center gap-3 shadow-md shadow-purple-600/20">
-          <Calculator className="w-6 h-6 opacity-80" />
+        {/* Live Rata-rata Widget Neo-Brutalism */}
+        <div className="neo-card-sm px-5 py-3.5 bg-purple-600 text-white flex items-center gap-3.5 shadow-[3px_3px_0px_#0f172a] self-start md:self-auto">
+          <div className="w-10 h-10 rounded-xl bg-amber-300 border-2 border-[#0f172a] flex items-center justify-center text-[#0f172a] font-black text-xl shadow-[1.5px_1.5px_0px_#0f172a]">
+            📊
+          </div>
           <div>
-            <div className="text-[10px] uppercase font-bold text-purple-200">Rata-rata Terbobot</div>
-            <div className="text-2xl font-black font-mono leading-none">{avgTerbobot}</div>
+            <div className="text-[10px] uppercase font-black tracking-wider text-purple-200">Rata-rata Terbobot</div>
+            <div className="text-2xl sm:text-3xl font-black font-mono leading-none tracking-tight">{avgTerbobot}</div>
           </div>
         </div>
       </div>
 
       {feedback && (
         <div
-          className={`p-3.5 rounded-xl text-xs font-bold flex items-center gap-2 ${
+          className={`p-4 rounded-2xl border-3 border-[#0f172a] shadow-[3px_3px_0px_#0f172a] text-xs font-black flex items-center gap-2 ${
             feedback.type === 'success'
-              ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200'
-              : 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200'
+              ? 'bg-emerald-200 text-[#0f172a]'
+              : 'bg-rose-200 text-[#0f172a]'
           }`}
         >
-          {feedback.type === 'success' ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+          {feedback.type === 'success' ? <CheckCircle2 className="w-4 h-4 text-emerald-800" /> : <AlertCircle className="w-4 h-4 text-rose-800" />}
           <span>{feedback.message}</span>
         </div>
       )}
 
-      {/* Selectors Kurikulum & Jurusan */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-white dark:bg-[#160E2E] p-5 rounded-2xl border border-purple-100 dark:border-purple-950/40">
+      {/* Selectors Kurikulum & Jurusan Neo-Brutalism */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 neo-card p-5 bg-purple-100 dark:bg-[#181133]">
         <div>
-          <label className="block text-xs font-bold text-gray-700 dark:text-purple-200 mb-1.5">
-            Pilih Kurikulum
+          <label className="block text-xs font-black text-[#0f172a] dark:text-purple-200 mb-2">
+            Pilih Kurikulum Sekolah
           </label>
           <div className="grid grid-cols-2 gap-2">
             {(['MERDEKA', 'K13'] as const).map((k) => (
@@ -230,10 +239,10 @@ export const SNBPRapor: React.FC<SNBPRaporProps> = ({ siswa, onRefreshData }) =>
                 key={k}
                 type="button"
                 onClick={() => handleKurikulumChange(k)}
-                className={`py-2 px-3 text-xs font-bold rounded-xl border transition-all ${
+                className={`py-2.5 px-3 text-xs font-black rounded-xl border-2.5 border-[#0f172a] transition-all ${
                   kurikulum === k
-                    ? 'border-purple-600 bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 shadow-sm'
-                    : 'border-gray-200 dark:border-purple-900 text-gray-500'
+                    ? 'bg-purple-600 text-white shadow-[2.5px_2.5px_0px_#0f172a] -translate-y-0.5'
+                    : 'bg-white dark:bg-[#1E1540] text-gray-700 dark:text-purple-300 hover:bg-purple-50 shadow-[1px_1px_0px_#0f172a]'
                 }`}
               >
                 {k === 'MERDEKA' ? 'Kurikulum Merdeka' : 'Kurikulum 2013 (K13)'}
@@ -243,13 +252,13 @@ export const SNBPRapor: React.FC<SNBPRaporProps> = ({ siswa, onRefreshData }) =>
         </div>
 
         <div>
-          <label className="block text-xs font-bold text-gray-700 dark:text-purple-200 mb-1.5">
-            Jurusan / Peminatan
+          <label className="block text-xs font-black text-[#0f172a] dark:text-purple-200 mb-2">
+            Jurusan / Rumpun Peminatan
           </label>
           <select
             value={jurusan}
             onChange={(e) => handleJurusanChange(e.target.value)}
-            className="w-full px-3 py-2 text-xs rounded-xl border border-gray-200 dark:border-purple-900 bg-white dark:bg-[#1E1540] text-gray-900 dark:text-white font-semibold focus:outline-none focus:ring-2 focus:ring-purple-600"
+            className="w-full px-3 py-2.5 text-xs neo-select"
           >
             {kurikulum === 'K13' ? (
               <>
@@ -262,7 +271,7 @@ export const SNBPRapor: React.FC<SNBPRaporProps> = ({ siswa, onRefreshData }) =>
               <>
                 <option value="Saintek">⚗️ Saintek</option>
                 <option value="Soshum">🌍 Soshum / Humaniora</option>
-                <option value="Bahasa & Budaya">🗣️ Bahasa & Budaya</option>
+                <option value="Bahasa & Budaya">🗣️ Bahasa &amp; Budaya</option>
                 <option value="Campuran">✨ Campuran (Kombinasi Mapel)</option>
               </>
             )}
@@ -270,36 +279,36 @@ export const SNBPRapor: React.FC<SNBPRaporProps> = ({ siswa, onRefreshData }) =>
         </div>
       </div>
 
-      {/* Kartu Analitik 2 Nilai Tertinggi Tiap Semester & Akumulatif */}
-      <div className="bg-gradient-to-br from-purple-50 via-white to-indigo-50 dark:from-[#1E1540] dark:to-[#160E2E] rounded-3xl p-5 border-2 border-purple-200 dark:border-purple-800 shadow-sm space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-purple-100 dark:border-purple-900/50">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-500 to-yellow-300 text-white flex items-center justify-center shadow-md">
-              <Award className="w-5 h-5 text-amber-950" />
+      {/* Kartu Analitik 2 Nilai Tertinggi Tiap Semester & Akumulatif Neo-Brutalism */}
+      <div className="neo-card p-5 sm:p-6 bg-amber-100 dark:bg-[#181133] space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b-2 border-[#0f172a]/20">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-300 border-2 border-[#0f172a] shadow-[2px_2px_0px_#0f172a] text-[#0f172a] flex items-center justify-center font-black text-xl shrink-0">
+              🏆
             </div>
             <div>
-              <h3 className="text-sm font-black text-gray-900 dark:text-white flex items-center gap-1.5">
+              <h3 className="text-sm font-black text-[#0f172a] dark:text-white flex items-center gap-2">
                 <span>2 Nilai Tertinggi Tiap Semester &amp; Akumulatif Terbobot</span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 font-bold">
+                <span className="neo-badge px-2 py-0.5 bg-purple-600 text-white text-[9px] font-black">
                   Akumulatif Otomatis
                 </span>
               </h3>
-              <p className="text-[11px] text-gray-500 dark:text-purple-300">
-                Peringkat 1 (🥇) dan Peringkat 2 (🥈) mata pelajaran dengan capaian nilai tertinggi di tiap semester serta kumulatif resmi.
+              <p className="text-[11px] font-bold text-gray-700 dark:text-purple-300">
+                Peringkat 1 (🥇) dan Peringkat 2 (🥈) mata pelajaran dengan capaian nilai tertinggi di tiap semester.
               </p>
             </div>
           </div>
           <div className="text-right">
-            <span className="text-[10px] text-purple-700 dark:text-purple-300 font-bold block">
+            <span className="text-[10px] text-[#0f172a] dark:text-purple-300 font-black block">
               Rata-rata 2 Tertinggi Akumulatif
             </span>
-            <span className="text-lg font-black font-mono text-purple-900 dark:text-white">
+            <span className="text-xl font-black font-mono text-purple-700 dark:text-purple-300">
               {top2Data.akumulatif.avgTop2 > 0 ? top2Data.akumulatif.avgTop2.toFixed(2) : '-'}
             </span>
           </div>
         </div>
 
-        {/* 6 Grid Kartu Semester */}
+        {/* 6 Grid Kartu Semester Neo-Brutalism */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
           {top2Data.allSemesters.map((item) => {
             const isAkum = item.semesterKey === 'akumulatif';
@@ -308,29 +317,29 @@ export const SNBPRapor: React.FC<SNBPRaporProps> = ({ siswa, onRefreshData }) =>
             return (
               <div
                 key={item.semesterKey}
-                className={`p-3.5 rounded-2xl border transition-all ${
+                className={`p-3.5 rounded-2xl border-2.5 border-[#0f172a] transition-all ${
                   isAkum
-                    ? 'bg-gradient-to-b from-purple-700 to-indigo-800 text-white border-purple-500 shadow-md shadow-purple-900/20'
+                    ? 'bg-purple-600 text-white shadow-[3px_3px_0px_#0f172a]'
                     : isSem5
-                    ? 'bg-purple-100/70 dark:bg-purple-950/60 border-purple-300 dark:border-purple-700'
-                    : 'bg-white/80 dark:bg-[#160E2E]/80 border-purple-100 dark:border-purple-900/40'
+                    ? 'bg-amber-300 text-[#0f172a] shadow-[3px_3px_0px_#0f172a]'
+                    : 'bg-white dark:bg-[#1E1540] text-[#0f172a] dark:text-white shadow-[2px_2px_0px_#0f172a]'
                 }`}
               >
                 <div className="flex items-center justify-between mb-2">
                   <span
                     className={`text-[11px] font-black uppercase tracking-wider ${
-                      isAkum ? 'text-amber-300' : 'text-purple-900 dark:text-purple-200'
+                      isAkum ? 'text-amber-300' : 'text-[#0f172a] dark:text-purple-200'
                     }`}
                   >
                     {item.label}
                   </span>
                   <span
-                    className={`text-[9px] px-1.5 py-0.5 rounded font-bold ${
+                    className={`text-[9px] px-2 py-0.5 rounded-full border border-[#0f172a] font-black ${
                       isAkum
-                        ? 'bg-white/20 text-white'
+                        ? 'bg-white text-[#0f172a]'
                         : isSem5
-                        ? 'bg-amber-200 dark:bg-amber-950 text-amber-900 dark:text-amber-200'
-                        : 'bg-gray-100 dark:bg-purple-900/40 text-gray-600 dark:text-purple-300'
+                        ? 'bg-purple-600 text-white'
+                        : 'bg-purple-100 text-[#0f172a]'
                     }`}
                   >
                     {item.bobotLabel}
@@ -341,61 +350,57 @@ export const SNBPRapor: React.FC<SNBPRaporProps> = ({ siswa, onRefreshData }) =>
                   <div className="space-y-2 text-xs">
                     {/* Top 1 */}
                     <div
-                      className={`p-2 rounded-xl flex items-center justify-between gap-1.5 ${
+                      className={`p-2 rounded-xl flex items-center justify-between gap-1.5 border-1.5 border-[#0f172a] ${
                         isAkum
-                          ? 'bg-white/10 text-white border border-white/10'
-                          : 'bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/40'
+                          ? 'bg-purple-700/80 text-white'
+                          : 'bg-amber-100 text-[#0f172a]'
                       }`}
                     >
                       <div className="flex items-center gap-1 min-w-0">
                         <span className="text-sm">🥇</span>
                         <span
-                          className={`font-bold truncate text-[11px] ${
-                            isAkum ? 'text-white' : 'text-gray-900 dark:text-purple-100'
-                          }`}
+                          className="font-black truncate text-[11px]"
                           title={item.top1?.mapel}
                         >
                           {item.top1?.mapel}
                         </span>
                       </div>
-                      <span className="font-mono font-black text-amber-500 dark:text-amber-300 flex-shrink-0">
+                      <span className="font-mono font-black text-amber-600 dark:text-amber-300 flex-shrink-0">
                         {item.top1?.nilai.toFixed(1)}
                       </span>
                     </div>
 
                     {/* Top 2 */}
                     <div
-                      className={`p-2 rounded-xl flex items-center justify-between gap-1.5 ${
+                      className={`p-2 rounded-xl flex items-center justify-between gap-1.5 border-1.5 border-[#0f172a] ${
                         isAkum
-                          ? 'bg-white/10 text-white border border-white/10'
-                          : 'bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800'
+                          ? 'bg-purple-700/80 text-white'
+                          : 'bg-slate-100 text-[#0f172a]'
                       }`}
                     >
                       <div className="flex items-center gap-1 min-w-0">
                         <span className="text-sm">🥈</span>
                         <span
-                          className={`font-bold truncate text-[11px] ${
-                            isAkum ? 'text-white' : 'text-gray-900 dark:text-purple-100'
-                          }`}
+                          className="font-black truncate text-[11px]"
                           title={item.top2?.mapel || '-'}
                         >
                           {item.top2?.mapel || '-'}
                         </span>
                       </div>
-                      <span className="font-mono font-black text-slate-500 dark:text-slate-300 flex-shrink-0">
+                      <span className="font-mono font-black text-slate-700 dark:text-slate-300 flex-shrink-0">
                         {item.top2 ? item.top2.nilai.toFixed(1) : '-'}
                       </span>
                     </div>
 
                     {/* Rata-rata 2 Tertinggi */}
-                    <div className="pt-1 flex items-center justify-between text-[10px]">
-                      <span className={isAkum ? 'text-purple-200' : 'text-gray-500'}>Rata 2 Teratas:</span>
-                      <strong className="font-mono font-black text-xs">{item.avgTop2.toFixed(2)}</strong>
+                    <div className="pt-1 flex items-center justify-between text-[10px] font-black">
+                      <span className={isAkum ? 'text-purple-200' : 'text-gray-600 dark:text-purple-300'}>Rata 2 Teratas:</span>
+                      <strong className="font-mono text-xs">{item.avgTop2.toFixed(2)}</strong>
                     </div>
                   </div>
                 ) : (
-                  <div className="py-4 text-center text-[10px] text-gray-400 italic">
-                    Belum ada nilai terisi
+                  <div className="py-4 text-center text-[10px] text-gray-500 font-bold italic">
+                    Belum ada nilai
                   </div>
                 )}
               </div>
@@ -404,43 +409,43 @@ export const SNBPRapor: React.FC<SNBPRaporProps> = ({ siswa, onRefreshData }) =>
         </div>
       </div>
 
-      {/* Table Input */}
-      <div className="bg-white dark:bg-[#160E2E] rounded-2xl border border-purple-100 dark:border-purple-950/40 shadow-sm overflow-hidden">
+      {/* Table Input Neo-Brutalism */}
+      <div className="neo-card p-0 overflow-hidden bg-white dark:bg-[#181133]">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-purple-700 text-white font-bold">
+            <thead className="bg-purple-600 text-white font-black border-b-3 border-[#0f172a]">
               <tr>
-                <th className="py-3 px-4 w-8">#</th>
-                <th className="py-3 px-4 min-w-[200px]">Mata Pelajaran</th>
-                <th className="py-3 px-2 text-center min-w-[70px]">
-                  Sem 1<span className="block text-[9px] font-normal text-purple-200">(10%)</span>
+                <th className="py-3.5 px-4 w-8 border-r-2 border-[#0f172a]">#</th>
+                <th className="py-3.5 px-4 min-w-[200px] border-r-2 border-[#0f172a]">Mata Pelajaran</th>
+                <th className="py-3.5 px-2 text-center min-w-[70px] border-r-2 border-[#0f172a]">
+                  Sem 1<span className="block text-[9px] font-bold text-purple-200">(10%)</span>
                 </th>
-                <th className="py-3 px-2 text-center min-w-[70px]">
-                  Sem 2<span className="block text-[9px] font-normal text-purple-200">(10%)</span>
+                <th className="py-3.5 px-2 text-center min-w-[70px] border-r-2 border-[#0f172a]">
+                  Sem 2<span className="block text-[9px] font-bold text-purple-200">(10%)</span>
                 </th>
-                <th className="py-3 px-2 text-center min-w-[70px]">
-                  Sem 3<span className="block text-[9px] font-normal text-purple-200">(15%)</span>
+                <th className="py-3.5 px-2 text-center min-w-[70px] border-r-2 border-[#0f172a]">
+                  Sem 3<span className="block text-[9px] font-bold text-purple-200">(15%)</span>
                 </th>
-                <th className="py-3 px-2 text-center min-w-[70px]">
-                  Sem 4<span className="block text-[9px] font-normal text-purple-200">(15%)</span>
+                <th className="py-3.5 px-2 text-center min-w-[70px] border-r-2 border-[#0f172a]">
+                  Sem 4<span className="block text-[9px] font-bold text-purple-200">(15%)</span>
                 </th>
-                <th className="py-3 px-2 text-center min-w-[75px] bg-purple-800">
-                  Sem 5<span className="block text-[9px] font-bold text-amber-300">⭐ (50%)</span>
+                <th className="py-3.5 px-2 text-center min-w-[75px] bg-amber-400 text-[#0f172a] border-r-2 border-[#0f172a]">
+                  Sem 5<span className="block text-[9px] font-black text-rose-700">⭐ (50%)</span>
                 </th>
-                <th className="py-3 px-3 text-center min-w-[85px]">Terbobot</th>
+                <th className="py-3.5 px-3 text-center min-w-[85px]">Terbobot</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-purple-50 dark:divide-purple-950/40">
+            <tbody className="divide-y-2 divide-[#0f172a]/15">
               {nilaiMapels.map((m, idx) => {
                 const tb = terbobotList[idx].terbobot;
                 return (
-                  <tr key={m.mapel} className="hover:bg-purple-50/40 dark:hover:bg-purple-950/20">
-                    <td className="py-2.5 px-4 text-gray-400 font-mono text-[11px]">{idx + 1}</td>
-                    <td className="py-2.5 px-4 font-semibold text-gray-800 dark:text-purple-200">
+                  <tr key={m.mapel} className="hover:bg-purple-100/50 dark:hover:bg-purple-950/30 transition-colors">
+                    <td className="py-2.5 px-4 text-gray-500 font-mono font-bold text-[11px] border-r-2 border-[#0f172a]/15">{idx + 1}</td>
+                    <td className="py-2.5 px-4 font-black text-[#0f172a] dark:text-purple-200 border-r-2 border-[#0f172a]/15">
                       {m.mapel}
                     </td>
                     {(['sem1', 'sem2', 'sem3', 'sem4'] as const).map((sem) => (
-                      <td key={sem} className="py-2 px-2 text-center">
+                      <td key={sem} className="py-2 px-2 text-center border-r-2 border-[#0f172a]/15">
                         <div className="flex flex-col items-center justify-center">
                           <input
                             type="number"
@@ -450,14 +455,14 @@ export const SNBPRapor: React.FC<SNBPRaporProps> = ({ siswa, onRefreshData }) =>
                             value={m[sem] || ''}
                             onChange={(e) => handleScoreChange(idx, sem, e.target.value)}
                             placeholder="0"
-                            className="w-14 text-center py-1 rounded-lg border border-gray-200 dark:border-purple-900 bg-gray-50 dark:bg-[#1E1540] text-gray-900 dark:text-white font-mono focus:bg-white focus:ring-1 focus:ring-purple-600"
+                            className="w-14 text-center py-1 rounded-lg border-2 border-[#0f172a] bg-white dark:bg-[#1E1540] text-[#0f172a] dark:text-white font-mono font-bold shadow-[1.5px_1.5px_0px_#0f172a] focus:bg-amber-100 focus:outline-none"
                           />
                           {getBadgeForMapelSem(m.mapel, sem)}
                         </div>
                       </td>
                     ))}
                     {/* Sem 5 Highlighted */}
-                    <td className="py-2 px-2 text-center bg-purple-50/50 dark:bg-purple-950/30">
+                    <td className="py-2 px-2 text-center bg-amber-100/60 dark:bg-amber-950/20 border-r-2 border-[#0f172a]/15">
                       <div className="flex flex-col items-center justify-center">
                         <input
                           type="number"
@@ -467,13 +472,13 @@ export const SNBPRapor: React.FC<SNBPRaporProps> = ({ siswa, onRefreshData }) =>
                           value={m.sem5 || ''}
                           onChange={(e) => handleScoreChange(idx, 'sem5', e.target.value)}
                           placeholder="0"
-                          className="w-14 text-center py-1 rounded-lg border-2 border-purple-400 dark:border-purple-600 bg-white dark:bg-[#1E1540] text-gray-900 dark:text-white font-bold font-mono focus:ring-2 focus:ring-purple-600"
+                          className="w-14 text-center py-1 rounded-lg border-2.5 border-[#0f172a] bg-amber-200 dark:bg-[#1E1540] text-[#0f172a] dark:text-white font-black font-mono shadow-[2px_2px_0px_#0f172a] focus:bg-white focus:outline-none"
                         />
                         {getBadgeForMapelSem(m.mapel, 'sem5')}
                       </div>
                     </td>
-                    <td className="py-2.5 px-3 text-center font-bold font-mono text-purple-700 dark:text-purple-300">
-                      <div>{tb > 0 ? tb.toFixed(2) : '-'}</div>
+                    <td className="py-2.5 px-3 text-center font-black font-mono text-purple-700 dark:text-purple-300">
+                      <div className="text-sm">{tb > 0 ? tb.toFixed(2) : '-'}</div>
                       {getBadgeForMapelAkum(m.mapel)}
                     </td>
                   </tr>
@@ -483,17 +488,17 @@ export const SNBPRapor: React.FC<SNBPRaporProps> = ({ siswa, onRefreshData }) =>
           </table>
         </div>
 
-        <div className="p-4 bg-gray-50/60 dark:bg-[#130B29]/60 border-t border-purple-100 dark:border-purple-950/40 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-[11px] text-gray-500">
-            Hanya mapel yang memiliki minimal satu nilai semester &gt; 0 yang akan disimpan dan dihitung.
+        <div className="p-4 bg-purple-50 dark:bg-[#120B27] border-t-3 border-[#0f172a] flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p className="text-xs font-bold text-gray-700 dark:text-purple-300">
+            💡 Hanya mapel yang memiliki minimal satu nilai semester &gt; 0 yang akan disimpan dan dihitung otomatis.
           </p>
           <button
             onClick={handleSave}
             disabled={saving}
-            className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-purple-700 hover:bg-purple-800 text-white font-bold text-xs shadow-md shadow-purple-600/30 flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+            className="w-full sm:w-auto px-6 py-3 neo-btn bg-purple-600 hover:bg-purple-700 text-white font-black text-xs shadow-[3px_3px_0px_#0f172a] flex items-center justify-center gap-2 disabled:opacity-50"
           >
             <Save className="w-4 h-4" />
-            <span>{saving ? 'Menyimpan...' : 'Simpan Nilai Rapor'}</span>
+            <span>{saving ? 'Menyimpan...' : '💾 Simpan Nilai Rapor'}</span>
           </button>
         </div>
       </div>

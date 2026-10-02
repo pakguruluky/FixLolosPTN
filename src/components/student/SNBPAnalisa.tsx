@@ -17,6 +17,7 @@ import {
   ShieldCheck,
   Layers,
   ListChecks,
+  Scale,
 } from 'lucide-react';
 import { Siswa } from '../../types';
 import { getAnalisaLengkap } from '../../services/api';
@@ -455,69 +456,207 @@ export const SNBPAnalisa: React.FC<SNBPAnalisaProps> = ({ siswa }) => {
         </div>
       )}
 
-      {/* 5.10 Nilai Akhir SNBP (NAS) Card */}
-      <div className="bg-white dark:bg-[#160E2E] rounded-3xl p-6 border-2 border-purple-300 dark:border-purple-800 shadow-md">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-purple-100 dark:border-purple-900/40 pb-4">
-          <div>
-            <span className="text-[10px] font-black uppercase tracking-wider text-purple-600 dark:text-purple-400">
-              Formulasi Standar Nasional
-            </span>
-            <h3 className="text-xl font-black text-gray-900 dark:text-white flex items-center gap-2">
-              <Award className="w-5 h-5 text-amber-500" />
+      {/* 5.10 Nilai Akhir SNBP (NAS) Card - Formulasi Standar Nasional */}
+      <div className="bg-white dark:bg-[#160E2E] rounded-3xl p-6 sm:p-7 border-2 border-purple-300 dark:border-purple-800 shadow-md">
+        {/* Header Formulasi Standar Nasional */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 border-b border-purple-100 dark:border-purple-900/40 pb-5">
+          <div className="space-y-1.5">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-900/60 text-purple-800 dark:text-purple-200 text-[11px] font-black border border-purple-200 dark:border-purple-700/60">
+              <Scale className="w-3.5 h-3.5 text-purple-600 dark:text-purple-300" />
+              <span>FORMULASI STANDAR NASIONAL (SNPMB PTN)</span>
+            </div>
+            <h3 className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white flex items-center gap-2.5">
+              <Award className="w-6 h-6 text-amber-500 shrink-0" />
               <span>Nilai Akhir SNBP</span>
             </h3>
+            <p className="text-xs text-gray-600 dark:text-purple-300/80 max-w-2xl">
+              Perhitungan kelayakan berbasis 3 pilar resmi seleksi nasional: <strong>50% Rata-rata Rapor Akademik</strong> + <strong>30% Prestasi &amp; Bakat (TKA)</strong> + <strong>20% Rekam Jejak Sekolah</strong>.
+            </p>
           </div>
 
-          <div className="flex items-center gap-3 sm:gap-4 shrink-0 bg-purple-50/70 dark:bg-purple-950/40 px-4 py-2.5 rounded-2xl border border-purple-100 dark:border-purple-900/50 self-start sm:self-auto">
-            <div className="text-right shrink-0">
-              <div className="text-[11px] font-bold text-gray-500 dark:text-purple-300 uppercase tracking-wider">
-                Status Kelayakan:
+          {/* Badge Skor & Kelayakan */}
+          <div className="flex items-center gap-3 sm:gap-4 shrink-0 bg-purple-50/90 dark:bg-purple-950/60 px-4 py-3 rounded-2xl border-2 border-purple-200 dark:border-purple-900/60 self-start lg:self-auto shadow-sm">
+            <div className="text-right">
+              <div className="text-[10px] font-extrabold text-gray-500 dark:text-purple-300 uppercase tracking-wider">
+                Status Kelayakan
               </div>
-              <div className={`text-sm sm:text-base font-black ${nilaiAkhir.color}`}>
+              <div className={`text-xs sm:text-sm font-black px-2.5 py-0.5 rounded-full mt-0.5 inline-block ${
+                nilaiAkhir.label.includes('Kompetitif')
+                  ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-800'
+                  : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-200 border border-amber-300 dark:border-amber-800'
+              }`}>
                 {nilaiAkhir.label}
               </div>
             </div>
-            <div className="min-w-[5.2rem] px-3.5 py-2 rounded-xl bg-purple-700 text-white font-mono font-black text-xl sm:text-2xl text-center shadow-md shadow-purple-700/25 shrink-0">
-              {nilaiAkhir.nilaiAkhir}
+            <div className="min-w-[5.6rem] px-3 py-2 rounded-xl bg-gradient-to-br from-purple-700 to-indigo-800 text-white font-mono text-center shadow-md shadow-purple-800/25 shrink-0">
+              <div className="text-[10px] uppercase font-bold text-purple-200 tracking-wider">Nilai Akhir</div>
+              <div className="text-2xl sm:text-3xl font-black leading-tight">
+                {nilaiAkhir.nilaiAkhir}
+              </div>
+              <div className="text-[9px] text-purple-200/90 font-medium">dari 100 Poin</div>
             </div>
           </div>
         </div>
 
-        {/* 3 Pillars Formula Breakdown */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-5">
-          <div className="p-4 rounded-2xl bg-purple-50 dark:bg-purple-950/40 border border-purple-100 dark:border-purple-900/40">
-            <div className="text-xs font-bold text-gray-500 dark:text-purple-300">
-              Pilar 1: Nilai Rapor (50%)
-            </div>
-            <div className="text-xl font-black text-purple-800 dark:text-purple-200 mt-1 font-mono">
-              {nilaiAkhir.skorRapor50} <span className="text-xs font-normal text-gray-400">/ 50</span>
-            </div>
-            <p className="text-[11px] text-gray-500 mt-1">Dihitung dari rata-rata rapor 5 semester terbobot.</p>
+        {/* Visual Equation Banner (Rumus Formulasi) */}
+        <div className="bg-purple-50/70 dark:bg-purple-950/40 rounded-2xl p-4 border border-purple-200/80 dark:border-purple-800/60 my-5">
+          <div className="text-[11px] font-black uppercase tracking-wider text-purple-800 dark:text-purple-300 mb-3 flex items-center justify-between">
+            <span className="flex items-center gap-1.5">
+              <Layers className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
+              <span>Struktur Penjumlahan Formulasi 3 Pilar</span>
+            </span>
+            <span className="text-[10px] font-bold text-gray-500 dark:text-purple-400">
+              Maksimal 100 Poin
+            </span>
           </div>
 
-          <div className="p-4 rounded-2xl bg-purple-50 dark:bg-purple-950/40 border border-purple-100 dark:border-purple-900/40">
-            <div className="text-xs font-bold text-gray-500 dark:text-purple-300">
-              Pilar 2: Prestasi & TKA (30%)
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
+            {/* Pilar 1 */}
+            <div className="bg-white dark:bg-[#1a1236] p-3 rounded-xl border border-purple-200 dark:border-purple-800 shadow-xs relative">
+              <div className="text-[10px] font-extrabold uppercase text-purple-600 dark:text-purple-400">Pilar 1 (50%)</div>
+              <div className="text-xs font-bold text-gray-800 dark:text-purple-100 truncate">Rapor Akademik</div>
+              <div className="text-xl font-black text-purple-700 dark:text-purple-300 font-mono mt-1">
+                {nilaiAkhir.skorRapor50}
+              </div>
+              <div className="text-[10px] text-gray-400 font-medium">Maks. 50 Poin</div>
             </div>
-            <div className="text-xl font-black text-purple-800 dark:text-purple-200 mt-1 font-mono">
-              {nilaiAkhir.skorPrestasi30} <span className="text-xs font-normal text-gray-400">/ 30</span>
+
+            {/* Pilar 2 */}
+            <div className="bg-white dark:bg-[#1a1236] p-3 rounded-xl border border-purple-200 dark:border-purple-800 shadow-xs relative">
+              <div className="text-[10px] font-extrabold uppercase text-amber-600 dark:text-amber-400">Pilar 2 (30%)</div>
+              <div className="text-xs font-bold text-gray-800 dark:text-purple-100 truncate">Prestasi &amp; TKA</div>
+              <div className="text-xl font-black text-amber-600 dark:text-amber-400 font-mono mt-1">
+                {nilaiAkhir.skorPrestasi30}
+              </div>
+              <div className="text-[10px] text-gray-400 font-medium">Maks. 30 Poin</div>
             </div>
-            <p className="text-[11px] text-gray-500 mt-1">Sertifikat terakreditasi + bonus TKA IRT &gt;60.</p>
+
+            {/* Pilar 3 */}
+            <div className="bg-white dark:bg-[#1a1236] p-3 rounded-xl border border-purple-200 dark:border-purple-800 shadow-xs relative">
+              <div className="text-[10px] font-extrabold uppercase text-emerald-600 dark:text-emerald-400">Pilar 3 (20%)</div>
+              <div className="text-xs font-bold text-gray-800 dark:text-purple-100 truncate">Rekam Jejak Sekolah</div>
+              <div className="text-xl font-black text-emerald-600 dark:text-emerald-400 font-mono mt-1">
+                {nilaiAkhir.skorTambahan20}
+              </div>
+              <div className="text-[10px] text-gray-400 font-medium">Maks. 20 Poin</div>
+            </div>
+
+            {/* Total Nilai Akhir */}
+            <div className="bg-gradient-to-br from-purple-700 to-indigo-800 text-white p-3 rounded-xl shadow-md border border-purple-600/50">
+              <div className="text-[10px] font-extrabold uppercase text-purple-200">Hasil Akhir</div>
+              <div className="text-xs font-bold text-white truncate">Nilai Akhir SNBP</div>
+              <div className="text-xl font-black text-white font-mono mt-1">
+                {nilaiAkhir.nilaiAkhir}
+              </div>
+              <div className="text-[10px] text-purple-200 font-medium">Skala 0–100</div>
+            </div>
+          </div>
+        </div>
+
+        {/* 3 Pillars Formula Breakdown Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
+          {/* Pilar 1 Card */}
+          <div className="p-4 rounded-2xl bg-purple-50/80 dark:bg-purple-950/40 border-2 border-purple-200 dark:border-purple-900/60 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between text-xs mb-2">
+                <span className="font-extrabold text-purple-700 dark:text-purple-300 flex items-center gap-1.5">
+                  <BookOpen className="w-4 h-4" />
+                  <span>Pilar 1: Nilai Rapor</span>
+                </span>
+                <span className="px-2 py-0.5 rounded-full bg-purple-200/80 dark:bg-purple-900/60 text-purple-800 dark:text-purple-200 text-[10px] font-black">
+                  Bobot 50%
+                </span>
+              </div>
+              <div className="text-2xl font-black text-purple-900 dark:text-purple-100 font-mono">
+                {nilaiAkhir.skorRapor50}{' '}
+                <span className="text-xs font-normal text-gray-400">/ 50 Poin</span>
+              </div>
+              {/* Progress bar */}
+              <div className="w-full bg-purple-200/70 dark:bg-purple-900/50 h-2 rounded-full mt-2.5 overflow-hidden">
+                <div
+                  className="bg-purple-600 h-full rounded-full transition-all duration-500"
+                  style={{ width: `${Math.min(100, (nilaiAkhir.skorRapor50 / 50) * 100)}%` }}
+                />
+              </div>
+              <div className="flex justify-between text-[10px] font-semibold text-gray-500 dark:text-purple-300/80 mt-1">
+                <span>Capaian Pilar</span>
+                <span>{Math.round((nilaiAkhir.skorRapor50 / 50) * 100)}%</span>
+              </div>
+            </div>
+            <p className="text-[11px] text-gray-600 dark:text-purple-300/90 mt-3 pt-2 border-t border-purple-200/60 dark:border-purple-900/40">
+              Dihitung dari rata-rata rapor semester 1 s.d. 5 ({peluang.rata_rapor}) dikonversi ke porsi 50%.
+            </p>
           </div>
 
-          <div className="p-4 rounded-2xl bg-purple-50 dark:bg-purple-950/40 border border-purple-100 dark:border-purple-900/40">
-            <div className="text-xs font-bold text-gray-500 dark:text-purple-300">
-              Pilar 3: Rekam Jejak Sekolah (20%)
+          {/* Pilar 2 Card */}
+          <div className="p-4 rounded-2xl bg-amber-50/60 dark:bg-amber-950/20 border-2 border-amber-200 dark:border-amber-900/50 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between text-xs mb-2">
+                <span className="font-extrabold text-amber-700 dark:text-amber-300 flex items-center gap-1.5">
+                  <Award className="w-4 h-4" />
+                  <span>Pilar 2: Prestasi &amp; TKA</span>
+                </span>
+                <span className="px-2 py-0.5 rounded-full bg-amber-200/80 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200 text-[10px] font-black">
+                  Bobot 30%
+                </span>
+              </div>
+              <div className="text-2xl font-black text-amber-900 dark:text-amber-100 font-mono">
+                {nilaiAkhir.skorPrestasi30}{' '}
+                <span className="text-xs font-normal text-gray-400">/ 30 Poin</span>
+              </div>
+              {/* Progress bar */}
+              <div className="w-full bg-amber-200/70 dark:bg-amber-900/50 h-2 rounded-full mt-2.5 overflow-hidden">
+                <div
+                  className="bg-amber-500 h-full rounded-full transition-all duration-500"
+                  style={{ width: `${Math.min(100, (nilaiAkhir.skorPrestasi30 / 30) * 100)}%` }}
+                />
+              </div>
+              <div className="flex justify-between text-[10px] font-semibold text-gray-500 dark:text-amber-300/80 mt-1">
+                <span>Capaian Pilar</span>
+                <span>{Math.round((nilaiAkhir.skorPrestasi30 / 30) * 100)}%</span>
+              </div>
             </div>
-            <div className="text-xl font-black text-purple-800 dark:text-purple-200 mt-1 font-mono">
-              {nilaiAkhir.skorTambahan20} <span className="text-xs font-normal text-gray-400">/ 20</span>
+            <p className="text-[11px] text-gray-600 dark:text-amber-300/90 mt-3 pt-2 border-t border-amber-200/60 dark:border-amber-900/40">
+              Sertifikat kompetisi terakreditasi + validasi skor Uji TKA IRT untuk memperkuat peluang prodi.
+            </p>
+          </div>
+
+          {/* Pilar 3 Card */}
+          <div className="p-4 rounded-2xl bg-emerald-50/60 dark:bg-emerald-950/20 border-2 border-emerald-200 dark:border-emerald-900/50 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between text-xs mb-2">
+                <span className="font-extrabold text-emerald-700 dark:text-emerald-300 flex items-center gap-1.5">
+                  <Compass className="w-4 h-4" />
+                  <span>Pilar 3: Rekam Jejak Sekolah</span>
+                </span>
+                <span className="px-2 py-0.5 rounded-full bg-emerald-200/80 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 text-[10px] font-black">
+                  Bobot 20%
+                </span>
+              </div>
+              <div className="text-2xl font-black text-emerald-900 dark:text-emerald-100 font-mono">
+                {nilaiAkhir.skorTambahan20}{' '}
+                <span className="text-xs font-normal text-gray-400">/ 20 Poin</span>
+              </div>
+              {/* Progress bar */}
+              <div className="w-full bg-emerald-200/70 dark:bg-emerald-900/50 h-2 rounded-full mt-2.5 overflow-hidden">
+                <div
+                  className="bg-emerald-500 h-full rounded-full transition-all duration-500"
+                  style={{ width: `${Math.min(100, (nilaiAkhir.skorTambahan20 / 20) * 100)}%` }}
+                />
+              </div>
+              <div className="flex justify-between text-[10px] font-semibold text-gray-500 dark:text-emerald-300/80 mt-1">
+                <span>Capaian Pilar</span>
+                <span>{Math.round((nilaiAkhir.skorTambahan20 / 20) * 100)}%</span>
+              </div>
             </div>
-            <p className="text-[11px] text-gray-500 mt-1">Akreditasi sekolah, ranking, dan alumni di PTN pilihan.</p>
+            <p className="text-[11px] text-gray-600 dark:text-emerald-300/90 mt-3 pt-2 border-t border-emerald-200/60 dark:border-emerald-900/40">
+              Akreditasi SMA ({siswa.akreditasi || 'A'}), ranking paralel, dan sebaran alumni sekolah di PTN pilihan.
+            </p>
           </div>
         </div>
 
         <p className="text-[10px] text-gray-400 dark:text-purple-400/60 mt-4 text-center">
-          * Catatan: Nilai Akhir SNBP merupakan perkiraan berbasis model statistik bimbingan belajar. Keputusan mutlak berada pada seleksi nasional masing-masing PTN.
+          * Catatan: Formulasi Standar Nasional merupakan model analitik bimbingan belajar berbasis ketentuan SNPMB Kemendikbudristek. Keputusan akhir kelulusan mutlak berada pada seleksi nasional masing-masing PTN.
         </p>
       </div>
 

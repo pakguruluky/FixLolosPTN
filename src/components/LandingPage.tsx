@@ -9,12 +9,15 @@ import {
   Compass,
   ArrowRight,
   ShieldCheck,
-  HelpCircle,
   ChevronDown,
   MessageCircle,
   Users,
   CheckCircle2,
   Calendar,
+  Flame,
+  Zap,
+  Target,
+  Layers,
 } from 'lucide-react';
 import { AppSettings } from '../types';
 
@@ -36,8 +39,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ settings, onOpenLogin 
       a: 'Tentu saja! Siswa dapat memilih program ganda (SNBP+SNBT). Anda dapat memasukkan nilai rapor semester 1–5 serta nilai TKA, sekaligus memantau progres 9 Try Out berkala untuk jalur tes.',
     },
     {
+      q: 'Berapa lama masa akses akun yang tersedia?',
+      a: 'Saat pendaftaran, siswa dapat memilih paket masa akses 1 Hari (Trial kilat), 1 Bulan (Intensif bulanan), 6 Bulan (Semesteran), atau 1 Tahun (Full Season SNBP+SNBT sampai pengumuman kelulusan).',
+    },
+    {
       q: 'Bagaimana jika saya lupa password akun?',
-      a: 'Anda dapat menghubungi Admin cabang atau bimbingan belajar melalui nomor WhatsApp resmi yang tersedia di tombol bantuan, atau meminta admin mereset password akun Anda ke kata sandi standar.',
+      a: 'Anda dapat menghubungi Admin cabang atau bimbingan belajar melalui kontak admin/bantuan, atau meminta admin mereset password akun Anda ke kata sandi standar.',
     },
     {
       q: 'Apakah orang tua memiliki akses portal terpisah?',
@@ -46,135 +53,197 @@ export const LandingPage: React.FC<LandingPageProps> = ({ settings, onOpenLogin 
   ];
 
   return (
-    <div className="min-h-screen bg-[#F7F4FF] dark:bg-[#0D0920] text-[#1A0835] dark:text-[#EDE8FF] transition-colors duration-300">
-      {/* Decorative background blobs */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-purple-400/10 dark:bg-purple-600/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-[-10%] left-[-5%] w-[600px] h-[600px] bg-amber-400/10 dark:bg-amber-600/10 rounded-full blur-3xl" />
-      </div>
+    <div className="min-h-screen bg-[#f3e8ff] dark:bg-[#0f0a1f] text-[#0f172a] dark:text-[#f8fafc] transition-colors duration-300 relative selection:bg-amber-300 selection:text-[#0f172a]">
+      {/* Decorative Neo-Brutalism Dot Grid */}
+      <div className="fixed inset-0 pointer-events-none opacity-20 neo-dot-grid z-0" />
 
-      {/* Navbar Sticky */}
-      <header className="sticky top-0 z-40 backdrop-blur-md bg-white/80 dark:bg-[#160E2E]/85 border-b border-purple-100 dark:border-purple-950/40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
+      {/* Floating Retro Shapes */}
+      <div className="fixed -top-12 -right-12 w-64 h-64 rounded-full bg-purple-300/30 blur-2xl pointer-events-none z-0" />
+      <div className="fixed -bottom-16 -left-16 w-80 h-80 rounded-full bg-amber-300/25 blur-2xl pointer-events-none z-0" />
+
+      {/* 1. HEADER / NAVBAR UTAMA */}
+      <header className="sticky top-0 z-40 bg-white dark:bg-[#181133] border-b-3 border-[#0f172a] shadow-[0px_4px_0px_#0f172a]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-3">
+          {/* Brand Logo & Sub-tagline */}
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-[#7C3AED] via-purple-600 to-[#F59E0B] flex items-center justify-center shadow-lg shadow-purple-500/20 text-white font-black text-xl">
+            <div className="w-11 h-11 rounded-2xl bg-amber-300 border-3 border-[#0f172a] shadow-[3px_3px_0px_#0f172a] flex items-center justify-center font-black text-2xl shrink-0 hover:rotate-6 transition-transform">
               🎓
             </div>
             <div>
-              <div className="text-xl font-extrabold tracking-tight bg-gradient-to-r from-purple-700 via-purple-900 to-amber-600 dark:from-purple-300 dark:to-amber-300 bg-clip-text text-transparent">
-                AnalisaKu 2027
+              <div className="flex items-center gap-2">
+                <span className="text-xl sm:text-2xl font-black tracking-tight text-[#0f172a] dark:text-white">
+                  AnalisaKu 2027
+                </span>
+                <span className="hidden md:inline-flex neo-badge px-2 py-0.5 bg-purple-200 text-[#0f172a] text-[10px] font-black">
+                  EDISI SMA
+                </span>
               </div>
-              <p className="text-[11px] font-semibold text-purple-600/80 dark:text-purple-300/70">
-                {settings.NAMA_LEMBAGA}
+              <p className="text-[11px] font-black text-purple-700 dark:text-purple-300 tracking-wide">
+                Fix Lolos PTN • Cabang ONLINE
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-3">
+          {/* Top Status Badge (Center on desktop) */}
+          <div className="hidden lg:flex items-center">
+            <div className="neo-badge px-3.5 py-1.5 bg-amber-300 text-[#0f172a] text-xs font-black animate-pulse">
+              🚀 Road to PTN 2027: Konsisten &amp; Juara!
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
             <button
               onClick={() => onOpenLogin('ortu')}
-              className="hidden sm:inline-flex px-3.5 py-2 text-xs font-semibold text-purple-700 dark:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/30 rounded-xl transition-all"
+              className="neo-btn px-3.5 sm:px-4 py-2 sm:py-2.5 bg-emerald-300 hover:bg-emerald-400 text-[#0f172a] text-xs sm:text-sm font-black shadow-[3px_3px_0px_#0f172a]"
             >
               👨‍👩‍👧 Portal Ortu
             </button>
             <button
               onClick={() => onOpenLogin('siswa')}
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#7C3AED] to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white text-xs sm:text-sm font-bold shadow-md shadow-purple-500/25 transition-all flex items-center gap-2 hover:scale-[1.02] active:scale-[0.98]"
+              className="neo-btn px-4 sm:px-5 py-2 sm:py-2.5 bg-purple-600 hover:bg-purple-700 text-white text-xs sm:text-sm font-black shadow-[3px_3px_0px_#0f172a] flex items-center gap-1.5"
             >
-              <span>🚀 Masuk Aplikasi</span>
+              <span>Masuk</span>
+              <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="relative z-10 pt-12 pb-16 sm:pt-20 sm:pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-100 dark:bg-purple-950/60 border border-purple-200 dark:border-purple-800 text-purple-800 dark:text-purple-300 text-xs font-bold mb-6 shadow-sm">
-          <Sparkles className="w-4 h-4 text-amber-500" />
-          <span>Platform Analisa Rasionalisasi SNBP & SNBT 2027</span>
+      {/* 2. HERO SECTION (NEO-BRUTALISM RPG STYLE) */}
+      <section className="relative z-10 pt-10 pb-16 sm:pt-16 sm:pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center">
+        {/* Playful Stickers Bar */}
+        <div className="flex flex-wrap items-center justify-center gap-2 mb-6">
+          <span className="neo-badge px-3 py-1 bg-amber-300 text-[#0f172a] text-xs font-black rotate-[-2deg]">
+            🔥 100% Standar SNPMB
+          </span>
+          <span className="neo-badge px-3 py-1 bg-cyan-200 text-[#0f172a] text-xs font-black rotate-[2deg]">
+            ⚡ Algoritma IRT &amp; Rapor Terbobot
+          </span>
+          <span className="neo-badge px-3 py-1 bg-pink-200 text-[#0f172a] text-xs font-black rotate-[-1deg]">
+            🛡️ Akses Fleksibel 1 Hari - 1 Tahun
+          </span>
         </div>
 
-        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.15] max-w-4xl mx-auto">
-          Rasionalisasi Peluang Lolos{' '}
-          <span className="bg-gradient-to-r from-[#7C3AED] via-purple-600 to-[#F59E0B] bg-clip-text text-transparent">
+        {/* Hero Headline */}
+        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-[#0f172a] dark:text-white tracking-tight leading-[1.15] max-w-4xl mx-auto">
+          Analisis Peluang Lolos{' '}
+          <span className="inline-block px-3 py-1 bg-purple-600 text-white rounded-2xl border-3 border-[#0f172a] shadow-[4px_4px_0px_#0f172a] rotate-[-1deg]">
             PTN Impianmu
-          </span>
-          , Lebih Terarah & Akurat.
+          </span>{' '}
+          Lebih Terarah &amp; Akurat!
         </h1>
 
-        <p className="mt-5 text-base sm:text-lg text-gray-600 dark:text-purple-200/80 max-w-2xl mx-auto leading-relaxed">
-          Kombinasi analisis komprehensif nilai rapor semester 1–5 terbobot, skor TKA IRT, dan formula UTBK 60:40 dengan database ribuan prodi PTN se-Indonesia.
+        <p className="mt-6 text-sm sm:text-base lg:text-lg font-bold text-gray-700 dark:text-purple-200 max-w-2xl mx-auto leading-relaxed">
+          Kombinasi analisis komprehensif nilai rapor semester 1–5 terbobot, skor Uji TKA IRT, dan formula UTBK 60:40 dengan database ribuan prodi PTN se-Indonesia.
         </p>
 
+        {/* Main CTA Buttons */}
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
           <button
             onClick={() => onOpenLogin('siswa')}
-            className="w-full sm:w-auto px-7 py-3.5 rounded-2xl bg-gradient-to-r from-[#7C3AED] to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-bold text-sm sm:text-base shadow-xl shadow-purple-600/30 flex items-center justify-center gap-2 transition-all hover:scale-105"
+            className="w-full sm:w-auto neo-btn px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white text-base sm:text-lg font-black shadow-[4px_4px_0px_#0f172a] flex items-center justify-center gap-2"
           >
-            <span>Masuk Aplikasi</span>
-            <ArrowRight className="w-4 h-4" />
+            <span>🚀 Masuk ke Dashboard</span>
+            <ArrowRight className="w-5 h-5" />
           </button>
           <button
             onClick={() => onOpenLogin('daftar')}
-            className="w-full sm:w-auto px-7 py-3.5 rounded-2xl bg-white dark:bg-[#160E2E] border-2 border-purple-300 dark:border-purple-800 text-purple-800 dark:text-purple-200 font-bold text-sm sm:text-base shadow-md hover:bg-purple-50 dark:hover:bg-purple-950/40 transition-all"
+            className="w-full sm:w-auto neo-btn px-8 py-4 bg-amber-300 hover:bg-amber-400 text-[#0f172a] text-base sm:text-lg font-black shadow-[4px_4px_0px_#0f172a]"
           >
-            Daftar Akun Baru
+            ✨ Daftar Akun Baru
           </button>
         </div>
 
-        {/* 4 Highlight Cards */}
-        <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-left">
-          <div className="p-5 rounded-2xl bg-white dark:bg-[#160E2E] border border-purple-100 dark:border-purple-950/50 shadow-sm hover:shadow-md transition-all">
-            <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 flex items-center justify-center font-bold text-lg mb-3">
-              📊
+        {/* 3. TARGET PTN TRADING CARDS PREVIEW */}
+        <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 text-left">
+          {/* Card 1: SNBP */}
+          <div className="neo-card p-5 bg-purple-100 hover:rotate-[-1deg] transition-transform">
+            <div className="flex items-center justify-between mb-3">
+              <span className="neo-badge px-2.5 py-0.5 bg-purple-600 text-white text-[10px] font-black">
+                JALUR RAPOR
+              </span>
+              <span className="text-2xl">📊</span>
             </div>
-            <h3 className="font-bold text-sm text-gray-900 dark:text-white">SNBP Jalur Rapor</h3>
-            <p className="text-xs text-gray-600 dark:text-purple-200/70 mt-1">
-              Bobot semester Sem1-Sem4 10-15%, Sem5 50%, validasi TKA IRT, mapel pendukung, dan sertifikat berpoin.
+            <h3 className="font-black text-base text-[#0f172a] mb-1">SNBP Akademik</h3>
+            <p className="text-xs font-bold text-gray-700 leading-relaxed">
+              Formulasi 3 pilar: 50% Rapor (Sem 1-5), 30% Prestasi &amp; TKA, 20% Rekam Jejak Sekolah, plus poin keketatan prodi favorit.
             </p>
+            <div className="mt-4 pt-3 border-t-2 border-[#0f172a]/20 flex justify-between items-center text-[11px] font-black text-purple-900">
+              <span>Maksimal 100 Poin</span>
+              <span className="neo-badge px-2 py-0.5 bg-white text-[#0f172a]">10 Pilar</span>
+            </div>
           </div>
 
-          <div className="p-5 rounded-2xl bg-white dark:bg-[#160E2E] border border-red-100 dark:border-red-950/30 shadow-sm hover:shadow-md transition-all">
-            <div className="w-10 h-10 rounded-xl bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-300 flex items-center justify-center font-bold text-lg mb-3">
-              🎯
+          {/* Card 2: SNBT */}
+          <div className="neo-card p-5 bg-rose-100 hover:rotate-[1deg] transition-transform">
+            <div className="flex items-center justify-between mb-3">
+              <span className="neo-badge px-2.5 py-0.5 bg-rose-500 text-white text-[10px] font-black">
+                JALUR UTBK TES
+              </span>
+              <span className="text-2xl">🎯</span>
             </div>
-            <h3 className="font-bold text-sm text-gray-900 dark:text-white">SNBT Formula 60 : 40</h3>
-            <p className="text-xs text-gray-600 dark:text-purple-200/70 mt-1">
-              TPS 60% (PU, PBM, PPU, PK) dan Literasi/PM 40% dari 9 Try Out berkala teruji terhadap target NAM.
+            <h3 className="font-black text-base text-[#0f172a] mb-1">SNBT Formula 60:40</h3>
+            <p className="text-xs font-bold text-gray-700 leading-relaxed">
+              Perhitungan 60% Tes Potensi Skolastik (PU, PBM, PPU, PK) + 40% Literasi &amp; Penalaran Mat dari 9 seri Try Out berkala.
             </p>
+            <div className="mt-4 pt-3 border-t-2 border-[#0f172a]/20 flex justify-between items-center text-[11px] font-black text-rose-900">
+              <span>9 Seri Try Out</span>
+              <span className="neo-badge px-2 py-0.5 bg-white text-[#0f172a]">Skor IRT</span>
+            </div>
           </div>
 
-          <div className="p-5 rounded-2xl bg-white dark:bg-[#160E2E] border border-amber-100 dark:border-amber-950/30 shadow-sm hover:shadow-md transition-all">
-            <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-300 flex items-center justify-center font-bold text-lg mb-3">
-              ⚡
+          {/* Card 3: Real-Time What-If */}
+          <div className="neo-card p-5 bg-amber-100 hover:rotate-[-1deg] transition-transform">
+            <div className="flex items-center justify-between mb-3">
+              <span className="neo-badge px-2.5 py-0.5 bg-amber-400 text-[#0f172a] text-[10px] font-black">
+                SIMULATOR
+              </span>
+              <span className="text-2xl">⚡</span>
             </div>
-            <h3 className="font-bold text-sm text-gray-900 dark:text-white">Analisa Real-Time</h3>
-            <p className="text-xs text-gray-600 dark:text-purple-200/70 mt-1">
-              Hasil peluang, radar subtes, rekomendasi semester berikutnya, dan grafik interaktif langsung terhitung.
+            <h3 className="font-black text-base text-[#0f172a] mb-1">Analisa Real-Time</h3>
+            <p className="text-xs font-bold text-gray-700 leading-relaxed">
+              Simulasikan skenario nilai rapor dan target try out secara langsung dengan indikator persentase kelulusan dinamis.
             </p>
+            <div className="mt-4 pt-3 border-t-2 border-[#0f172a]/20 flex justify-between items-center text-[11px] font-black text-amber-900">
+              <span>What-If Engine</span>
+              <span className="neo-badge px-2 py-0.5 bg-white text-[#0f172a]">Interaktif</span>
+            </div>
           </div>
 
-          <div className="p-5 rounded-2xl bg-white dark:bg-[#160E2E] border border-emerald-100 dark:border-emerald-950/30 shadow-sm hover:shadow-md transition-all">
-            <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-300 flex items-center justify-center font-bold text-lg mb-3">
-              💡
+          {/* Card 4: 3 Rekomendasi Cadangan */}
+          <div className="neo-card p-5 bg-emerald-100 hover:rotate-[1deg] transition-transform">
+            <div className="flex items-center justify-between mb-3">
+              <span className="neo-badge px-2.5 py-0.5 bg-emerald-500 text-white text-[10px] font-black">
+                CADANGAN AMAN
+              </span>
+              <span className="text-2xl">💡</span>
             </div>
-            <h3 className="font-bold text-sm text-gray-900 dark:text-white">3 Rekomendasi Alternatif</h3>
-            <p className="text-xs text-gray-600 dark:text-purple-200/70 mt-1">
-              Sistem menyaring prodi cadangan paling rasional dan aman dari seluruh database PTN Indonesia.
+            <h3 className="font-black text-base text-[#0f172a] mb-1">3 Alternatif Prodi</h3>
+            <p className="text-xs font-bold text-gray-700 leading-relaxed">
+              Rekomendasi prodi alternatif paling rasional dan berpeluang tinggi jika pilihan utama sangat ketat.
             </p>
+            <div className="mt-4 pt-3 border-t-2 border-[#0f172a]/20 flex justify-between items-center text-[11px] font-black text-emerald-900">
+              <span>Database Nasional</span>
+              <span className="neo-badge px-2 py-0.5 bg-white text-[#0f172a]">Smart Match</span>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* 8 Feature Cards */}
-      <section className="py-16 bg-white/60 dark:bg-[#120B27]/70 border-y border-purple-100 dark:border-purple-950/40">
+      {/* 4. FITUR LENGKAP NEO-BRUTALISM GRID */}
+      <section className="py-16 bg-white dark:bg-[#181133] border-y-3 border-[#0f172a]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white">
-              Fitur Lengkap untuk Sukses Masuk PTN
+            <div className="inline-flex items-center gap-1.5 neo-badge px-3 py-1 bg-cyan-200 text-[#0f172a] text-xs font-black mb-3">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>ARSITEKTUR FITUR MODERN</span>
+            </div>
+            <h2 className="text-2xl sm:text-4xl font-black text-[#0f172a] dark:text-white">
+              Fitur Lengkap untuk Pejuang PTN 2027
             </h2>
-            <p className="mt-2 text-sm text-gray-600 dark:text-purple-300">
-              Dirancang khusus untuk bimbingan belajar dan sekolah modern dengan standar seleksi nasional terkini.
+            <p className="mt-2 text-sm font-bold text-gray-600 dark:text-purple-300">
+              Dirancang dengan standar baku seleksi nasional SNPMB Kemendikbudristek untuk siswa SMA seluruh Indonesia.
             </p>
           </div>
 
@@ -182,64 +251,79 @@ export const LandingPage: React.FC<LandingPageProps> = ({ settings, onOpenLogin 
             {[
               {
                 icon: FileCheck,
-                color: 'text-purple-600 bg-purple-100 dark:bg-purple-900/40',
-                title: 'Input Rapor & TKA',
-                desc: 'Mendukung Kurikulum 2013 dan Kurikulum Merdeka (Saintek, Soshum, Bahasa, Campuran) serta IRT 200–800.',
+                color: 'bg-purple-200',
+                badge: 'K13 & MERDEKA',
+                title: 'Input Rapor & TKA IRT',
+                desc: 'Mendukung peminatan Saintek, Soshum, Bahasa, Campuran, serta konversi IRT 200–800 dengan GAP analysis.',
               },
               {
                 icon: TrendingUp,
-                color: 'text-red-600 bg-red-100 dark:bg-red-900/40',
-                title: 'Input 9 Try Out SNBT',
-                desc: 'Pratinjau otomatis 60:40 saat mengetik skor, grafik tren TO 1 s.d. 9, dan analisis ketercapaian per subtes.',
+                color: 'bg-rose-200',
+                badge: 'FORMULA 60:40',
+                title: '9 Seri Try Out UTBK',
+                desc: 'Pratinjau otomatis skor tertimbang 60:40 saat mengetik skor, grafik tren TO 1 s.d. 9, dan evaluasi subtes.',
               },
               {
                 icon: Compass,
-                color: 'text-blue-600 bg-blue-100 dark:bg-blue-900/40',
+                color: 'bg-cyan-200',
+                badge: '4 TIER KEKETATAN',
                 title: 'Pilihan PTN & Prodi',
-                desc: 'Maksimal 2 pilihan SNBP dengan validasi wilayah provinsi sekolah serta hingga 4 pilihan SNBT.',
+                desc: 'Maksimal 2 pilihan SNBP dengan validasi provinsi sekolah dan 4 pilihan prodi SNBT ber-NAM target.',
               },
               {
                 icon: Award,
-                color: 'text-emerald-600 bg-emerald-100 dark:bg-emerald-900/40',
+                color: 'bg-amber-200',
+                badge: 'POIN MAKS. 20',
                 title: 'Sertifikat & Prestasi',
-                desc: 'Katalog penilaian sertifikat terakreditasi untuk Olimpiade, Olahraga, Seni, dan Kepengurusan Organisasi.',
+                desc: 'Penilaian bobot sertifikat terakreditasi tingkat Kota, Provinsi, Nasional hingga Internasional.',
               },
               {
                 icon: BookOpen,
-                color: 'text-amber-600 bg-amber-100 dark:bg-amber-900/40',
-                title: 'Modul Belajar Aman',
-                desc: 'Viewer layar penuh berproteksi anti-inspeksi dan watermark, tersaring otomatis berdasarkan kelas dan program.',
+                color: 'bg-emerald-200',
+                badge: 'ANTI-INSPEKSI',
+                title: 'Modul Belajar Terproteksi',
+                desc: 'Viewer materi belajar dan ringkasan rumus dengan watermark nama siswa dan keamanan anti-unduh liar.',
               },
               {
                 icon: Users,
-                color: 'text-indigo-600 bg-indigo-100 dark:bg-indigo-900/40',
+                color: 'bg-indigo-200',
+                badge: 'AKSES KHUSUS',
                 title: 'Portal Orang Tua',
-                desc: 'Akses transparan bagi wali siswa untuk memantau kemajuan belajar anak dan mengunduh laporan perkembangan.',
-              },
-              {
-                icon: MessageCircle,
-                color: 'text-rose-600 bg-rose-100 dark:bg-rose-900/40',
-                title: 'Chat & Bantuan Admin',
-                desc: 'Konsultasi interaktif langsung antara siswa dan admin/konselor bimbingan belajar untuk pemilihan jurusan.',
+                desc: 'Pantau kemajuan akademik anak dan unduh lembar laporan resmi evaluasi peluang kelulusan.',
               },
               {
                 icon: ShieldCheck,
-                color: 'text-teal-600 bg-teal-100 dark:bg-teal-900/40',
-                title: 'Rangkuman Analisis Digital',
-                desc: 'Dashboard analisis komprehensif real-time dengan rekomendasi strategi taktis untuk siswa, orang tua, dan sekolah.',
+                color: 'bg-teal-200',
+                badge: 'REALTIME CLOUD',
+                title: 'Database Terkoneksi',
+                desc: 'Semua hasil tersimpan dan tersinkronisasi otomatis ke cloud backend aman tanpa hilang saat ganti perangkat.',
+              },
+              {
+                icon: Zap,
+                color: 'bg-pink-200',
+                badge: '4 PAKET MASA AKTIF',
+                title: 'Pilihan Masa Akses',
+                desc: 'Mendukung paket 1 Hari, 1 Bulan, 6 Bulan, dan 1 Tahun dengan sistem kedaluwarsa otomatis.',
               },
             ].map((f, i) => {
               const Icon = f.icon;
               return (
                 <div
                   key={i}
-                  className="p-5 rounded-2xl bg-white dark:bg-[#160E2E] border border-purple-100 dark:border-purple-950/40 shadow-sm hover:border-purple-300 transition-all"
+                  className="neo-card p-5 bg-white dark:bg-[#1e1540] hover:-translate-y-1 transition-transform flex flex-col justify-between"
                 >
-                  <div className={`w-10 h-10 rounded-xl ${f.color} flex items-center justify-center mb-3`}>
-                    <Icon className="w-5 h-5" />
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className={`w-10 h-10 rounded-xl ${f.color} border-2 border-[#0f172a] shadow-[2px_2px_0px_#0f172a] flex items-center justify-center text-[#0f172a]`}>
+                        <Icon className="w-5 h-5" />
+                      </div>
+                      <span className="neo-badge px-2 py-0.5 bg-white dark:bg-[#160E2E] text-[#0f172a] dark:text-purple-200 text-[9px] font-black">
+                        {f.badge}
+                      </span>
+                    </div>
+                    <h3 className="font-black text-sm text-[#0f172a] dark:text-white mb-1.5">{f.title}</h3>
+                    <p className="text-xs font-semibold text-gray-600 dark:text-purple-300 leading-relaxed">{f.desc}</p>
                   </div>
-                  <h3 className="font-bold text-sm text-gray-900 dark:text-white mb-1">{f.title}</h3>
-                  <p className="text-xs text-gray-600 dark:text-purple-300/80 leading-relaxed">{f.desc}</p>
                 </div>
               );
             })}
@@ -247,194 +331,168 @@ export const LandingPage: React.FC<LandingPageProps> = ({ settings, onOpenLogin 
         </div>
       </section>
 
-      {/* 4 Cara Kerja */}
+      {/* 5. TIGA PERAN PENGGUNA TERINTEGRASI */}
       <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white">
-            4 Langkah Menuju PTN Impian
+          <div className="inline-flex items-center gap-1.5 neo-badge px-3 py-1 bg-amber-300 text-[#0f172a] text-xs font-black mb-3">
+            <Users className="w-3.5 h-3.5" />
+            <span>SINERGI 3 AKTOR</span>
+          </div>
+          <h2 className="text-2xl sm:text-4xl font-black text-[#0f172a] dark:text-white">
+            Tiga Portal Pengguna Terintegrasi
           </h2>
-          <p className="mt-2 text-sm text-gray-600 dark:text-purple-300">
-            Alur analisa yang sistematis, objektif, dan terbukti membantu ribuan alumni lolos.
+          <p className="mt-2 text-sm font-bold text-gray-600 dark:text-purple-300">
+            Kolaborasi aktif antara siswa pejuang PTN, orang tua pendamping, dan pengelola bimbel/sekolah.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
-          {[
-            { step: '01', title: 'Daftar Akun', desc: 'Isi data diri dan pilih program SNBP, SNBT, atau keduanya.' },
-            { step: '02', title: 'Input Nilai', desc: 'Masukkan nilai rapor semester 1–5, nilai TKA, atau hasil Try Out berkala.' },
-            { step: '03', title: 'Pilih Prodi PTN', desc: 'Cari universitas dan jurusan incaran dengan filter ketetatan & NRM/NAM.' },
-            { step: '04', title: 'Lihat Rasionalisasi', desc: 'Dapatkan persentase peluang, grafik radar, evaluasi subtes, dan laporan A4.' },
-          ].map((item, idx) => (
-            <div
-              key={idx}
-              className="p-6 rounded-2xl bg-white dark:bg-[#160E2E] border border-purple-100 dark:border-purple-950/40 text-center relative"
-            >
-              <div className="w-12 h-12 rounded-2xl bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 font-black text-lg mx-auto flex items-center justify-center mb-4">
-                {item.step}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Role Siswa */}
+          <div className="neo-card p-6 bg-purple-100 flex flex-col justify-between">
+            <div>
+              <div className="w-14 h-14 rounded-2xl bg-purple-600 text-white border-3 border-[#0f172a] shadow-[3px_3px_0px_#0f172a] flex items-center justify-center text-3xl mb-4">
+                👧🏻
               </div>
-              <h3 className="font-bold text-base text-gray-900 dark:text-white mb-2">{item.title}</h3>
-              <p className="text-xs text-gray-600 dark:text-purple-200/70">{item.desc}</p>
+              <span className="neo-badge px-2.5 py-0.5 bg-purple-600 text-white text-[10px] font-black mb-2">
+                PORTAL SISWA
+              </span>
+              <h3 className="font-black text-xl text-[#0f172a] mt-1">Siswa Pejuang PTN</h3>
+              <p className="text-xs font-bold text-gray-700 mt-2 leading-relaxed">
+                Mengisi nilai rapor, skor TKA, latihan try out berkala, eksplorasi prodi, membaca modul belajar, dan cek kelayakan secara instan.
+              </p>
             </div>
-          ))}
+            <button
+              onClick={() => onOpenLogin('siswa')}
+              className="mt-6 neo-btn w-full py-2.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-black shadow-[3px_3px_0px_#0f172a]"
+            >
+              Masuk Portal Siswa &rarr;
+            </button>
+          </div>
+
+          {/* Role Orang Tua */}
+          <div className="neo-card p-6 bg-emerald-100 flex flex-col justify-between">
+            <div>
+              <div className="w-14 h-14 rounded-2xl bg-emerald-500 text-white border-3 border-[#0f172a] shadow-[3px_3px_0px_#0f172a] flex items-center justify-center text-3xl mb-4">
+                👨‍👩‍👧
+              </div>
+              <span className="neo-badge px-2.5 py-0.5 bg-emerald-600 text-white text-[10px] font-black mb-2">
+                PORTAL ORANG TUA
+              </span>
+              <h3 className="font-black text-xl text-[#0f172a] mt-1">Orang Tua Pendamping</h3>
+              <p className="text-xs font-bold text-gray-700 mt-2 leading-relaxed">
+                Akses aman dan transparan untuk memantau progres belajar anak, rasionalisasi prodi pilihan, dan konsultasi arah masa depan.
+              </p>
+            </div>
+            <button
+              onClick={() => onOpenLogin('ortu')}
+              className="mt-6 neo-btn w-full py-2.5 bg-emerald-400 hover:bg-emerald-500 text-[#0f172a] text-xs font-black shadow-[3px_3px_0px_#0f172a]"
+            >
+              Masuk Portal Ortu &rarr;
+            </button>
+          </div>
+
+          {/* Role Admin */}
+          <div className="neo-card p-6 bg-amber-100 flex flex-col justify-between">
+            <div>
+              <div className="w-14 h-14 rounded-2xl bg-amber-400 text-[#0f172a] border-3 border-[#0f172a] shadow-[3px_3px_0px_#0f172a] flex items-center justify-center text-3xl mb-4">
+                🛡️
+              </div>
+              <span className="neo-badge px-2.5 py-0.5 bg-[#0f172a] text-amber-300 text-[10px] font-black mb-2">
+                PORTAL PENGELOLA
+              </span>
+              <h3 className="font-black text-xl text-[#0f172a] mt-1">Admin Bimbingan Belajar</h3>
+              <p className="text-xs font-bold text-gray-700 mt-2 leading-relaxed">
+                Verifikasi pendaftaran siswa, kelola token registrasi, atur masa akses, upload modul belajar, dan pantau log aktivitas.
+              </p>
+            </div>
+            <button
+              onClick={() => onOpenLogin('admin')}
+              className="mt-6 neo-btn w-full py-2.5 bg-amber-300 hover:bg-amber-400 text-[#0f172a] text-xs font-black shadow-[3px_3px_0px_#0f172a]"
+            >
+              Konsol Admin &rarr;
+            </button>
+          </div>
         </div>
       </section>
 
-      {/* 3 Peran Pengguna */}
-      <section className="py-16 bg-purple-50/50 dark:bg-[#140D2D]/60 border-y border-purple-100 dark:border-purple-950/40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-10">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white">
-              Tiga Peran Pengguna Terintegrasi
+      {/* 6. FAQ NEO-BRUTALISM ACCORDION */}
+      <section className="py-16 bg-white dark:bg-[#181133] border-t-3 border-[#0f172a]">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center gap-1.5 neo-badge px-3 py-1 bg-pink-200 text-[#0f172a] text-xs font-black mb-2">
+              <span>❓ TANYA JAWAB</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-black text-[#0f172a] dark:text-white">
+              Pertanyaan yang Sering Diajukan
             </h2>
-            <p className="mt-2 text-sm text-gray-600 dark:text-purple-300">
-              Sinergi antara siswa, orang tua, dan bimbingan belajar/sekolah.
-            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-6 rounded-2xl bg-white dark:bg-[#160E2E] border border-purple-200 dark:border-purple-900 shadow-sm">
-              <span className="text-3xl mb-3 block">👨‍🎓</span>
-              <h3 className="font-bold text-lg text-gray-900 dark:text-white">Siswa</h3>
-              <p className="text-xs text-gray-600 dark:text-purple-200/80 mt-2">
-                Mengisi nilai mandiri, melihat grafik capaian, membandingkan jurusan, membaca modul terproteksi, serta konsultasi via chat admin.
-              </p>
-              <button
-                onClick={() => onOpenLogin('siswa')}
-                className="mt-4 text-xs font-bold text-purple-700 dark:text-purple-400 hover:underline flex items-center gap-1"
-              >
-                <span>Masuk sebagai Siswa</span> &rarr;
-              </button>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-white dark:bg-[#160E2E] border border-purple-200 dark:border-purple-900 shadow-sm">
-              <span className="text-3xl mb-3 block">👨‍👩‍👧</span>
-              <h3 className="font-bold text-lg text-gray-900 dark:text-white">Orang Tua</h3>
-              <p className="text-xs text-gray-600 dark:text-purple-200/80 mt-2">
-                Memantau rasionalisasi peluang dan tren grafik Try Out anak secara transparan tanpa khawatir data tertukar.
-              </p>
-              <button
-                onClick={() => onOpenLogin('ortu')}
-                className="mt-4 text-xs font-bold text-purple-700 dark:text-purple-400 hover:underline flex items-center gap-1"
-              >
-                <span>Portal Orang Tua</span> &rarr;
-              </button>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-white dark:bg-[#160E2E] border border-purple-200 dark:border-purple-900 shadow-sm">
-              <span className="text-3xl mb-3 block">🔐</span>
-              <h3 className="font-bold text-lg text-gray-900 dark:text-white">Admin Sekolah / Bimbel</h3>
-              <p className="text-xs text-gray-600 dark:text-purple-200/80 mt-2">
-                Verifikasi pendaftaran, generate token instan, manajemen modul, dan log aktivitas sistem.
-              </p>
-              <button
-                onClick={() => onOpenLogin('admin')}
-                className="mt-4 text-xs font-bold text-purple-700 dark:text-purple-400 hover:underline flex items-center gap-1"
-              >
-                <span>Dashboard Admin</span> &rarr;
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Accordion */}
-      <section className="py-16 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-10">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white">
-            Pertanyaan yang Sering Diajukan (FAQ)
-          </h2>
-          <p className="mt-2 text-sm text-gray-600 dark:text-purple-300">
-            Ketahui lebih banyak mengenai fitur dan mekanisme kalkulasi AnalisaKu 2027.
-          </p>
-        </div>
-
-        <div className="space-y-3">
-          {faqs.map((faq, idx) => (
-            <div
-              key={idx}
-              className="rounded-2xl bg-white dark:bg-[#160E2E] border border-purple-100 dark:border-purple-950/40 overflow-hidden"
-            >
-              <button
-                onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                className="w-full px-5 py-4 text-left flex justify-between items-center gap-3 font-bold text-sm text-gray-900 dark:text-white hover:bg-purple-50/50 dark:hover:bg-purple-950/20"
-              >
-                <span>{faq.q}</span>
-                <ChevronDown
-                  className={`w-4 h-4 text-purple-600 transition-transform duration-200 ${
-                    openFaq === idx ? 'rotate-180' : ''
-                  }`}
-                />
-              </button>
-              {openFaq === idx && (
-                <div className="px-5 pb-4 text-xs text-gray-600 dark:text-purple-200/80 leading-relaxed border-t border-purple-50 dark:border-purple-950/20 pt-3">
-                  {faq.a}
+          <div className="space-y-3.5">
+            {faqs.map((faq, idx) => {
+              const isOpen = openFaq === idx;
+              return (
+                <div
+                  key={idx}
+                  className="neo-card bg-[#faf5ff] dark:bg-[#1f1540] overflow-hidden"
+                >
+                  <button
+                    onClick={() => setOpenFaq(isOpen ? null : idx)}
+                    className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 font-black text-xs sm:text-sm text-[#0f172a] dark:text-white"
+                  >
+                    <span>{faq.q}</span>
+                    <ChevronDown
+                      className={`w-5 h-5 shrink-0 transition-transform ${
+                        isOpen ? 'rotate-180 text-purple-600' : 'text-gray-500'
+                      }`}
+                    />
+                  </button>
+                  {isOpen && (
+                    <div className="px-4 pb-4 sm:px-5 sm:pb-5 text-xs font-semibold text-gray-700 dark:text-purple-200 leading-relaxed border-t-2 border-[#0f172a]/10 pt-3">
+                      {faq.a}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Banner CTA */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="rounded-3xl bg-gradient-to-r from-[#7C3AED] via-purple-700 to-[#F59E0B] p-8 sm:p-12 text-white text-center shadow-xl shadow-purple-600/20 relative overflow-hidden">
-          <div className="relative z-10 max-w-2xl mx-auto">
-            <h2 className="text-2xl sm:text-4xl font-extrabold">Siap Memaksimalkan Peluang Lolos PTN?</h2>
-            <p className="mt-3 text-purple-100 text-xs sm:text-sm">
-              Jangan biarkan pemilihan jurusan dilakukan dengan spekulasi. Analisa data Anda sekarang juga.
-            </p>
-            <div className="mt-6 flex flex-wrap justify-center gap-3">
-              <button
-                onClick={() => onOpenLogin('siswa')}
-                className="px-6 py-3 rounded-xl bg-white text-purple-800 font-bold text-xs sm:text-sm hover:bg-purple-50 transition-all shadow-md"
-              >
-                Masuk Sekarang
-              </button>
-              <a
-                href={`https://wa.me/${settings.WA_ADMIN}?text=Halo%20Admin%20AnalisaKu%202027,%20saya%20ingin%20berkonsultasi.`}
-                target="_blank"
-                rel="noreferrer"
-                className="px-6 py-3 rounded-xl bg-purple-900/60 hover:bg-purple-900 text-white font-bold text-xs sm:text-sm border border-white/20 transition-all flex items-center gap-2"
-              >
-                <MessageCircle className="w-4 h-4" />
-                <span>Konsultasi WhatsApp</span>
-              </a>
-            </div>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-white dark:bg-[#120B27] border-t border-purple-100 dark:border-purple-950/40 py-10 px-4 sm:px-6 lg:px-8 text-xs text-gray-500 dark:text-purple-300/60">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
-          <div>
-            <div className="font-bold text-gray-800 dark:text-purple-100 text-sm">
-              AnalisaKu 2027 by {settings.NAMA_LEMBAGA} © 2027
-            </div>
-            <div className="mt-1">@Copyright Pak Guru AI 2026</div>
+      {/* 7. FOOTER */}
+      <footer className="bg-purple-200 dark:bg-[#0c0819] border-t-3 border-[#0f172a] py-10 text-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+          <div className="flex items-center justify-center gap-2">
+            <span className="text-2xl">🎓</span>
+            <span className="text-lg font-black text-[#0f172a] dark:text-white">
+              AnalisaKu 2027 • High School Edition
+            </span>
           </div>
-          <div className="flex flex-wrap items-center justify-center gap-4">
-            <button onClick={() => onOpenLogin('siswa')} className="hover:text-purple-700 dark:hover:text-purple-300">
-              Siswa
-            </button>
-            <button onClick={() => onOpenLogin('ortu')} className="hover:text-purple-700 dark:hover:text-purple-300">
-              Orang Tua
-            </button>
-            <button onClick={() => onOpenLogin('daftar')} className="hover:text-purple-700 dark:hover:text-purple-300">
-              Daftar Baru
-            </button>
-            <button onClick={() => onOpenLogin('admin')} className="hover:text-purple-700 dark:hover:text-purple-300">
-              Admin
-            </button>
-            <a
-              href={`https://wa.me/${settings.WA_ADMIN}?text=Halo%20Admin%20AnalisaKu%202027,%20saya%20butuh%20bantuan.`}
-              target="_blank"
-              rel="noreferrer"
-              className="text-purple-600 dark:text-purple-400 font-semibold hover:underline"
+          <p className="text-xs font-bold text-gray-700 dark:text-purple-300 max-w-md mx-auto">
+            Sistem Rasionalisasi Peluang SNBP &amp; SNBT Terlengkap • Dikelola oleh {settings.NAMA_LEMBAGA}
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+            <button
+              onClick={() => onOpenLogin('siswa')}
+              className="neo-badge px-3 py-1 bg-white text-[#0f172a] text-xs font-bold hover:bg-amber-200"
             >
-              Hubungi Admin via WhatsApp
-            </a>
+              Login Siswa
+            </button>
+            <button
+              onClick={() => onOpenLogin('ortu')}
+              className="neo-badge px-3 py-1 bg-white text-[#0f172a] text-xs font-bold hover:bg-emerald-200"
+            >
+              Portal Orang Tua
+            </button>
+            <button
+              onClick={() => onOpenLogin('admin')}
+              className="neo-badge px-3 py-1 bg-white text-[#0f172a] text-xs font-bold hover:bg-cyan-200"
+            >
+              Akses Admin
+            </button>
           </div>
+          <p className="text-[11px] font-bold text-gray-500 dark:text-purple-400 pt-4">
+            © 2027 AnalisaKu. Hak Cipta Dilindungi Undang-Undang.
+          </p>
         </div>
       </footer>
     </div>

@@ -162,32 +162,31 @@ export const SNBTTryOut: React.FC<SNBTTryOutProps> = ({ siswa, onRefreshData }) 
 
   return (
     <div className="space-y-6">
-      {/* Header Card with Real-Time Live Preview Banner */}
-      <div className="bg-white dark:bg-[#160E2E] p-5 sm:p-6 rounded-3xl border border-purple-100 dark:border-purple-950/40 flex flex-col lg:flex-row lg:items-center justify-between gap-5 shadow-sm">
+      {/* Header Card with Real-Time Live Preview Banner Neo-Brutalism */}
+      <div className="neo-card p-5 sm:p-6 bg-white dark:bg-[#181133] flex flex-col lg:flex-row lg:items-center justify-between gap-5">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-100 dark:bg-red-950/60 text-red-800 dark:text-red-200 text-xs font-bold mb-2">
-            <Zap className="w-3.5 h-3.5 text-red-600 fill-red-600 animate-pulse" />
-            <span>Kalkulator Rasionalisasi UTBK-SNBT (Bobot 60 : 40)</span>
+          <div className="inline-flex items-center gap-1.5 neo-badge px-3 py-1 bg-rose-200 text-[#0f172a] text-xs font-black mb-2">
+            <Zap className="w-3.5 h-3.5 text-rose-700 fill-rose-700 animate-pulse" />
+            <span>FORMULA RESMI SNBT 60 : 40</span>
           </div>
-          <h2 className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white flex items-center gap-2">
-            <TrendingUp className="w-6 h-6 text-red-600" />
+          <h2 className="text-xl sm:text-2xl font-black text-[#0f172a] dark:text-white flex items-center gap-2">
+            <TrendingUp className="w-6 h-6 text-rose-600" />
             <span>Input Nilai Try Out UTBK</span>
           </h2>
-          <p className="text-xs text-gray-500 dark:text-purple-300 mt-1 max-w-xl">
+          <p className="text-xs font-bold text-gray-700 dark:text-purple-300 mt-1 max-w-xl">
             Ketik perolehan nilai Try Out 1 s.d. 9 (skala 0–800). Skor tertimbang dihitung secara real-time pada setiap ketikan berdasarkan bobot resmi TPS 60% &amp; Literasi/PM 40%.
           </p>
         </div>
 
-        {/* PRATINJAU SKOR TERTIMBANG UPDATE REAL-TIME */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-red-600 via-rose-600 to-purple-700 text-white shadow-xl shadow-red-600/25 min-w-[280px]">
-          <div className="flex items-center justify-between gap-2 border-b border-white/20 pb-2 mb-2">
-            <div className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-red-100">
+        {/* PRATINJAU SKOR TERTIMBANG UPDATE REAL-TIME NEO-BRUTALISM */}
+        <div className="neo-card-sm p-4 sm:p-5 bg-rose-500 text-white shadow-[4px_4px_0px_#0f172a] min-w-[280px]">
+          <div className="flex items-center justify-between gap-2 border-b-2 border-white/30 pb-2 mb-2">
+            <div className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-rose-100">
               <Calculator className="w-4 h-4" />
               <span>Pratinjau Skor Tertimbang</span>
             </div>
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-black bg-white/20 text-white backdrop-blur-sm animate-pulse">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-              <span>Live Update</span>
+            <span className="neo-badge px-2 py-0.5 text-[9px] font-black bg-amber-300 text-[#0f172a]">
+              ⚡ Live Update
             </span>
           </div>
 
@@ -195,23 +194,23 @@ export const SNBTTryOut: React.FC<SNBTTryOutProps> = ({ siswa, onRefreshData }) 
             <div className="text-3xl sm:text-4xl font-black font-mono leading-none tracking-tight">
               {liveCalc.skor_tertimbang > 0 ? liveCalc.skor_tertimbang.toFixed(2) : '0.00'}
             </div>
-            <div className="text-xs font-bold text-red-200">
+            <div className="text-xs font-black text-rose-200">
               / 800
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 mt-3 pt-2 border-t border-white/15 text-[10px]">
-            <div className="p-1.5 rounded-lg bg-black/20">
-              <span className="text-red-200 block">TPS (60%):</span>
-              <span className="font-mono font-bold text-xs">{liveCalc.skor_tps.toFixed(1)}</span>
+          <div className="grid grid-cols-2 gap-2 mt-3 pt-2 border-t-2 border-white/20 text-[10px]">
+            <div className="p-2 rounded-xl bg-black/20 border border-white/20">
+              <span className="text-rose-200 block font-bold">TPS (60%):</span>
+              <span className="font-mono font-black text-xs">{liveCalc.skor_tps.toFixed(1)}</span>
             </div>
-            <div className="p-1.5 rounded-lg bg-black/20">
-              <span className="text-red-200 block">Literasi (40%):</span>
-              <span className="font-mono font-bold text-xs">{liveCalc.skor_literasi.toFixed(1)}</span>
+            <div className="p-2 rounded-xl bg-black/20 border border-white/20">
+              <span className="text-rose-200 block font-bold">Literasi (40%):</span>
+              <span className="font-mono font-black text-xs">{liveCalc.skor_literasi.toFixed(1)}</span>
             </div>
           </div>
 
-          <div className="text-[10px] text-red-200/90 mt-2 text-right font-medium">
+          <div className="text-[10px] text-rose-200 mt-2 text-right font-black">
             Terisi: <strong>{liveCalc.subtesTerisiCount} dari 7</strong> subtes UTBK
           </div>
         </div>
@@ -219,28 +218,28 @@ export const SNBTTryOut: React.FC<SNBTTryOutProps> = ({ siswa, onRefreshData }) 
 
       {feedback && (
         <div
-          className={`p-4 rounded-2xl text-xs font-bold flex items-center gap-2 ${
+          className={`p-4 rounded-2xl border-3 border-[#0f172a] shadow-[3px_3px_0px_#0f172a] text-xs font-black flex items-center gap-2 ${
             feedback.type === 'success'
-              ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200'
-              : 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200'
+              ? 'bg-emerald-200 text-[#0f172a]'
+              : 'bg-rose-200 text-[#0f172a]'
           }`}
         >
-          {feedback.type === 'success' ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+          {feedback.type === 'success' ? <CheckCircle2 className="w-4 h-4 text-emerald-800" /> : <AlertCircle className="w-4 h-4 text-rose-800" />}
           <span>{feedback.message}</span>
         </div>
       )}
 
-      {/* Input Form Card */}
-      <form onSubmit={handleSave} className="bg-white dark:bg-[#160E2E] rounded-3xl border border-purple-100 dark:border-purple-950/40 p-6 space-y-6 shadow-sm">
-        <div className="flex flex-wrap items-center gap-4 border-b border-purple-50 dark:border-purple-950/40 pb-4">
+      {/* Input Form Card Neo-Brutalism */}
+      <form onSubmit={handleSave} className="neo-card p-6 bg-white dark:bg-[#181133] space-y-6">
+        <div className="flex flex-wrap items-center gap-4 border-b-2 border-[#0f172a]/20 pb-4">
           <div>
-            <label className="block text-xs font-bold text-gray-700 dark:text-purple-200 mb-1">
+            <label className="block text-xs font-black text-[#0f172a] dark:text-purple-200 mb-1">
               Pilih Try Out Ke-
             </label>
             <select
               value={selectedTOKe}
               onChange={(e) => handleSelectTO(parseInt(e.target.value))}
-              className="px-4 py-2.5 text-xs rounded-xl border border-gray-200 dark:border-purple-900 bg-gray-50 dark:bg-[#1E1540] text-gray-900 dark:text-white font-bold"
+              className="px-4 py-2.5 text-xs neo-select"
             >
               {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
                 <option key={num} value={num}>
@@ -251,13 +250,13 @@ export const SNBTTryOut: React.FC<SNBTTryOutProps> = ({ siswa, onRefreshData }) 
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-gray-700 dark:text-purple-200 mb-1">
+            <label className="block text-xs font-black text-[#0f172a] dark:text-purple-200 mb-1">
               Bulan Pelaksanaan
             </label>
             <select
               value={selectedBulan}
               onChange={(e) => setSelectedBulan(e.target.value)}
-              className="px-4 py-2.5 text-xs rounded-xl border border-gray-200 dark:border-purple-900 bg-gray-50 dark:bg-[#1E1540] text-gray-900 dark:text-white font-bold"
+              className="px-4 py-2.5 text-xs neo-select"
             >
               {BULAN_TO.map((b) => (
                 <option key={b} value={b}>
@@ -268,20 +267,20 @@ export const SNBTTryOut: React.FC<SNBTTryOutProps> = ({ siswa, onRefreshData }) 
           </div>
 
           <div className="self-end ml-auto flex items-center gap-2">
-            <span className="text-[11px] text-gray-500 hidden sm:inline">
+            <span className="neo-badge px-3 py-1 bg-amber-300 text-[#0f172a] text-xs font-black hidden sm:inline">
               Mengedit Try Out ke-{selectedTOKe} ({selectedBulan})
             </span>
           </div>
         </div>
 
-        {/* GRUP 1: TPS 60% (Ungu) */}
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-extrabold text-xs text-purple-700 dark:text-purple-300 uppercase tracking-wider flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-purple-600" />
+        {/* GRUP 1: TPS 60% */}
+        <div className="neo-card p-5 bg-purple-100 dark:bg-[#1E1540] space-y-3">
+          <div className="flex items-center justify-between pb-2 border-b-2 border-[#0f172a]/20">
+            <h3 className="font-black text-xs text-[#0f172a] dark:text-purple-200 uppercase tracking-wider flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full bg-purple-600 border border-[#0f172a]" />
               <span>Tes Potensi Skolastik (TPS) — Total Bobot 60%</span>
             </h3>
-            <span className="text-[10px] text-gray-400">PU, PBM, PPU, PK (@15% bobot)</span>
+            <span className="text-[10px] font-bold text-gray-600 dark:text-purple-300">PU, PBM, PPU, PK (@15% bobot)</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -311,8 +310,8 @@ export const SNBTTryOut: React.FC<SNBTTryOutProps> = ({ siswa, onRefreshData }) 
                 placeholder: '0 - 800',
               },
             ].map((sub, i) => (
-              <div key={i} className="p-3.5 rounded-2xl bg-purple-50/50 dark:bg-purple-950/30 border border-purple-100 dark:border-purple-900/40">
-                <label className="block text-xs font-bold text-gray-800 dark:text-purple-200 mb-1.5 truncate">
+              <div key={i} className="neo-card-sm p-3.5 bg-white dark:bg-[#181133] space-y-1.5 shadow-[2px_2px_0px_#0f172a]">
+                <label className="block text-xs font-black text-[#0f172a] dark:text-purple-200 truncate">
                   {sub.label}
                 </label>
                 <input
@@ -323,21 +322,21 @@ export const SNBTTryOut: React.FC<SNBTTryOutProps> = ({ siswa, onRefreshData }) 
                   value={sub.val}
                   onChange={(e) => sub.set(e.target.value === '' ? '' : parseFloat(e.target.value))}
                   placeholder={sub.placeholder}
-                  className="w-full px-3 py-2 text-sm rounded-xl border border-gray-200 dark:border-purple-900 bg-white dark:bg-[#1E1540] text-gray-900 dark:text-white font-mono font-bold focus:ring-2 focus:ring-purple-600"
+                  className="w-full px-3 py-2 text-sm neo-input font-mono font-bold"
                 />
               </div>
             ))}
           </div>
         </div>
 
-        {/* GRUP 2: LITERASI & PM 40% (Merah) */}
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-extrabold text-xs text-red-600 dark:text-red-400 uppercase tracking-wider flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-red-600" />
+        {/* GRUP 2: LITERASI & PM 40% */}
+        <div className="neo-card p-5 bg-rose-100 dark:bg-[#1E1540] space-y-3">
+          <div className="flex items-center justify-between pb-2 border-b-2 border-[#0f172a]/20">
+            <h3 className="font-black text-xs text-[#0f172a] dark:text-rose-200 uppercase tracking-wider flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full bg-rose-600 border border-[#0f172a]" />
               <span>Literasi &amp; Penalaran Matematika — Total Bobot 40%</span>
             </h3>
-            <span className="text-[10px] text-gray-400">LBI (13.33%), LBE (13.33%), PM (13.34%)</span>
+            <span className="text-[10px] font-bold text-gray-600 dark:text-rose-300">LBI (13.33%), LBE (13.33%), PM (13.34%)</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -361,8 +360,8 @@ export const SNBTTryOut: React.FC<SNBTTryOutProps> = ({ siswa, onRefreshData }) 
                 placeholder: '0 - 800',
               },
             ].map((sub, i) => (
-              <div key={i} className="p-3.5 rounded-2xl bg-red-50/40 dark:bg-red-950/20 border border-red-100 dark:border-red-950/40">
-                <label className="block text-xs font-bold text-gray-800 dark:text-red-200 mb-1.5 truncate">
+              <div key={i} className="neo-card-sm p-3.5 bg-white dark:bg-[#181133] space-y-1.5 shadow-[2px_2px_0px_#0f172a]">
+                <label className="block text-xs font-black text-[#0f172a] dark:text-purple-200 truncate">
                   {sub.label}
                 </label>
                 <input
@@ -373,7 +372,7 @@ export const SNBTTryOut: React.FC<SNBTTryOutProps> = ({ siswa, onRefreshData }) 
                   value={sub.val}
                   onChange={(e) => sub.set(e.target.value === '' ? '' : parseFloat(e.target.value))}
                   placeholder={sub.placeholder}
-                  className="w-full px-3 py-2 text-sm rounded-xl border border-gray-200 dark:border-red-950/60 bg-white dark:bg-[#1E1540] text-gray-900 dark:text-white font-mono font-bold focus:ring-2 focus:ring-red-600"
+                  className="w-full px-3 py-2 text-sm neo-input font-mono font-bold"
                 />
               </div>
             ))}
@@ -384,69 +383,71 @@ export const SNBTTryOut: React.FC<SNBTTryOutProps> = ({ siswa, onRefreshData }) 
           <button
             type="submit"
             disabled={saving}
-            className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-gradient-to-r from-red-600 via-rose-600 to-purple-700 hover:from-red-700 hover:to-purple-800 text-white font-extrabold text-sm shadow-xl shadow-red-600/30 transition-all flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-8 py-3.5 neo-btn bg-rose-500 hover:bg-rose-600 text-white font-black text-sm shadow-[3px_3px_0px_#0f172a] flex items-center justify-center gap-2"
           >
             <Save className="w-4 h-4" />
-            <span>{saving ? 'Menyimpan...' : `Simpan Skor Try Out Ke-${selectedTOKe}`}</span>
+            <span>{saving ? 'Menyimpan...' : `💾 Simpan Skor Try Out Ke-${selectedTOKe}`}</span>
           </button>
         </div>
       </form>
 
-      {/* History Riwayat Try Out */}
-      <div className="bg-white dark:bg-[#160E2E] rounded-3xl border border-purple-100 dark:border-purple-950/40 p-6 space-y-4 shadow-sm">
-        <div className="flex items-center justify-between border-b border-purple-50 dark:border-purple-950/40 pb-3">
-          <h3 className="font-extrabold text-sm text-gray-900 dark:text-white flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-purple-600" />
+      {/* History Riwayat Try Out Neo-Brutalism */}
+      <div className="neo-card p-0 overflow-hidden bg-white dark:bg-[#181133]">
+        <div className="p-4 bg-purple-200 dark:bg-purple-950/60 border-b-2.5 border-[#0f172a] flex items-center justify-between">
+          <h3 className="font-black text-sm text-[#0f172a] dark:text-white flex items-center gap-2">
+            <TrendingUp className="w-4 h-4 text-purple-700" />
             <span>Riwayat Seluruh Try Out ({toList.length} dari 9 Tersimpan)</span>
           </h3>
-          <span className="text-[10px] text-gray-400">Klik 'Edit' untuk memuat skor ke form</span>
+          <span className="neo-badge px-2.5 py-0.5 bg-white text-[#0f172a] text-[10px] font-black">
+            Klik 'Edit' untuk memuat skor
+          </span>
         </div>
 
         {toList.length > 0 ? (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-purple-50 dark:bg-purple-950/50 text-gray-700 dark:text-purple-200 font-bold">
+            <table className="w-full text-left text-xs font-bold">
+              <thead className="bg-purple-600 text-white font-black border-b-2 border-[#0f172a]">
                 <tr>
-                  <th className="py-2.5 px-3">TO</th>
-                  <th className="py-2.5 px-2">Bulan</th>
-                  <th className="py-2.5 px-2 text-center">PU</th>
-                  <th className="py-2.5 px-2 text-center">PBM</th>
-                  <th className="py-2.5 px-2 text-center">PPU</th>
-                  <th className="py-2.5 px-2 text-center">PK</th>
-                  <th className="py-2.5 px-2 text-center">LBI</th>
-                  <th className="py-2.5 px-2 text-center">LBE</th>
-                  <th className="py-2.5 px-2 text-center">PM</th>
-                  <th className="py-2.5 px-3 text-center">TPS (60%)</th>
-                  <th className="py-2.5 px-3 text-center">Lit (40%)</th>
-                  <th className="py-2.5 px-3 text-center">Skor Tertimbang</th>
+                  <th className="py-2.5 px-3 border-r-2 border-[#0f172a]">TO</th>
+                  <th className="py-2.5 px-2 border-r-2 border-[#0f172a]">Bulan</th>
+                  <th className="py-2.5 px-2 text-center border-r-2 border-[#0f172a]">PU</th>
+                  <th className="py-2.5 px-2 text-center border-r-2 border-[#0f172a]">PBM</th>
+                  <th className="py-2.5 px-2 text-center border-r-2 border-[#0f172a]">PPU</th>
+                  <th className="py-2.5 px-2 text-center border-r-2 border-[#0f172a]">PK</th>
+                  <th className="py-2.5 px-2 text-center border-r-2 border-[#0f172a]">LBI</th>
+                  <th className="py-2.5 px-2 text-center border-r-2 border-[#0f172a]">LBE</th>
+                  <th className="py-2.5 px-2 text-center border-r-2 border-[#0f172a]">PM</th>
+                  <th className="py-2.5 px-3 text-center border-r-2 border-[#0f172a]">TPS (60%)</th>
+                  <th className="py-2.5 px-3 text-center border-r-2 border-[#0f172a]">Lit (40%)</th>
+                  <th className="py-2.5 px-3 text-center border-r-2 border-[#0f172a]">Skor Tertimbang</th>
                   <th className="py-2.5 px-2 text-center">Aksi</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-purple-50 dark:divide-purple-950/30 font-mono">
+              <tbody className="divide-y-2 divide-[#0f172a]/15 font-mono">
                 {toList.map((t) => (
-                  <tr key={t.to_ke} className="hover:bg-purple-50/40 dark:hover:bg-purple-950/20">
-                    <td className="py-2.5 px-3 font-bold text-gray-900 dark:text-white">TO {t.to_ke}</td>
-                    <td className="py-2.5 px-2 font-sans font-semibold text-gray-600 dark:text-purple-300">
+                  <tr key={t.to_ke} className="hover:bg-purple-100/50 dark:hover:bg-purple-950/20">
+                    <td className="py-2.5 px-3 font-black text-[#0f172a] dark:text-white border-r-2 border-[#0f172a]/15">TO {t.to_ke}</td>
+                    <td className="py-2.5 px-2 font-sans font-bold text-gray-700 dark:text-purple-300 border-r-2 border-[#0f172a]/15">
                       {t.bulan}
                     </td>
-                    <td className="py-2.5 px-2 text-center">{t.pu || '-'}</td>
-                    <td className="py-2.5 px-2 text-center">{t.pbm || '-'}</td>
-                    <td className="py-2.5 px-2 text-center">{t.ppu || '-'}</td>
-                    <td className="py-2.5 px-2 text-center">{t.pk || '-'}</td>
-                    <td className="py-2.5 px-2 text-center">{t.lbi || '-'}</td>
-                    <td className="py-2.5 px-2 text-center">{t.lbe || '-'}</td>
-                    <td className="py-2.5 px-2 text-center">{t.pm || '-'}</td>
-                    <td className="py-2.5 px-3 text-center text-purple-700 dark:text-purple-300 font-bold">
+                    <td className="py-2.5 px-2 text-center border-r-2 border-[#0f172a]/15">{t.pu || '-'}</td>
+                    <td className="py-2.5 px-2 text-center border-r-2 border-[#0f172a]/15">{t.pbm || '-'}</td>
+                    <td className="py-2.5 px-2 text-center border-r-2 border-[#0f172a]/15">{t.ppu || '-'}</td>
+                    <td className="py-2.5 px-2 text-center border-r-2 border-[#0f172a]/15">{t.pk || '-'}</td>
+                    <td className="py-2.5 px-2 text-center border-r-2 border-[#0f172a]/15">{t.lbi || '-'}</td>
+                    <td className="py-2.5 px-2 text-center border-r-2 border-[#0f172a]/15">{t.lbe || '-'}</td>
+                    <td className="py-2.5 px-2 text-center border-r-2 border-[#0f172a]/15">{t.pm || '-'}</td>
+                    <td className="py-2.5 px-3 text-center text-purple-700 dark:text-purple-300 font-black border-r-2 border-[#0f172a]/15">
                       {t.skor_tps}
                     </td>
-                    <td className="py-2.5 px-3 text-center text-red-600 font-bold">{t.skor_literasi}</td>
-                    <td className="py-2.5 px-3 text-center font-black text-sm text-red-600 dark:text-red-400">
+                    <td className="py-2.5 px-3 text-center text-rose-600 font-black border-r-2 border-[#0f172a]/15">{t.skor_literasi}</td>
+                    <td className="py-2.5 px-3 text-center font-black text-sm text-rose-600 dark:text-rose-400 border-r-2 border-[#0f172a]/15">
                       {t.skor_tertimbang}
                     </td>
-                    <td className="py-2.5 px-2 text-center">
+                    <td className="py-2.5 px-2 text-center font-sans">
                       <button
                         onClick={() => handleSelectTOToEdit(t)}
-                        className="px-2.5 py-1 rounded-lg bg-purple-100 dark:bg-purple-900/60 text-purple-800 dark:text-purple-200 font-sans font-bold text-[10px] hover:bg-purple-200"
+                        className="neo-btn-sm px-2.5 py-1 bg-amber-300 text-[#0f172a] font-black text-[10px] shadow-[1.5px_1.5px_0px_#0f172a]"
                       >
                         Edit
                       </button>
@@ -457,7 +458,7 @@ export const SNBTTryOut: React.FC<SNBTTryOutProps> = ({ siswa, onRefreshData }) 
             </table>
           </div>
         ) : (
-          <div className="py-8 text-center text-xs text-gray-400">
+          <div className="py-8 text-center text-xs text-gray-500 font-bold">
             Belum ada nilai Try Out yang disimpan. Mulai masukkan nilai TO 1 di atas!
           </div>
         )}
