@@ -554,6 +554,21 @@ export async function clearOldTokens(): Promise<number> {
   return removed;
 }
 
+export function hitungTanggalAksesAkhir(paket: PaketAkses, fromDate: Date = new Date()): Date {
+  const durasiMap: Record<string, number> = {
+    '1HARI': 1,
+    TRIAL: 1,
+    '1MINGGU': 7,
+    '1BULAN': 30,
+    '3BULAN': 90,
+    '6BULAN': 180,
+    '1TAHUN': 365,
+    UNLIMITED: 36500,
+  };
+  const days = durasiMap[paket] || 30;
+  return new Date(fromDate.getTime() + days * 86400000);
+}
+
 export interface DaftarInputData {
   nama_siswa: string;
   nama_ortu: string;
@@ -567,6 +582,7 @@ export interface DaftarInputData {
   password: string;
   token_daftar?: string;
   pilihan_program: ProgramType;
+  pilihan_akses?: PaketAkses;
 }
 
 export async function daftarSiswa(
@@ -610,8 +626,8 @@ export async function daftarSiswa(
   const passOrtu = cleanHPOrtu.length >= 4 ? cleanHPOrtu.slice(-4) : '1234';
 
   const now = new Date();
-  const durasiMs = isDirectActive ? 24 * 3600 * 1000 : 0; // TRIAL 1 hari jika dengan token
-  const exp = new Date(now.getTime() + durasiMs);
+  const selectedAkses: PaketAkses = data.pilihan_akses || (isDirectActive ? '1HARI' : '1BULAN');
+  const exp = hitungTanggalAksesAkhir(selectedAkses, now);
 
   const newSiswa: Siswa = {
     nis,
@@ -630,7 +646,7 @@ export async function daftarSiswa(
     pilihan_program: finalProgram,
     status: isDirectActive ? 'AKTIF' : 'PENDING',
     status_daftar: isDirectActive ? 'AKTIF' : 'PENDING',
-    akses: isDirectActive ? 'TRIAL' : 'TRIAL',
+    akses: selectedAkses,
     akses_mulai: now.toISOString(),
     akses_akhir: exp.toISOString(),
     created: now.toISOString(),
@@ -647,7 +663,7 @@ export async function daftarSiswa(
     await markTokenUsed(data.token_daftar, `${nis} | ${data.nama_siswa}`);
   }
 
-  await addLog(nis, 'SISWA', 'DAFTAR', `Pendaftaran baru: ${data.nama_siswa} (${finalProgram})`);
+  await addLog(nis, 'SISWA', 'DAFTAR', `Pendaftaran baru: ${data.nama_siswa} (${finalProgram}, Paket: ${selectedAkses})`);
 
   return {
     success: true,
@@ -666,18 +682,8 @@ export async function approveDaftar(nis: string, paket: PaketAkses): Promise<{ s
   const idx = siswaList.findIndex((s) => s.nis === nis);
   if (idx === -1) return { success: false };
 
-  const durasiMap: Record<PaketAkses, number> = {
-    TRIAL: 1,
-    '1MINGGU': 7,
-    '1BULAN': 30,
-    '3BULAN': 90,
-    '1TAHUN': 365,
-    UNLIMITED: 36500,
-  };
-
   const now = new Date();
-  const durasiDays = durasiMap[paket] || 30;
-  const exp = new Date(now.getTime() + durasiDays * 86400000);
+  const exp = hitungTanggalAksesAkhir(paket, now);
 
   siswaList[idx].status = 'AKTIF';
   siswaList[idx].status_daftar = 'AKTIF';
@@ -687,7 +693,7 @@ export async function approveDaftar(nis: string, paket: PaketAkses): Promise<{ s
 
   save(K_SISWA, siswaList);
   await fsSetDoc('siswa', nis, siswaList[idx]);
-  await addLog('ADMIN', 'ADMIN', 'APPROVE_DAFTAR', `Menyetujui pendaftaran ${nis} (${siswaList[idx].nama_siswa}) dengan paket ${paket}`);
+  await addLog('ADMIN', 'ADMIN', 'APPROVE_DAFTAR', `Menyetujui pendaftaran ${nis} (${siswaList[idx].nama_siswa}) dengan paket ${paket} s.d. ${exp.toLocaleDateString('id-ID')}`);
   return { success: true };
 }
 
@@ -769,24 +775,23 @@ export async function updateSiswaAkses(nis: string, paket: PaketAkses): Promise<
   const siswaList = load<Siswa[]>(K_SISWA, []);
   const idx = siswaList.findIndex((s) => s.nis === nis);
   if (idx !== -1) {
-    const durasiMap: Record<PaketAkses, number> = {
-      TRIAL: 1,
-      '1MINGGU': 7,
-      '1BULAN': 30,
-      '3BULAN': 90,
-      '1TAHUN': 365,
-      UNLIMITED: 36500,
-    };
     const now = new Date();
-    const durasi = durasiMap[paket] || 30;
-    const exp = new Date(now.getTime() + durasi * 86400000);
+    const exp = hitungTanggalAksesAkhir(paket, now);
 
     siswaList[idx].akses = paket;
     siswaList[idx].akses_mulai = now.toISOString();
     siswaList[idx].akses_akhir = exp.toISOString();
+    siswaList[idx].status = 'AKTIF';
+    siswaList[idx].status_daftar = 'AKTIF';
+
     save(K_SISWA, siswaList);
     await fsSetDoc('siswa', nis, siswaList[idx]);
-    await addLog('ADMIN', 'ADMIN', 'UBAH_AKSES', `Mengubah akses ${nis} menjadi ${paket}`);
+    await addLog(
+      'ADMIN',
+      'ADMIN',
+      'UBAH_AKSES',
+      `Mengubah akses ${nis} (${siswaList[idx].nama_siswa}) menjadi paket ${paket} (Berlaku s.d. ${exp.toLocaleDateString('id-ID')})`
+    );
   }
 }
 

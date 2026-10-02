@@ -17,7 +17,7 @@ import {
   MapPin,
   Flame,
 } from 'lucide-react';
-import { Siswa, AppSettings, ProgramType } from '../types';
+import { Siswa, AppSettings, ProgramType, PaketAkses } from '../types';
 import {
   loginSiswa,
   loginOrtu,
@@ -76,6 +76,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   const [regProgramSNBP, setRegProgramSNBP] = useState(true);
   const [regProgramSNBT, setRegProgramSNBT] = useState(true);
+  const [regAkses, setRegAkses] = useState<PaketAkses>('1BULAN');
 
   // Success register modal info
   const [regSuccessInfo, setRegSuccessInfo] = useState<{
@@ -206,6 +207,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         password: regPassword,
         token_daftar: regToken.trim() || undefined,
         pilihan_program: program,
+        pilihan_akses: regAkses,
       });
 
       if (res.success && res.nis) {
@@ -821,6 +823,72 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                               onChange={() => {}}
                               className="accent-red-600"
                             />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* PEMILIHAN LAMA MASA AKSES */}
+                      <div className="space-y-2 pt-1 border-t border-gray-100 dark:border-purple-950/40">
+                        <div className="flex justify-between items-center">
+                          <label className="block text-[11px] font-bold text-gray-700 dark:text-purple-200">
+                            Pilih Durasi Masa Akses Akun:
+                          </label>
+                          <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400">
+                            Pilihan: {regAkses === '1HARI' ? '1 Hari' : regAkses === '1BULAN' ? '1 Bulan' : regAkses === '6BULAN' ? '6 Bulan' : '1 Tahun'}
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                          {/* 1 HARI */}
+                          <div
+                            onClick={() => setRegAkses('1HARI')}
+                            className={`p-2.5 rounded-xl border-2 cursor-pointer text-center transition-all ${
+                              regAkses === '1HARI'
+                                ? 'border-purple-600 bg-purple-50 dark:bg-purple-950/60 shadow-sm'
+                                : 'border-gray-200 dark:border-purple-900/60 hover:border-purple-300'
+                            }`}
+                          >
+                            <div className="font-black text-xs text-purple-900 dark:text-purple-200">1 Hari</div>
+                            <div className="text-[9px] text-gray-500 mt-0.5">Trial / Kilat</div>
+                          </div>
+
+                          {/* 1 BULAN */}
+                          <div
+                            onClick={() => setRegAkses('1BULAN')}
+                            className={`p-2.5 rounded-xl border-2 cursor-pointer text-center transition-all ${
+                              regAkses === '1BULAN'
+                                ? 'border-purple-600 bg-purple-50 dark:bg-purple-950/60 shadow-sm'
+                                : 'border-gray-200 dark:border-purple-900/60 hover:border-purple-300'
+                            }`}
+                          >
+                            <div className="font-black text-xs text-purple-900 dark:text-purple-200">1 Bulan</div>
+                            <div className="text-[9px] text-gray-500 mt-0.5">30 Hari</div>
+                          </div>
+
+                          {/* 6 BULAN */}
+                          <div
+                            onClick={() => setRegAkses('6BULAN')}
+                            className={`p-2.5 rounded-xl border-2 cursor-pointer text-center transition-all ${
+                              regAkses === '6BULAN'
+                                ? 'border-purple-600 bg-purple-50 dark:bg-purple-950/60 shadow-sm'
+                                : 'border-gray-200 dark:border-purple-900/60 hover:border-purple-300'
+                            }`}
+                          >
+                            <div className="font-black text-xs text-purple-900 dark:text-purple-200">6 Bulan</div>
+                            <div className="text-[9px] text-gray-500 mt-0.5">1 Semester</div>
+                          </div>
+
+                          {/* 1 TAHUN */}
+                          <div
+                            onClick={() => setRegAkses('1TAHUN')}
+                            className={`p-2.5 rounded-xl border-2 cursor-pointer text-center transition-all ${
+                              regAkses === '1TAHUN'
+                                ? 'border-purple-600 bg-purple-50 dark:bg-purple-950/60 shadow-sm'
+                                : 'border-gray-200 dark:border-purple-900/60 hover:border-purple-300'
+                            }`}
+                          >
+                            <div className="font-black text-xs text-purple-900 dark:text-purple-200">1 Tahun</div>
+                            <div className="text-[9px] text-gray-500 mt-0.5">Full Year</div>
                           </div>
                         </div>
                       </div>

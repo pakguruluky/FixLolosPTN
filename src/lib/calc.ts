@@ -1941,13 +1941,18 @@ export function checkAkses(siswa: Siswa): { valid: boolean; pesan?: string } {
   }
 
   const exp = new Date(siswa.akses_akhir);
-  exp.setHours(23, 59, 59, 999);
+  // Jika format tanggal tanpa jam (YYYY-MM-DD), set ke akhir hari
+  if (!siswa.akses_akhir.includes('T')) {
+    exp.setHours(23, 59, 59, 999);
+  }
   const now = new Date();
 
   const valid = now.getTime() <= exp.getTime();
   return {
     valid,
-    pesan: valid ? undefined : 'Masa aktif paket akses Anda telah berakhir.',
+    pesan: valid
+      ? undefined
+      : 'Masa aktif paket akses Anda telah berakhir (expired). Silakan hubungi admin untuk perpanjangan masa akses.',
   };
 }
 

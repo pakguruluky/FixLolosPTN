@@ -12,6 +12,8 @@ import {
   IdCard,
 } from 'lucide-react';
 import { Siswa, AppSettings } from '../types';
+import { checkAkses } from '../lib/calc';
+import { AccessExpiredOverlay } from './student/AccessExpiredOverlay';
 import { SNBPAnalisa } from './student/SNBPAnalisa';
 import { SNBTAnalisa } from './student/SNBTAnalisa';
 
@@ -46,8 +48,15 @@ export const PortalOrtu: React.FC<PortalOrtuProps> = ({
     }, 600);
   };
 
+  const aksesCheck = checkAkses(siswa);
+
   return (
     <div className="min-h-screen bg-[#F7F4FF] dark:bg-[#0D0920] text-[#1A0835] dark:text-[#EDE8FF] py-6 px-3 sm:px-6 lg:px-8">
+      {/* Expired Access Blocking Overlay */}
+      {!aksesCheck.valid && (
+        <AccessExpiredOverlay siswa={siswa} settings={settings} onLogout={onLogout} />
+      )}
+
       <div className="max-w-6xl mx-auto space-y-6">
         {/* Top Header Card Portal Orang Tua */}
         <div className="bg-gradient-to-r from-purple-800 via-indigo-700 to-purple-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-5 relative overflow-hidden">

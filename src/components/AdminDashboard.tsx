@@ -73,6 +73,7 @@ import {
   getAnalisaLengkap,
   getAnalisaSNBT,
 } from '../services/api';
+import { checkAkses } from '../lib/calc';
 import { subscribeToCollection } from '../services/firebaseDb';
 import { SNBPAnalisa } from './student/SNBPAnalisa';
 import { SNBTAnalisa } from './student/SNBTAnalisa';
@@ -182,6 +183,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   // Actions
   const handleApprove = async (nis: string, paket: PaketAkses) => {
     await approveDaftar(nis, paket);
+    await loadAll();
+  };
+
+  const handleChangeAkses = async (nis: string, newPaket: PaketAkses) => {
+    await updateSiswaAkses(nis, newPaket);
     await loadAll();
   };
 
@@ -496,15 +502,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-purple-50 dark:border-purple-950/30">
                       <select
                         id={`paket_${p.nis}`}
-                        defaultValue="1BULAN"
-                        className="px-2 py-1.5 text-xs rounded-lg border bg-gray-50 dark:bg-[#1E1540] font-semibold"
+                        defaultValue={p.akses || '1BULAN'}
+                        className="px-2 py-1.5 text-xs rounded-lg border border-purple-200 dark:border-purple-800 bg-gray-50 dark:bg-[#1E1540] font-bold text-purple-900 dark:text-purple-100"
                       >
-                        <option value="TRIAL">Trial 1 Hari</option>
-                        <option value="1MINGGU">1 Minggu</option>
-                        <option value="1BULAN">1 Bulan</option>
-                        <option value="3BULAN">3 Bulan</option>
-                        <option value="1TAHUN">1 Tahun</option>
-                        <option value="UNLIMITED">Unlimited</option>
+                        <option value="1HARI">1 Hari (24 Jam)</option>
+                        <option value="1BULAN">1 Bulan (30 Hari)</option>
+                        <option value="6BULAN">6 Bulan (1 Semester)</option>
+                        <option value="1TAHUN">1 Tahun (Full Year)</option>
                       </select>
 
                       <button
@@ -641,10 +645,29 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                             {s.status}
                           </span>
                         </td>
-                        <td className="py-2.5 px-2 font-mono text-[11px]">
-                          <strong>{s.akses}</strong>
-                          <div className="text-[9px] text-gray-400">
-                            s.d. {s.akses_akhir ? new Date(s.akses_akhir).toLocaleDateString('id-ID') : '-'}
+                        <td className="py-2.5 px-2">
+                          <div className="flex flex-col gap-1 min-w-[130px]">
+                            <div className="flex items-center gap-1">
+                              <select
+                                value={s.akses || '1BULAN'}
+                                onChange={(e) => handleChangeAkses(s.nis, e.target.value as PaketAkses)}
+                                className="px-2 py-1 text-[11px] rounded-lg border border-purple-200 dark:border-purple-800 bg-purple-50/70 dark:bg-[#1E1540] text-purple-900 dark:text-purple-100 font-bold focus:outline-none focus:ring-1 focus:ring-purple-600"
+                                title="Ubah durasi masa akses siswa"
+                              >
+                                <option value="1HARI">1 Hari</option>
+                                <option value="1BULAN">1 Bulan</option>
+                                <option value="6BULAN">6 Bulan</option>
+                                <option value="1TAHUN">1 Tahun</option>
+                              </select>
+                              {!checkAkses(s).valid && (
+                                <span className="px-1.5 py-0.5 rounded text-[8px] font-black bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300">
+                                  EXPIRED
+                                </span>
+                              )}
+                            </div>
+                            <div className="text-[10px] text-gray-500 dark:text-purple-300/70 font-mono">
+                              s.d. {s.akses_akhir ? new Date(s.akses_akhir).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'}
+                            </div>
                           </div>
                         </td>
                         <td className="py-2.5 px-3 text-center">

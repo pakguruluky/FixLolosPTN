@@ -1,7 +1,15 @@
 export type ProgramType = 'SNBP' | 'SNBT' | 'SNBP+SNBT';
 export type UserStatus = 'AKTIF' | 'NONAKTIF' | 'PENDING';
 export type DaftarStatus = 'AKTIF' | 'PENDING' | 'DITOLAK';
-export type PaketAkses = 'TRIAL' | '1MINGGU' | '1BULAN' | '3BULAN' | '1TAHUN' | 'UNLIMITED';
+export type PaketAkses =
+  | '1HARI'
+  | '1BULAN'
+  | '6BULAN'
+  | '1TAHUN'
+  | 'TRIAL'
+  | '1MINGGU'
+  | '3BULAN'
+  | 'UNLIMITED';
 export type AkreditasiSekolah = 'A' | 'B' | 'C' | 'Tidak Terakreditasi';
 
 export interface Siswa {
