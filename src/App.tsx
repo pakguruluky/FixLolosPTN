@@ -154,6 +154,8 @@ export default function App() {
       {view === 'landing' && settings && (
         <LandingPage
           settings={settings}
+          darkMode={darkMode}
+          onToggleDarkMode={toggleDarkMode}
           onOpenLogin={(tab = 'siswa') => setActiveAuthTab(tab)}
         />
       )}

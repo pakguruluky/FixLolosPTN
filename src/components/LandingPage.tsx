@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   GraduationCap,
   Sparkles,
@@ -18,16 +18,71 @@ import {
   Zap,
   Target,
   Layers,
+  Sun,
+  Moon,
+  ArrowUp,
 } from 'lucide-react';
 import { AppSettings } from '../types';
 
 interface LandingPageProps {
   settings: AppSettings;
+  darkMode?: boolean;
+  onToggleDarkMode?: () => void;
   onOpenLogin: (defaultTab?: 'siswa' | 'ortu' | 'daftar' | 'admin') => void;
 }
 
-export const LandingPage: React.FC<LandingPageProps> = ({ settings, onOpenLogin }) => {
+export const LandingPage: React.FC<LandingPageProps> = ({
+  settings,
+  darkMode = false,
+  onToggleDarkMode,
+  onOpenLogin,
+}) => {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const [activeNav, setActiveNav] = useState('hero');
+
+  // Monitor scroll for back-to-top and active section
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 300) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+
+      const sections = ['hero', 'jalur', 'fitur', 'portal', 'faq'];
+      const scrollPosition = window.scrollY + 160;
+
+      for (const sectionId of sections) {
+        const el = document.getElementById(sectionId);
+        if (el) {
+          const top = el.offsetTop;
+          const height = el.offsetHeight;
+          if (scrollPosition >= top && scrollPosition < top + height) {
+            setActiveNav(sectionId);
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToSection = (e: React.MouseEvent, id: string) => {
+    e.preventDefault();
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setActiveNav(id);
+      window.history.replaceState(null, '', `#${id}`);
+    }
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const faqs = [
     {
@@ -65,8 +120,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ settings, onOpenLogin 
       <header className="sticky top-0 z-40 bg-white dark:bg-[#181133] border-b-3 border-[#0f172a] shadow-[0px_4px_0px_#0f172a]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-3">
           {/* Brand Logo & Sub-tagline */}
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-amber-300 border-3 border-[#0f172a] shadow-[3px_3px_0px_#0f172a] flex items-center justify-center font-black text-2xl shrink-0 hover:rotate-6 transition-transform">
+          <a
+            href="#hero"
+            onClick={(e) => scrollToSection(e, 'hero')}
+            className="flex items-center gap-3 group text-left cursor-pointer"
+          >
+            <div className="w-11 h-11 rounded-2xl bg-amber-300 border-3 border-[#0f172a] shadow-[3px_3px_0px_#0f172a] flex items-center justify-center font-black text-2xl shrink-0 group-hover:rotate-6 transition-transform">
               🎓
             </div>
             <div>
@@ -74,7 +133,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ settings, onOpenLogin 
                 <span className="text-xl sm:text-2xl font-black tracking-tight text-[#0f172a] dark:text-white">
                   AnalisaKu 2027
                 </span>
-                <span className="hidden md:inline-flex neo-badge px-2 py-0.5 bg-purple-200 text-[#0f172a] text-[10px] font-black">
+                <span className="hidden sm:inline-flex neo-badge px-2 py-0.5 bg-purple-200 text-[#0f172a] text-[10px] font-black">
                   EDISI SMA
                 </span>
               </div>
@@ -82,36 +141,96 @@ export const LandingPage: React.FC<LandingPageProps> = ({ settings, onOpenLogin 
                 Fix Lolos PTN • Cabang ONLINE
               </p>
             </div>
-          </div>
+          </a>
 
-          {/* Top Status Badge (Center on desktop) */}
-          <div className="hidden lg:flex items-center">
-            <div className="neo-badge px-3.5 py-1.5 bg-amber-300 text-[#0f172a] text-xs font-black animate-pulse">
-              🚀 Road to PTN 2027: Konsisten &amp; Juara!
-            </div>
-          </div>
+          {/* Desktop Navigation Links (Smooth Scroll) */}
+          <nav className="hidden lg:flex items-center gap-1.5 bg-[#f3e8ff] dark:bg-[#201548] p-1.5 rounded-2xl border-2 border-[#0f172a] shadow-[2px_2px_0px_#0f172a]">
+            {[
+              { id: 'hero', label: 'Beranda' },
+              { id: 'jalur', label: 'Jalur SNBP & SNBT' },
+              { id: 'fitur', label: 'Fitur' },
+              { id: 'portal', label: '3 Portal' },
+              { id: 'faq', label: 'FAQ' },
+            ].map((item) => {
+              const isActive = activeNav === item.id;
+              return (
+                <a
+                  key={item.id}
+                  href={`#${item.id}`}
+                  onClick={(e) => scrollToSection(e, item.id)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                    isActive
+                      ? 'bg-amber-300 text-[#0f172a] shadow-[2px_2px_0px_#0f172a] -translate-y-0.5'
+                      : 'text-slate-800 dark:text-purple-200 hover:text-purple-900 dark:hover:text-white hover:bg-white/60 dark:hover:bg-purple-900/50'
+                  }`}
+                >
+                  {item.label}
+                </a>
+              );
+            })}
+          </nav>
 
-          {/* Action Buttons */}
-          <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+          {/* Action Buttons & Theme Toggle */}
+          <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+            {/* Theme Toggle Button */}
+            {onToggleDarkMode && (
+              <button
+                type="button"
+                onClick={onToggleDarkMode}
+                aria-label="Toggle Light/Dark Theme"
+                className="neo-btn p-2 sm:p-2.5 bg-amber-300 dark:bg-purple-700 text-[#0f172a] dark:text-amber-300 text-xs font-black shadow-[2px_2px_0px_#0f172a]"
+                title={darkMode ? 'Ganti ke Tema Terang' : 'Ganti ke Tema Gelap'}
+              >
+                {darkMode ? <Sun className="w-4 h-4 text-amber-300" /> : <Moon className="w-4 h-4 text-[#0f172a]" />}
+              </button>
+            )}
+
             <button
               onClick={() => onOpenLogin('ortu')}
-              className="neo-btn px-3.5 sm:px-4 py-2 sm:py-2.5 bg-emerald-300 hover:bg-emerald-400 text-[#0f172a] text-xs sm:text-sm font-black shadow-[3px_3px_0px_#0f172a]"
+              className="neo-btn px-3 sm:px-4 py-2 sm:py-2.5 bg-emerald-300 hover:bg-emerald-400 text-[#0f172a] text-xs sm:text-sm font-black shadow-[3px_3px_0px_#0f172a]"
             >
-              👨‍👩‍👧 Portal Ortu
+              👨‍👩‍👧 <span className="hidden sm:inline">Portal </span>Ortu
             </button>
             <button
               onClick={() => onOpenLogin('siswa')}
-              className="neo-btn px-4 sm:px-5 py-2 sm:py-2.5 bg-purple-600 hover:bg-purple-700 text-white text-xs sm:text-sm font-black shadow-[3px_3px_0px_#0f172a] flex items-center gap-1.5"
+              className="neo-btn px-3.5 sm:px-5 py-2 sm:py-2.5 bg-purple-600 hover:bg-purple-700 text-white text-xs sm:text-sm font-black shadow-[3px_3px_0px_#0f172a] flex items-center gap-1.5"
             >
               <span>Masuk</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         </div>
+
+        {/* Mobile Sub-Navigation Bar (Horizontal Smooth Scroll) */}
+        <div className="lg:hidden flex items-center gap-2 overflow-x-auto px-4 py-2 bg-[#f3e8ff] dark:bg-[#140e2b] border-t-2 border-[#0f172a]/20 scrollbar-none">
+          {[
+            { id: 'hero', label: '🏠 Beranda' },
+            { id: 'jalur', label: '🎯 SNBP & SNBT' },
+            { id: 'fitur', label: '⚡ Fitur' },
+            { id: 'portal', label: '👥 3 Portal' },
+            { id: 'faq', label: '❓ FAQ' },
+          ].map((item) => {
+            const isActive = activeNav === item.id;
+            return (
+              <a
+                key={item.id}
+                href={`#${item.id}`}
+                onClick={(e) => scrollToSection(e, item.id)}
+                className={`whitespace-nowrap px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                  isActive
+                    ? 'bg-amber-300 text-[#0f172a] border-2 border-[#0f172a] shadow-[2px_2px_0px_#0f172a]'
+                    : 'text-slate-800 dark:text-purple-200 bg-white/70 dark:bg-purple-950/60'
+                }`}
+              >
+                {item.label}
+              </a>
+            );
+          })}
+        </div>
       </header>
 
       {/* 2. HERO SECTION (NEO-BRUTALISM RPG STYLE) */}
-      <section className="relative z-10 pt-10 pb-16 sm:pt-16 sm:pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center">
+      <section id="hero" className="scroll-mt-28 relative z-10 pt-10 pb-16 sm:pt-16 sm:pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center">
         {/* Playful Stickers Bar */}
         <div className="flex flex-wrap items-center justify-center gap-2 mb-6">
           <span className="neo-badge px-3 py-1 bg-amber-300 text-[#0f172a] text-xs font-black rotate-[-2deg]">
@@ -134,7 +253,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ settings, onOpenLogin 
           Lebih Terarah &amp; Akurat!
         </h1>
 
-        <p className="mt-6 text-sm sm:text-base lg:text-lg font-bold text-gray-700 dark:text-purple-200 max-w-2xl mx-auto leading-relaxed">
+        <p className="mt-6 text-sm sm:text-base lg:text-lg font-bold text-slate-800 dark:text-purple-100 max-w-2xl mx-auto leading-relaxed">
           Kombinasi analisis komprehensif nilai rapor semester 1–5 terbobot, skor Uji TKA IRT, dan formula UTBK 60:40 dengan database ribuan prodi PTN se-Indonesia.
         </p>
 
@@ -156,83 +275,83 @@ export const LandingPage: React.FC<LandingPageProps> = ({ settings, onOpenLogin 
         </div>
 
         {/* 3. TARGET PTN TRADING CARDS PREVIEW */}
-        <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 text-left">
+        <div id="jalur" className="scroll-mt-28 mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 text-left">
           {/* Card 1: SNBP */}
-          <div className="neo-card p-5 bg-purple-100 hover:rotate-[-1deg] transition-transform">
+          <div className="neo-card p-5 bg-purple-100 dark:bg-[#201548] hover:rotate-[-1deg] transition-transform">
             <div className="flex items-center justify-between mb-3">
               <span className="neo-badge px-2.5 py-0.5 bg-purple-600 text-white text-[10px] font-black">
                 JALUR RAPOR
               </span>
               <span className="text-2xl">📊</span>
             </div>
-            <h3 className="font-black text-base text-[#0f172a] mb-1">SNBP Akademik</h3>
-            <p className="text-xs font-bold text-gray-700 leading-relaxed">
+            <h3 className="font-black text-base text-[#0f172a] dark:text-white mb-1">SNBP Akademik</h3>
+            <p className="text-xs font-bold text-slate-800 dark:text-purple-200 leading-relaxed">
               Formulasi 3 pilar: 50% Rapor (Sem 1-5), 30% Prestasi &amp; TKA, 20% Rekam Jejak Sekolah, plus poin keketatan prodi favorit.
             </p>
-            <div className="mt-4 pt-3 border-t-2 border-[#0f172a]/20 flex justify-between items-center text-[11px] font-black text-purple-900">
+            <div className="mt-4 pt-3 border-t-2 border-[#0f172a]/20 dark:border-purple-700/50 flex justify-between items-center text-[11px] font-black text-purple-900 dark:text-purple-300">
               <span>Maksimal 100 Poin</span>
-              <span className="neo-badge px-2 py-0.5 bg-white text-[#0f172a]">10 Pilar</span>
+              <span className="neo-badge px-2 py-0.5 bg-white dark:bg-[#140c2e] text-[#0f172a] dark:text-purple-200">10 Pilar</span>
             </div>
           </div>
 
           {/* Card 2: SNBT */}
-          <div className="neo-card p-5 bg-rose-100 hover:rotate-[1deg] transition-transform">
+          <div className="neo-card p-5 bg-rose-100 dark:bg-[#34162e] hover:rotate-[1deg] transition-transform">
             <div className="flex items-center justify-between mb-3">
               <span className="neo-badge px-2.5 py-0.5 bg-rose-500 text-white text-[10px] font-black">
                 JALUR UTBK TES
               </span>
               <span className="text-2xl">🎯</span>
             </div>
-            <h3 className="font-black text-base text-[#0f172a] mb-1">SNBT Formula 60:40</h3>
-            <p className="text-xs font-bold text-gray-700 leading-relaxed">
+            <h3 className="font-black text-base text-[#0f172a] dark:text-white mb-1">SNBT Formula 60:40</h3>
+            <p className="text-xs font-bold text-slate-800 dark:text-rose-200 leading-relaxed">
               Perhitungan 60% Tes Potensi Skolastik (PU, PBM, PPU, PK) + 40% Literasi &amp; Penalaran Mat dari 9 seri Try Out berkala.
             </p>
-            <div className="mt-4 pt-3 border-t-2 border-[#0f172a]/20 flex justify-between items-center text-[11px] font-black text-rose-900">
+            <div className="mt-4 pt-3 border-t-2 border-[#0f172a]/20 dark:border-rose-800/50 flex justify-between items-center text-[11px] font-black text-rose-900 dark:text-rose-300">
               <span>9 Seri Try Out</span>
-              <span className="neo-badge px-2 py-0.5 bg-white text-[#0f172a]">Skor IRT</span>
+              <span className="neo-badge px-2 py-0.5 bg-white dark:bg-[#140c2e] text-[#0f172a] dark:text-rose-200">Skor IRT</span>
             </div>
           </div>
 
           {/* Card 3: Real-Time What-If */}
-          <div className="neo-card p-5 bg-amber-100 hover:rotate-[-1deg] transition-transform">
+          <div className="neo-card p-5 bg-amber-100 dark:bg-[#332213] hover:rotate-[-1deg] transition-transform">
             <div className="flex items-center justify-between mb-3">
               <span className="neo-badge px-2.5 py-0.5 bg-amber-400 text-[#0f172a] text-[10px] font-black">
                 SIMULATOR
               </span>
               <span className="text-2xl">⚡</span>
             </div>
-            <h3 className="font-black text-base text-[#0f172a] mb-1">Analisa Real-Time</h3>
-            <p className="text-xs font-bold text-gray-700 leading-relaxed">
+            <h3 className="font-black text-base text-[#0f172a] dark:text-white mb-1">Analisa Real-Time</h3>
+            <p className="text-xs font-bold text-slate-800 dark:text-amber-200 leading-relaxed">
               Simulasikan skenario nilai rapor dan target try out secara langsung dengan indikator persentase kelulusan dinamis.
             </p>
-            <div className="mt-4 pt-3 border-t-2 border-[#0f172a]/20 flex justify-between items-center text-[11px] font-black text-amber-900">
+            <div className="mt-4 pt-3 border-t-2 border-[#0f172a]/20 dark:border-amber-800/50 flex justify-between items-center text-[11px] font-black text-amber-900 dark:text-amber-300">
               <span>What-If Engine</span>
-              <span className="neo-badge px-2 py-0.5 bg-white text-[#0f172a]">Interaktif</span>
+              <span className="neo-badge px-2 py-0.5 bg-white dark:bg-[#140c2e] text-[#0f172a] dark:text-amber-200">Interaktif</span>
             </div>
           </div>
 
           {/* Card 4: 3 Rekomendasi Cadangan */}
-          <div className="neo-card p-5 bg-emerald-100 hover:rotate-[1deg] transition-transform">
+          <div className="neo-card p-5 bg-emerald-100 dark:bg-[#122c26] hover:rotate-[1deg] transition-transform">
             <div className="flex items-center justify-between mb-3">
               <span className="neo-badge px-2.5 py-0.5 bg-emerald-500 text-white text-[10px] font-black">
                 CADANGAN AMAN
               </span>
               <span className="text-2xl">💡</span>
             </div>
-            <h3 className="font-black text-base text-[#0f172a] mb-1">3 Alternatif Prodi</h3>
-            <p className="text-xs font-bold text-gray-700 leading-relaxed">
+            <h3 className="font-black text-base text-[#0f172a] dark:text-white mb-1">3 Alternatif Prodi</h3>
+            <p className="text-xs font-bold text-slate-800 dark:text-emerald-200 leading-relaxed">
               Rekomendasi prodi alternatif paling rasional dan berpeluang tinggi jika pilihan utama sangat ketat.
             </p>
-            <div className="mt-4 pt-3 border-t-2 border-[#0f172a]/20 flex justify-between items-center text-[11px] font-black text-emerald-900">
+            <div className="mt-4 pt-3 border-t-2 border-[#0f172a]/20 dark:border-emerald-800/50 flex justify-between items-center text-[11px] font-black text-emerald-900 dark:text-emerald-300">
               <span>Database Nasional</span>
-              <span className="neo-badge px-2 py-0.5 bg-white text-[#0f172a]">Smart Match</span>
+              <span className="neo-badge px-2 py-0.5 bg-white dark:bg-[#140c2e] text-[#0f172a] dark:text-emerald-200">Smart Match</span>
             </div>
           </div>
         </div>
       </section>
 
       {/* 4. FITUR LENGKAP NEO-BRUTALISM GRID */}
-      <section className="py-16 bg-white dark:bg-[#181133] border-y-3 border-[#0f172a]">
+      <section id="fitur" className="scroll-mt-28 py-16 bg-white dark:bg-[#181133] border-y-3 border-[#0f172a]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-12">
             <div className="inline-flex items-center gap-1.5 neo-badge px-3 py-1 bg-cyan-200 text-[#0f172a] text-xs font-black mb-3">
@@ -242,7 +361,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ settings, onOpenLogin 
             <h2 className="text-2xl sm:text-4xl font-black text-[#0f172a] dark:text-white">
               Fitur Lengkap untuk Pejuang PTN 2027
             </h2>
-            <p className="mt-2 text-sm font-bold text-gray-600 dark:text-purple-300">
+            <p className="mt-2 text-sm font-bold text-slate-700 dark:text-purple-200">
               Dirancang dengan standar baku seleksi nasional SNPMB Kemendikbudristek untuk siswa SMA seluruh Indonesia.
             </p>
           </div>
@@ -317,12 +436,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ settings, onOpenLogin 
                       <div className={`w-10 h-10 rounded-xl ${f.color} border-2 border-[#0f172a] shadow-[2px_2px_0px_#0f172a] flex items-center justify-center text-[#0f172a]`}>
                         <Icon className="w-5 h-5" />
                       </div>
-                      <span className="neo-badge px-2 py-0.5 bg-white dark:bg-[#160E2E] text-[#0f172a] dark:text-purple-200 text-[9px] font-black">
+                      <span className="neo-badge px-2 py-0.5 bg-slate-100 dark:bg-[#140c2e] text-[#0f172a] dark:text-purple-200 text-[9px] font-black">
                         {f.badge}
                       </span>
                     </div>
                     <h3 className="font-black text-sm text-[#0f172a] dark:text-white mb-1.5">{f.title}</h3>
-                    <p className="text-xs font-semibold text-gray-600 dark:text-purple-300 leading-relaxed">{f.desc}</p>
+                    <p className="text-xs font-bold text-slate-700 dark:text-purple-200 leading-relaxed">{f.desc}</p>
                   </div>
                 </div>
               );
@@ -332,7 +451,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ settings, onOpenLogin 
       </section>
 
       {/* 5. TIGA PERAN PENGGUNA TERINTEGRASI */}
-      <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="portal" className="scroll-mt-28 py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-12">
           <div className="inline-flex items-center gap-1.5 neo-badge px-3 py-1 bg-amber-300 text-[#0f172a] text-xs font-black mb-3">
             <Users className="w-3.5 h-3.5" />
@@ -341,14 +460,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({ settings, onOpenLogin 
           <h2 className="text-2xl sm:text-4xl font-black text-[#0f172a] dark:text-white">
             Tiga Portal Pengguna Terintegrasi
           </h2>
-          <p className="mt-2 text-sm font-bold text-gray-600 dark:text-purple-300">
+          <p className="mt-2 text-sm font-bold text-slate-800 dark:text-purple-200">
             Kolaborasi aktif antara siswa pejuang PTN, orang tua pendamping, dan pengelola bimbel/sekolah.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Role Siswa */}
-          <div className="neo-card p-6 bg-purple-100 flex flex-col justify-between">
+          <div className="neo-card p-6 bg-purple-100 dark:bg-[#201548] flex flex-col justify-between">
             <div>
               <div className="w-14 h-14 rounded-2xl bg-purple-600 text-white border-3 border-[#0f172a] shadow-[3px_3px_0px_#0f172a] flex items-center justify-center text-3xl mb-4">
                 👧🏻
@@ -356,8 +475,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ settings, onOpenLogin 
               <span className="neo-badge px-2.5 py-0.5 bg-purple-600 text-white text-[10px] font-black mb-2">
                 PORTAL SISWA
               </span>
-              <h3 className="font-black text-xl text-[#0f172a] mt-1">Siswa Pejuang PTN</h3>
-              <p className="text-xs font-bold text-gray-700 mt-2 leading-relaxed">
+              <h3 className="font-black text-xl text-[#0f172a] dark:text-white mt-1">Siswa Pejuang PTN</h3>
+              <p className="text-xs font-bold text-slate-800 dark:text-purple-200 mt-2 leading-relaxed">
                 Mengisi nilai rapor, skor TKA, latihan try out berkala, eksplorasi prodi, membaca modul belajar, dan cek kelayakan secara instan.
               </p>
             </div>
@@ -370,7 +489,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ settings, onOpenLogin 
           </div>
 
           {/* Role Orang Tua */}
-          <div className="neo-card p-6 bg-emerald-100 flex flex-col justify-between">
+          <div className="neo-card p-6 bg-emerald-100 dark:bg-[#122e25] flex flex-col justify-between">
             <div>
               <div className="w-14 h-14 rounded-2xl bg-emerald-500 text-white border-3 border-[#0f172a] shadow-[3px_3px_0px_#0f172a] flex items-center justify-center text-3xl mb-4">
                 👨‍👩‍👧
@@ -378,8 +497,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ settings, onOpenLogin 
               <span className="neo-badge px-2.5 py-0.5 bg-emerald-600 text-white text-[10px] font-black mb-2">
                 PORTAL ORANG TUA
               </span>
-              <h3 className="font-black text-xl text-[#0f172a] mt-1">Orang Tua Pendamping</h3>
-              <p className="text-xs font-bold text-gray-700 mt-2 leading-relaxed">
+              <h3 className="font-black text-xl text-[#0f172a] dark:text-white mt-1">Orang Tua Pendamping</h3>
+              <p className="text-xs font-bold text-slate-800 dark:text-emerald-200 mt-2 leading-relaxed">
                 Akses aman dan transparan untuk memantau progres belajar anak, rasionalisasi prodi pilihan, dan konsultasi arah masa depan.
               </p>
             </div>
@@ -392,7 +511,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ settings, onOpenLogin 
           </div>
 
           {/* Role Admin */}
-          <div className="neo-card p-6 bg-amber-100 flex flex-col justify-between">
+          <div className="neo-card p-6 bg-amber-100 dark:bg-[#332213] flex flex-col justify-between">
             <div>
               <div className="w-14 h-14 rounded-2xl bg-amber-400 text-[#0f172a] border-3 border-[#0f172a] shadow-[3px_3px_0px_#0f172a] flex items-center justify-center text-3xl mb-4">
                 🛡️
@@ -400,8 +519,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ settings, onOpenLogin 
               <span className="neo-badge px-2.5 py-0.5 bg-[#0f172a] text-amber-300 text-[10px] font-black mb-2">
                 PORTAL PENGELOLA
               </span>
-              <h3 className="font-black text-xl text-[#0f172a] mt-1">Admin Bimbingan Belajar</h3>
-              <p className="text-xs font-bold text-gray-700 mt-2 leading-relaxed">
+              <h3 className="font-black text-xl text-[#0f172a] dark:text-white mt-1">Admin Bimbingan Belajar</h3>
+              <p className="text-xs font-bold text-slate-800 dark:text-amber-200 mt-2 leading-relaxed">
                 Verifikasi pendaftaran siswa, kelola token registrasi, atur masa akses, upload modul belajar, dan pantau log aktivitas.
               </p>
             </div>
@@ -416,7 +535,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ settings, onOpenLogin 
       </section>
 
       {/* 6. FAQ NEO-BRUTALISM ACCORDION */}
-      <section className="py-16 bg-white dark:bg-[#181133] border-t-3 border-[#0f172a]">
+      <section id="faq" className="scroll-mt-28 py-16 bg-white dark:bg-[#181133] border-t-3 border-[#0f172a]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <div className="inline-flex items-center gap-1.5 neo-badge px-3 py-1 bg-pink-200 text-[#0f172a] text-xs font-black mb-2">
@@ -442,12 +561,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ settings, onOpenLogin 
                     <span>{faq.q}</span>
                     <ChevronDown
                       className={`w-5 h-5 shrink-0 transition-transform ${
-                        isOpen ? 'rotate-180 text-purple-600' : 'text-gray-500'
+                        isOpen ? 'rotate-180 text-purple-600 dark:text-purple-400' : 'text-slate-700 dark:text-purple-300'
                       }`}
                     />
                   </button>
                   {isOpen && (
-                    <div className="px-4 pb-4 sm:px-5 sm:pb-5 text-xs font-semibold text-gray-700 dark:text-purple-200 leading-relaxed border-t-2 border-[#0f172a]/10 pt-3">
+                    <div className="px-4 pb-4 sm:px-5 sm:pb-5 text-xs font-bold text-slate-800 dark:text-purple-200 leading-relaxed border-t-2 border-[#0f172a]/10 dark:border-purple-800/40 pt-3">
                       {faq.a}
                     </div>
                   )}
@@ -500,6 +619,22 @@ export const LandingPage: React.FC<LandingPageProps> = ({ settings, onOpenLogin 
           </div>
         </div>
       </footer>
+
+      {/* 8. FLOATING SMOOTH NAVIGATION & BACK TO TOP BUTTON */}
+      {showScrollTop && (
+        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 animate-bounce-in">
+          <button
+            type="button"
+            onClick={scrollToTop}
+            aria-label="Kembali ke Atas"
+            className="neo-btn p-3 bg-amber-300 hover:bg-amber-400 text-[#0f172a] shadow-[3px_3px_0px_#0f172a] flex items-center gap-1.5 text-xs font-black"
+            title="Kembali ke Atas"
+          >
+            <ArrowUp className="w-5 h-5" />
+            <span className="hidden sm:inline">Ke Atas</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 };
