@@ -463,36 +463,41 @@ export const LandingPage: React.FC<LandingPageProps> = ({ settings, onOpenLogin 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
           <div className="flex items-center justify-center gap-2">
             <span className="text-2xl">🎓</span>
-            <span className="text-lg font-black text-[#0f172a] dark:text-white">
+            <span className="text-xl font-black text-[#0f172a] dark:text-white">
               AnalisaKu 2027 • High School Edition
             </span>
           </div>
-          <p className="text-xs font-bold text-gray-700 dark:text-purple-300 max-w-md mx-auto">
+          <p className="text-xs font-extrabold text-[#0f172a] dark:text-purple-200 max-w-md mx-auto">
             Sistem Rasionalisasi Peluang SNBP &amp; SNBT Terlengkap • Dikelola oleh {settings.NAMA_LEMBAGA}
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
             <button
               onClick={() => onOpenLogin('siswa')}
-              className="neo-badge px-3 py-1 bg-white text-[#0f172a] text-xs font-bold hover:bg-amber-200"
+              className="neo-btn px-3.5 py-1.5 bg-white hover:bg-amber-200 text-[#0f172a] text-xs font-black shadow-[2px_2px_0px_#0f172a]"
             >
               Login Siswa
             </button>
             <button
               onClick={() => onOpenLogin('ortu')}
-              className="neo-badge px-3 py-1 bg-white text-[#0f172a] text-xs font-bold hover:bg-emerald-200"
+              className="neo-btn px-3.5 py-1.5 bg-white hover:bg-emerald-200 text-[#0f172a] text-xs font-black shadow-[2px_2px_0px_#0f172a]"
             >
               Portal Orang Tua
             </button>
             <button
               onClick={() => onOpenLogin('admin')}
-              className="neo-badge px-3 py-1 bg-white text-[#0f172a] text-xs font-bold hover:bg-cyan-200"
+              className="neo-btn px-3.5 py-1.5 bg-white hover:bg-cyan-200 text-[#0f172a] text-xs font-black shadow-[2px_2px_0px_#0f172a]"
             >
               Akses Admin
             </button>
           </div>
-          <p className="text-[11px] font-bold text-gray-500 dark:text-purple-400 pt-4">
-            © 2027 AnalisaKu. Hak Cipta Dilindungi Undang-Undang.
-          </p>
+          <div className="pt-4 border-t-2 border-[#0f172a]/20">
+            <p className="text-sm font-black text-[#0f172a] dark:text-amber-300 tracking-wide">
+              © 2027 AnalisaKu by. Pak GuruAI
+            </p>
+            <p className="text-xs font-bold text-slate-800 dark:text-purple-300 mt-1">
+              Hak Cipta Dilindungi Undang-Undang • Platform Resmi Persiapan Lolos PTN 2027
+            </p>
+          </div>
         </div>
       </footer>
     </div>

@@ -1350,7 +1350,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   type="text"
                   id="new_cabang_input"
                   placeholder="Ketik nama cabang baru..."
-                  className="flex-1 px-3 py-2 text-xs rounded-xl border bg-gray-50 dark:bg-[#1E1540] font-bold uppercase"
+                  className="flex-1 px-3 py-2 text-xs neo-input bg-white dark:bg-[#160E2E] text-[#0f172a] dark:text-white font-black uppercase"
                 />
                 <button
                   onClick={async () => {
@@ -1361,7 +1361,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       await loadAll();
                     }
                   }}
-                  className="px-4 py-2 rounded-xl bg-purple-700 hover:bg-purple-800 text-white text-xs font-bold shadow-sm transition-all"
+                  className="neo-btn-sm px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-black shadow-[2px_2px_0px_#0f172a]"
                 >
                   + Tambah Cabang
                 </button>
@@ -1369,6 +1369,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             </div>
           </div>
         )}
+
+        {/* Footer Admin Neo-Brutalism */}
+        <footer className="mt-10 py-6 px-6 text-center text-xs font-bold text-[#0f172a] dark:text-purple-200 border-t-2 border-[#0f172a]/20 bg-purple-100/60 dark:bg-[#181133] rounded-2xl">
+          <div className="font-black text-sm text-[#0f172a] dark:text-amber-300">© 2027 AnalisaKu by. Pak GuruAI</div>
+          <div className="mt-1 text-xs text-slate-700 dark:text-purple-300">Konsol Manajemen Admin Bimbingan Belajar • Dikelola oleh {settings.NAMA_LEMBAGA}</div>
+        </footer>
       </main>
 
       {/* MODAL TAMBAH SISWA MANUAL */}

@@ -332,9 +332,9 @@ export const StudentLayout: React.FC<StudentLayoutProps> = ({
         </main>
 
         {/* Page Footer */}
-        <footer className="py-6 px-6 text-center text-xs text-gray-400 dark:text-purple-400/60 border-t border-purple-100 dark:border-purple-950/40">
-          <div>AnalisaKu 2027 by {settings.NAMA_LEMBAGA} © 2027</div>
-          <div className="mt-0.5">@Copyright Pak Guru AI 2026</div>
+        <footer className="py-6 px-6 text-center text-xs font-bold text-[#0f172a] dark:text-purple-200 border-t-2 border-[#0f172a]/20 bg-purple-100/60 dark:bg-[#160E2E]">
+          <div className="font-black text-sm text-[#0f172a] dark:text-amber-300">© 2027 AnalisaKu by. Pak GuruAI</div>
+          <div className="mt-1 text-xs text-slate-700 dark:text-purple-300">Dikelola oleh {settings.NAMA_LEMBAGA} • Hak Cipta Dilindungi Undang-Undang</div>
         </footer>
       </div>
     </div>

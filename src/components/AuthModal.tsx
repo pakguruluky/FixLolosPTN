@@ -360,7 +360,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               </button>
 
               <div className="text-center pt-2">
-                <span className="text-xs font-bold text-gray-600 dark:text-purple-300">Belum punya akun? </span>
+                <span className="text-xs font-bold text-slate-800 dark:text-purple-200">Belum punya akun? </span>
                 <button
                   type="button"
                   onClick={() => {
@@ -437,27 +437,27 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   <div className="w-14 h-14 rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 mx-auto flex items-center justify-center">
                     <CheckCircle className="w-8 h-8" />
                   </div>
-                  <h3 className="font-extrabold text-lg text-gray-900 dark:text-white">
+                  <h3 className="font-black text-xl text-[#0f172a] dark:text-white">
                     Pendaftaran Berhasil!
                   </h3>
-                  <div className="p-4 rounded-2xl bg-purple-50 dark:bg-purple-950/50 text-left space-y-2 border border-purple-100 dark:border-purple-900">
-                    <div className="text-xs text-gray-500 dark:text-purple-300">
+                  <div className="neo-card-sm p-4 bg-purple-50 dark:bg-purple-950/50 text-left space-y-2 shadow-[3px_3px_0px_#0f172a]">
+                    <div className="text-xs font-black text-slate-800 dark:text-purple-200">
                       Nomor Induk Siswa (NIS) Anda:
                     </div>
-                    <div className="text-xl font-black text-purple-700 dark:text-purple-300 font-mono tracking-wider">
+                    <div className="text-2xl font-black text-purple-700 dark:text-purple-300 font-mono tracking-wider">
                       {regSuccessInfo.nis}
                     </div>
-                    <div className="text-[11px] text-amber-700 dark:text-amber-300 font-medium">
+                    <div className="text-xs text-amber-800 dark:text-amber-300 font-bold">
                       ⚠️ Harap catat dan simpan NIS ini dengan aman! NIS digunakan untuk login siswa dan orang tua.
                     </div>
                   </div>
 
                   {regSuccessInfo.isDirectActive ? (
-                    <p className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold">
+                    <p className="text-xs text-emerald-700 dark:text-emerald-300 font-black">
                       Akun Anda langsung aktif (Paket Trial 1 Hari melalui token). Silakan login sekarang!
                     </p>
                   ) : (
-                    <p className="text-xs text-amber-600 dark:text-amber-400 font-semibold">
+                    <p className="text-xs text-amber-800 dark:text-amber-300 font-black">
                       Akun Anda sedang menunggu verifikasi oleh Administrator bimbingan belajar/sekolah. Anda akan dapat masuk setelah disetujui.
                     </p>
                   )}

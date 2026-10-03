@@ -88,14 +88,14 @@ export const ModulViewer: React.FC<ModulViewerProps> = ({ siswa }) => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-[#160E2E] p-5 rounded-2xl border border-purple-100 dark:border-purple-950/40">
+      {/* Header Neo-Brutalism */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 neo-card p-5 sm:p-6 bg-white dark:bg-[#181133] shadow-[4px_4px_0px_#0f172a]">
         <div>
-          <h2 className="text-xl font-black text-gray-900 dark:text-white flex items-center gap-2">
+          <h2 className="text-xl sm:text-2xl font-black text-[#0f172a] dark:text-white flex items-center gap-2">
             <BookOpen className="w-5 h-5 text-purple-600" />
-            <span>Modul & Bank Materi Belajar</span>
+            <span>Modul &amp; Bank Materi Belajar</span>
           </h2>
-          <p className="text-xs text-gray-500 dark:text-purple-300 mt-1">
+          <p className="text-xs font-bold text-slate-700 dark:text-purple-200 mt-1">
             Materi tersaring otomatis untuk kelas <strong className="text-purple-700 dark:text-purple-300">{siswa.kelas}</strong> dan program <strong className="text-purple-700 dark:text-purple-300">{siswa.pilihan_program}</strong>.
           </p>
         </div>
@@ -106,21 +106,21 @@ export const ModulViewer: React.FC<ModulViewerProps> = ({ siswa }) => {
             placeholder="Cari judul modul..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="px-3 py-2 text-xs rounded-xl border border-gray-200 dark:border-purple-900 bg-gray-50 dark:bg-[#1E1540] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+            className="px-3.5 py-2 text-xs neo-input bg-white dark:bg-[#160E2E] text-[#0f172a] dark:text-white font-bold"
           />
         </div>
       </div>
 
-      {/* Kategori Filters */}
+      {/* Kategori Filters Neo-Brutalism */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
         {categories.map((kat) => (
           <button
             key={kat}
             onClick={() => setSelectedKategori(kat)}
-            className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-black whitespace-nowrap transition-all border-2 border-[#0f172a] ${
               selectedKategori === kat
-                ? 'bg-purple-700 text-white shadow-sm'
-                : 'bg-white dark:bg-[#160E2E] text-gray-600 dark:text-purple-300 hover:bg-purple-50 border border-purple-100 dark:border-purple-900/40'
+                ? 'bg-purple-600 text-white shadow-[2px_2px_0px_#0f172a] -translate-y-0.5'
+                : 'bg-white dark:bg-[#181133] text-[#0f172a] dark:text-purple-200 hover:bg-purple-100 shadow-[1px_1px_0px_#0f172a]'
             }`}
           >
             {kat}
@@ -130,47 +130,47 @@ export const ModulViewer: React.FC<ModulViewerProps> = ({ siswa }) => {
 
       {/* Modul Grid */}
       {loading ? (
-        <div className="text-center py-16 text-xs text-gray-400">Memuat katalog modul belajar...</div>
+        <div className="text-center py-16 text-xs font-bold text-slate-700 dark:text-purple-300">Memuat katalog modul belajar...</div>
       ) : filteredModuls.length === 0 ? (
-        <div className="text-center py-16 bg-white dark:bg-[#160E2E] rounded-2xl border border-purple-100 dark:border-purple-900/40 p-8">
-          <BookOpen className="w-10 h-10 text-gray-300 dark:text-purple-800 mx-auto mb-2" />
-          <p className="text-sm font-bold text-gray-700 dark:text-purple-200">Tidak ada modul yang cocok</p>
-          <p className="text-xs text-gray-400 mt-1">Silakan pilih kategori lain atau periksa kembali kata kunci pencarian Anda.</p>
+        <div className="text-center py-16 neo-card bg-white dark:bg-[#181133] p-8 shadow-[4px_4px_0px_#0f172a]">
+          <BookOpen className="w-10 h-10 text-gray-400 dark:text-purple-400 mx-auto mb-2" />
+          <p className="text-sm font-black text-[#0f172a] dark:text-white">Tidak ada modul yang cocok</p>
+          <p className="text-xs font-bold text-slate-700 dark:text-purple-300 mt-1">Silakan pilih kategori lain atau periksa kembali kata kunci pencarian Anda.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {filteredModuls.map((modul) => (
             <div
               key={modul.id}
-              className="bg-white dark:bg-[#160E2E] rounded-2xl border border-purple-100 dark:border-purple-950/40 shadow-sm hover:shadow-md hover:border-purple-300 transition-all flex flex-col justify-between overflow-hidden group"
+              className="neo-card p-0 bg-white dark:bg-[#181133] shadow-[4px_4px_0px_#0f172a] hover:-translate-y-1 transition-all flex flex-col justify-between overflow-hidden group"
             >
               <div className="p-5">
                 <div className="flex items-center justify-between gap-2 mb-3">
-                  <span className="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300">
+                  <span className="neo-badge px-2.5 py-0.5 text-[10px] font-black uppercase bg-purple-200 text-[#0f172a]">
                     {modul.tipe_file}
                   </span>
-                  <span className="text-[10px] font-semibold text-gray-400">
+                  <span className="text-[10px] font-black text-slate-700 dark:text-purple-300">
                     Target: {modul.kelas_target}
                   </span>
                 </div>
 
-                <h3 className="font-bold text-sm text-gray-900 dark:text-white group-hover:text-purple-600 transition-colors line-clamp-2">
+                <h3 className="font-black text-sm text-[#0f172a] dark:text-white group-hover:text-purple-600 transition-colors line-clamp-2">
                   {modul.judul}
                 </h3>
 
-                <p className="mt-2 text-xs text-gray-500 dark:text-purple-300/80 line-clamp-3 leading-relaxed">
+                <p className="mt-2 text-xs font-bold text-slate-700 dark:text-purple-200 line-clamp-3 leading-relaxed">
                   {modul.deskripsi}
                 </p>
               </div>
 
-              <div className="px-5 py-3.5 bg-gray-50/70 dark:bg-[#130B29]/60 border-t border-purple-50 dark:border-purple-950/30 flex items-center justify-between">
-                <span className="text-[11px] font-medium text-gray-400 dark:text-purple-400">
+              <div className="px-5 py-3.5 bg-purple-50 dark:bg-[#140c24] border-t-2 border-[#0f172a] flex items-center justify-between">
+                <span className="text-[11px] font-black text-purple-900 dark:text-purple-300">
                   {modul.kategori}
                 </span>
 
                 <button
                   onClick={() => handleOpenModul(modul)}
-                  className="px-3 py-1.5 rounded-xl bg-purple-700 hover:bg-purple-800 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all"
+                  className="neo-btn-sm px-3.5 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-black shadow-[2px_2px_0px_#0f172a] flex items-center gap-1.5"
                 >
                   <Eye className="w-3.5 h-3.5" />
                   <span>Buka Materi</span>

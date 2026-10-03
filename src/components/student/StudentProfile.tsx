@@ -96,45 +96,45 @@ export const StudentProfile: React.FC<StudentProfileProps> = ({ siswa, onProfile
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
-      {/* Profil Header Card */}
-      <div className="bg-white dark:bg-[#160E2E] rounded-3xl border border-purple-100 dark:border-purple-950/40 p-6 flex items-center gap-5">
-        <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-purple-700 to-amber-500 text-white font-black text-2xl flex items-center justify-center shadow-lg shadow-purple-600/20">
-          {siswa.nama_siswa.charAt(0)}
+      {/* Profil Header Card Neo-Brutalism */}
+      <div className="neo-card p-6 bg-white dark:bg-[#181133] flex items-center gap-5 shadow-[4px_4px_0px_#0f172a]">
+        <div className="w-16 h-16 rounded-2xl bg-amber-300 border-3 border-[#0f172a] shadow-[2.5px_2.5px_0px_#0f172a] text-[#0f172a] font-black text-2xl flex items-center justify-center">
+          {siswa.nama_siswa ? siswa.nama_siswa.charAt(0) : '👧🏻'}
         </div>
         <div>
-          <h2 className="text-xl font-black text-gray-900 dark:text-white">
+          <h2 className="text-xl sm:text-2xl font-black text-[#0f172a] dark:text-white">
             {siswa.nama_siswa}
           </h2>
-          <div className="flex flex-wrap items-center gap-2 mt-1 text-xs text-gray-500 dark:text-purple-300">
-            <span className="font-mono font-bold text-purple-700 dark:text-purple-300">
+          <div className="flex flex-wrap items-center gap-2 mt-1 text-xs">
+            <span className="font-mono font-black text-purple-700 dark:text-purple-300">
               NIS: {siswa.nis}
             </span>
-            <span>•</span>
-            <span>Username: @{siswa.username}</span>
-            <span>•</span>
-            <span className="px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300 font-bold text-[10px]">
+            <span className="text-[#0f172a] dark:text-purple-300">•</span>
+            <span className="font-bold text-slate-700 dark:text-purple-200">Username: @{siswa.username}</span>
+            <span className="text-[#0f172a] dark:text-purple-300">•</span>
+            <span className="neo-badge px-2 py-0.5 bg-purple-200 text-[#0f172a] font-black text-[10px]">
               {siswa.pilihan_program}
             </span>
           </div>
         </div>
       </div>
 
-      {/* Form Update Profil */}
-      <div className="bg-white dark:bg-[#160E2E] rounded-3xl border border-purple-100 dark:border-purple-950/40 p-6 space-y-4">
-        <h3 className="font-extrabold text-sm text-gray-900 dark:text-white flex items-center gap-2 border-b border-purple-50 dark:border-purple-950/40 pb-3">
+      {/* Form Update Profil Neo-Brutalism */}
+      <div className="neo-card p-6 bg-purple-50/60 dark:bg-[#181133] space-y-4 shadow-[4px_4px_0px_#0f172a]">
+        <h3 className="font-black text-sm text-[#0f172a] dark:text-white flex items-center gap-2 border-b-2 border-[#0f172a]/20 pb-3">
           <User className="w-4 h-4 text-purple-600" />
-          <span>Informasi Akademik & Sekolah</span>
+          <span>Informasi Akademik &amp; Sekolah</span>
         </h3>
 
         {profileMsg && (
           <div
-            className={`p-3 rounded-xl text-xs font-bold flex items-center gap-2 ${
+            className={`p-3.5 rounded-xl text-xs font-black border-2 border-[#0f172a] shadow-[2px_2px_0px_#0f172a] flex items-center gap-2 ${
               profileMsg.type === 'success'
-                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                : 'bg-rose-50 text-rose-700 border border-rose-200'
+                ? 'bg-emerald-200 text-[#0f172a]'
+                : 'bg-rose-200 text-[#0f172a]'
             }`}
           >
-            {profileMsg.type === 'success' ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+            {profileMsg.type === 'success' ? <CheckCircle2 className="w-4 h-4 text-emerald-800" /> : <AlertCircle className="w-4 h-4 text-rose-800" />}
             <span>{profileMsg.message}</span>
           </div>
         )}
@@ -142,7 +142,7 @@ export const StudentProfile: React.FC<StudentProfileProps> = ({ siswa, onProfile
         <form onSubmit={handleUpdateProfile} className="space-y-4 text-xs">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block font-bold text-gray-700 dark:text-purple-200 mb-1">
+              <label className="block font-black text-[#0f172a] dark:text-purple-200 mb-1">
                 Asal Sekolah
               </label>
               <input
@@ -150,18 +150,18 @@ export const StudentProfile: React.FC<StudentProfileProps> = ({ siswa, onProfile
                 required
                 value={asalSekolah}
                 onChange={(e) => setAsalSekolah(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-purple-900 bg-gray-50 dark:bg-[#1E1540] text-gray-900 dark:text-white focus:bg-white"
+                className="w-full px-3 py-2 neo-input bg-white dark:bg-[#160E2E] text-[#0f172a] dark:text-white font-bold"
               />
             </div>
 
             <div>
-              <label className="block font-bold text-gray-700 dark:text-purple-200 mb-1">
+              <label className="block font-black text-[#0f172a] dark:text-purple-200 mb-1">
                 Provinsi Sekolah (Wajib untuk Validasi SNBP)
               </label>
               <select
                 value={provinsiSekolah}
                 onChange={(e) => setProvinsiSekolah(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-purple-900 bg-gray-50 dark:bg-[#1E1540] text-gray-900 dark:text-white"
+                className="w-full px-3 py-2 neo-select bg-white dark:bg-[#160E2E] text-[#0f172a] dark:text-white font-bold"
               >
                 {provinsiList.map((p) => (
                   <option key={p} value={p}>
@@ -174,24 +174,24 @@ export const StudentProfile: React.FC<StudentProfileProps> = ({ siswa, onProfile
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="block font-bold text-gray-700 dark:text-purple-200 mb-1">Kelas</label>
+              <label className="block font-black text-[#0f172a] dark:text-purple-200 mb-1">Kelas</label>
               <input
                 type="text"
                 value={kelas}
                 onChange={(e) => setKelas(e.target.value)}
                 placeholder="Contoh: 12 MIPA 1"
-                className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-purple-900 bg-gray-50 dark:bg-[#1E1540] text-gray-900 dark:text-white"
+                className="w-full px-3 py-2 neo-input bg-white dark:bg-[#160E2E] text-[#0f172a] dark:text-white font-bold"
               />
             </div>
 
             <div>
-              <label className="block font-bold text-gray-700 dark:text-purple-200 mb-1">
+              <label className="block font-black text-[#0f172a] dark:text-purple-200 mb-1">
                 Akreditasi Sekolah
               </label>
               <select
                 value={akreditasi}
                 onChange={(e) => setAkreditasi(e.target.value as any)}
-                className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-purple-900 bg-gray-50 dark:bg-[#1E1540] text-gray-900 dark:text-white"
+                className="w-full px-3 py-2 neo-select bg-white dark:bg-[#160E2E] text-[#0f172a] dark:text-white font-bold"
               >
                 <option value="A">A (Poin Maksimal)</option>
                 <option value="B">B</option>
@@ -201,11 +201,11 @@ export const StudentProfile: React.FC<StudentProfileProps> = ({ siswa, onProfile
             </div>
 
             <div>
-              <label className="block font-bold text-gray-700 dark:text-purple-200 mb-1">Cabang</label>
+              <label className="block font-black text-[#0f172a] dark:text-purple-200 mb-1">Cabang</label>
               <select
                 value={cabang}
                 onChange={(e) => setCabang(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-purple-900 bg-gray-50 dark:bg-[#1E1540] text-gray-900 dark:text-white"
+                className="w-full px-3 py-2 neo-select bg-white dark:bg-[#160E2E] text-[#0f172a] dark:text-white font-bold"
               >
                 {cabangList.map((c) => (
                   <option key={c} value={c}>
@@ -218,21 +218,21 @@ export const StudentProfile: React.FC<StudentProfileProps> = ({ siswa, onProfile
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block font-bold text-gray-700 dark:text-purple-200 mb-1">No HP Siswa</label>
+              <label className="block font-black text-[#0f172a] dark:text-purple-200 mb-1">No HP Siswa</label>
               <input
                 type="tel"
                 value={noHPSiswa}
                 onChange={(e) => setNoHPSiswa(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-purple-900 bg-gray-50 dark:bg-[#1E1540] text-gray-900 dark:text-white"
+                className="w-full px-3 py-2 neo-input bg-white dark:bg-[#160E2E] text-[#0f172a] dark:text-white font-bold font-mono"
               />
             </div>
             <div>
-              <label className="block font-bold text-gray-700 dark:text-purple-200 mb-1">No HP Orang Tua</label>
+              <label className="block font-black text-[#0f172a] dark:text-purple-200 mb-1">No HP Orang Tua</label>
               <input
                 type="tel"
                 value={noHPOrtu}
                 onChange={(e) => setNoHPOrtu(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-purple-900 bg-gray-50 dark:bg-[#1E1540] text-gray-900 dark:text-white"
+                className="w-full px-3 py-2 neo-input bg-white dark:bg-[#160E2E] text-[#0f172a] dark:text-white font-bold font-mono"
               />
             </div>
           </div>
@@ -241,7 +241,7 @@ export const StudentProfile: React.FC<StudentProfileProps> = ({ siswa, onProfile
             <button
               type="submit"
               disabled={savingProfile}
-              className="px-6 py-2.5 rounded-xl bg-purple-700 hover:bg-purple-800 text-white font-bold text-xs shadow-md shadow-purple-600/30 flex items-center gap-1.5 transition-all"
+              className="neo-btn px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-black text-xs shadow-[3px_3px_0px_#0f172a] flex items-center gap-1.5"
             >
               <Save className="w-4 h-4" />
               <span>{savingProfile ? 'Menyimpan...' : 'Simpan Perubahan'}</span>
@@ -250,29 +250,29 @@ export const StudentProfile: React.FC<StudentProfileProps> = ({ siswa, onProfile
         </form>
       </div>
 
-      {/* Form Ubah Password */}
-      <div className="bg-white dark:bg-[#160E2E] rounded-3xl border border-purple-100 dark:border-purple-950/40 p-6 space-y-4">
-        <h3 className="font-extrabold text-sm text-gray-900 dark:text-white flex items-center gap-2 border-b border-purple-50 dark:border-purple-950/40 pb-3">
+      {/* Form Ubah Password Neo-Brutalism */}
+      <div className="neo-card p-6 bg-white dark:bg-[#181133] space-y-4 shadow-[4px_4px_0px_#0f172a]">
+        <h3 className="font-black text-sm text-[#0f172a] dark:text-white flex items-center gap-2 border-b-2 border-[#0f172a]/20 pb-3">
           <Lock className="w-4 h-4 text-purple-600" />
           <span>Ganti Kata Sandi Akun</span>
         </h3>
 
         {passMsg && (
           <div
-            className={`p-3 rounded-xl text-xs font-bold flex items-center gap-2 ${
+            className={`p-3.5 rounded-xl text-xs font-black border-2 border-[#0f172a] shadow-[2px_2px_0px_#0f172a] flex items-center gap-2 ${
               passMsg.type === 'success'
-                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                : 'bg-rose-50 text-rose-700 border border-rose-200'
+                ? 'bg-emerald-200 text-[#0f172a]'
+                : 'bg-rose-200 text-[#0f172a]'
             }`}
           >
-            {passMsg.type === 'success' ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+            {passMsg.type === 'success' ? <CheckCircle2 className="w-4 h-4 text-emerald-800" /> : <AlertCircle className="w-4 h-4 text-rose-800" />}
             <span>{passMsg.message}</span>
           </div>
         )}
 
         <form onSubmit={handleChangePassword} className="space-y-4 text-xs">
           <div>
-            <label className="block font-bold text-gray-700 dark:text-purple-200 mb-1">
+            <label className="block font-black text-[#0f172a] dark:text-purple-200 mb-1">
               Kata Sandi Saat Ini
             </label>
             <input
@@ -281,13 +281,13 @@ export const StudentProfile: React.FC<StudentProfileProps> = ({ siswa, onProfile
               value={oldPass}
               onChange={(e) => setOldPass(e.target.value)}
               placeholder="Masukkan password saat ini"
-              className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-purple-900 bg-gray-50 dark:bg-[#1E1540] text-gray-900 dark:text-white"
+              className="w-full px-3 py-2 neo-input bg-white dark:bg-[#160E2E] text-[#0f172a] dark:text-white font-bold"
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block font-bold text-gray-700 dark:text-purple-200 mb-1">
+              <label className="block font-black text-[#0f172a] dark:text-purple-200 mb-1">
                 Kata Sandi Baru (Min. 6 Karakter)
               </label>
               <input
@@ -296,11 +296,11 @@ export const StudentProfile: React.FC<StudentProfileProps> = ({ siswa, onProfile
                 value={newPass}
                 onChange={(e) => setNewPass(e.target.value)}
                 placeholder="Kata sandi baru"
-                className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-purple-900 bg-gray-50 dark:bg-[#1E1540] text-gray-900 dark:text-white"
+                className="w-full px-3 py-2 neo-input bg-white dark:bg-[#160E2E] text-[#0f172a] dark:text-white font-bold"
               />
             </div>
             <div>
-              <label className="block font-bold text-gray-700 dark:text-purple-200 mb-1">
+              <label className="block font-black text-[#0f172a] dark:text-purple-200 mb-1">
                 Konfirmasi Kata Sandi Baru
               </label>
               <input
@@ -309,7 +309,7 @@ export const StudentProfile: React.FC<StudentProfileProps> = ({ siswa, onProfile
                 value={confirmPass}
                 onChange={(e) => setConfirmPass(e.target.value)}
                 placeholder="Ulangi kata sandi baru"
-                className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-purple-900 bg-gray-50 dark:bg-[#1E1540] text-gray-900 dark:text-white"
+                className="w-full px-3 py-2 neo-input bg-white dark:bg-[#160E2E] text-[#0f172a] dark:text-white font-bold"
               />
             </div>
           </div>
@@ -318,7 +318,7 @@ export const StudentProfile: React.FC<StudentProfileProps> = ({ siswa, onProfile
             <button
               type="submit"
               disabled={savingPass}
-              className="px-6 py-2.5 rounded-xl bg-purple-700 hover:bg-purple-800 text-white font-bold text-xs shadow-md shadow-purple-600/30 flex items-center gap-1.5 transition-all"
+              className="neo-btn px-6 py-2.5 bg-rose-500 hover:bg-rose-600 text-white font-black text-xs shadow-[3px_3px_0px_#0f172a] flex items-center gap-1.5"
             >
               <Lock className="w-4 h-4" />
               <span>{savingPass ? 'Memproses...' : 'Ubah Kata Sandi'}</span>

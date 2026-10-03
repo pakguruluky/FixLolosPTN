@@ -279,7 +279,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
             <Compass className="w-5 h-5 text-purple-600" />
             <span>Target PTN Impian (Trading Card Rasionalisasi)</span>
           </h2>
-          <span className="text-xs font-bold text-gray-500 dark:text-purple-300 hidden sm:inline-block">
+          <span className="text-xs font-black text-slate-700 dark:text-purple-200 hidden sm:inline-block">
             Prediksi Berbasis Data Historis &amp; NRM/NAM Resmi
           </span>
         </div>
@@ -516,7 +516,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
             </span>
           </div>
 
-          <p className="text-xs text-gray-600 dark:text-purple-200 font-medium">
+          <p className="text-xs text-slate-800 dark:text-purple-200 font-bold leading-relaxed">
             Geser slider di bawah ini untuk menguji bagaimana kenaikan nilai rapor semester atau lonjakan skor Try Out UTBK dapat mendongkrak probabilitas kelulusanmu!
           </p>
 
@@ -540,7 +540,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
                 onChange={(e) => setSimulasiRapor(parseFloat(e.target.value))}
                 className="w-full h-3 bg-purple-100 rounded-lg appearance-none cursor-pointer accent-purple-600 border border-[#0f172a]"
               />
-              <div className="flex justify-between text-[10px] text-gray-500 font-bold">
+              <div className="flex justify-between text-[10px] text-slate-700 dark:text-purple-300 font-black">
                 <span>70.0 (Batas KKM)</span>
                 <span>85.0 (Kompetitif)</span>
                 <span>98.0 (Juara Umum)</span>
@@ -566,7 +566,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
                 onChange={(e) => setSimulasiUTBK(parseInt(e.target.value))}
                 className="w-full h-3 bg-rose-100 rounded-lg appearance-none cursor-pointer accent-rose-600 border border-[#0f172a]"
               />
-              <div className="flex justify-between text-[10px] text-gray-500 font-bold">
+              <div className="flex justify-between text-[10px] text-slate-700 dark:text-purple-300 font-black">
                 <span>450 (Dasar)</span>
                 <span>650 (Top PTN)</span>
                 <span>820 (Peringkat 1 Nasional)</span>
@@ -609,7 +609,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
                   <h3 className="font-black text-base text-[#0f172a] dark:text-white">
                     Badge Achievements
                   </h3>
-                  <p className="text-[10px] font-bold text-amber-700 dark:text-amber-300">
+                  <p className="text-[10px] font-black text-amber-800 dark:text-amber-300">
                     Pencapaian &amp; Misi Siswa Kelas 12
                   </p>
                 </div>
@@ -634,7 +634,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
                 <div className="font-black text-xs text-[#0f172a] dark:text-white">
                   Master Math
                 </div>
-                <p className="text-[10px] text-gray-600 dark:text-purple-300 leading-tight">
+                <p className="text-[10px] text-slate-700 dark:text-purple-200 font-bold leading-tight">
                   Nilai rapor Matematika konsisten &gt;88.
                 </p>
               </div>
@@ -652,18 +652,18 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
                 <div className="font-black text-xs text-[#0f172a] dark:text-white">
                   15-Day Streak
                 </div>
-                <p className="text-[10px] text-gray-600 dark:text-purple-300 leading-tight">
+                <p className="text-[10px] text-slate-700 dark:text-purple-200 font-bold leading-tight">
                   Konsisten login belajar 15 hari beruntun.
                 </p>
               </div>
 
               {/* Badge 3: Top 1% UTBK (Locked) */}
-              <div className="neo-card-sm p-3 bg-gray-100 dark:bg-purple-950/30 opacity-75 border-2.5 border-[#0f172a] space-y-1.5">
+              <div className="neo-card-sm p-3 bg-gray-100 dark:bg-purple-950/30 opacity-85 border-2.5 border-[#0f172a] space-y-1.5">
                 <div className="flex items-center justify-between">
                   <div className="w-9 h-9 rounded-xl bg-gray-200 border-2 border-[#0f172a] flex items-center justify-center text-lg grayscale">
                     🎯
                   </div>
-                  <span className="neo-badge px-1.5 py-0.2 bg-gray-300 text-gray-700 text-[8px] font-black flex items-center gap-0.5">
+                  <span className="neo-badge px-1.5 py-0.2 bg-gray-300 text-gray-800 text-[8px] font-black flex items-center gap-0.5">
                     <Lock className="w-2.5 h-2.5" />
                     LOCKED
                   </span>
@@ -671,18 +671,18 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
                 <div className="font-black text-xs text-[#0f172a] dark:text-white">
                   Top 1% UTBK
                 </div>
-                <p className="text-[10px] text-gray-500 leading-tight">
+                <p className="text-[10px] text-slate-700 dark:text-purple-300 font-bold leading-tight">
                   Capai skor rata-rata try out &gt;720 poin.
                 </p>
               </div>
 
               {/* Badge 4: Tiket PTN (Locked) */}
-              <div className="neo-card-sm p-3 bg-gray-100 dark:bg-purple-950/30 opacity-75 border-2.5 border-[#0f172a] space-y-1.5">
+              <div className="neo-card-sm p-3 bg-gray-100 dark:bg-purple-950/30 opacity-85 border-2.5 border-[#0f172a] space-y-1.5">
                 <div className="flex items-center justify-between">
                   <div className="w-9 h-9 rounded-xl bg-gray-200 border-2 border-[#0f172a] flex items-center justify-center text-lg grayscale">
                     🎫
                   </div>
-                  <span className="neo-badge px-1.5 py-0.2 bg-gray-300 text-gray-700 text-[8px] font-black flex items-center gap-0.5">
+                  <span className="neo-badge px-1.5 py-0.2 bg-gray-300 text-gray-800 text-[8px] font-black flex items-center gap-0.5">
                     <Lock className="w-2.5 h-2.5" />
                     LOCKED
                   </span>
@@ -690,14 +690,14 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
                 <div className="font-black text-xs text-[#0f172a] dark:text-white">
                   Tiket PTN
                 </div>
-                <p className="text-[10px] text-gray-500 leading-tight">
+                <p className="text-[10px] text-slate-700 dark:text-purple-300 font-bold leading-tight">
                   Tuntas verifikasi pendaftaran PTN 2027.
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="neo-card-sm p-3 bg-white dark:bg-[#1E1540] text-center text-xs font-bold text-gray-700 dark:text-purple-200">
+          <div className="neo-card-sm p-3 bg-white dark:bg-[#1E1540] text-center text-xs font-black text-[#0f172a] dark:text-amber-300">
             💡 Selesaikan 2 try out berikutnya untuk membuka badge <strong>Top 1% UTBK</strong>!
           </div>
         </div>

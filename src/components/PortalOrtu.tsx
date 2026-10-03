@@ -111,7 +111,7 @@ export const PortalOrtu: React.FC<PortalOrtuProps> = ({
             <div className="flex items-start gap-2.5">
               <UserCheck className="w-4 h-4 text-purple-600 mt-0.5 shrink-0" />
               <div>
-                <span className="text-gray-500 dark:text-purple-300 block text-[10px] font-black uppercase tracking-wider">Nama Ananda</span>
+                <span className="text-slate-700 dark:text-purple-300 block text-[10px] font-black uppercase tracking-wider">Nama Ananda</span>
                 <strong className="text-[#0f172a] dark:text-white font-black text-sm truncate block">{siswa.nama_siswa}</strong>
               </div>
             </div>
@@ -119,7 +119,7 @@ export const PortalOrtu: React.FC<PortalOrtuProps> = ({
             <div className="flex items-start gap-2.5">
               <IdCard className="w-4 h-4 text-purple-600 mt-0.5 shrink-0" />
               <div>
-                <span className="text-gray-500 dark:text-purple-300 block text-[10px] font-black uppercase tracking-wider">NIS Siswa</span>
+                <span className="text-slate-700 dark:text-purple-300 block text-[10px] font-black uppercase tracking-wider">NIS Siswa</span>
                 <strong className="font-mono text-purple-700 dark:text-purple-300 font-black block">{siswa.nis}</strong>
               </div>
             </div>
@@ -127,7 +127,7 @@ export const PortalOrtu: React.FC<PortalOrtuProps> = ({
             <div className="flex items-start gap-2.5">
               <School className="w-4 h-4 text-purple-600 mt-0.5 shrink-0" />
               <div>
-                <span className="text-gray-500 dark:text-purple-300 block text-[10px] font-black uppercase tracking-wider">Kelas &amp; Jurusan</span>
+                <span className="text-slate-700 dark:text-purple-300 block text-[10px] font-black uppercase tracking-wider">Kelas &amp; Jurusan</span>
                 <strong className="text-[#0f172a] dark:text-white font-bold block">{siswa.kelas}</strong>
               </div>
             </div>
@@ -135,7 +135,7 @@ export const PortalOrtu: React.FC<PortalOrtuProps> = ({
             <div className="flex items-start gap-2.5">
               <Building className="w-4 h-4 text-purple-600 mt-0.5 shrink-0" />
               <div>
-                <span className="text-gray-500 dark:text-purple-300 block text-[10px] font-black uppercase tracking-wider">Asal Sekolah</span>
+                <span className="text-slate-700 dark:text-purple-300 block text-[10px] font-black uppercase tracking-wider">Asal Sekolah</span>
                 <strong className="text-[#0f172a] dark:text-white font-bold truncate block">{siswa.asal_sekolah}</strong>
               </div>
             </div>
@@ -143,7 +143,7 @@ export const PortalOrtu: React.FC<PortalOrtuProps> = ({
             <div className="flex items-start gap-2.5">
               <GraduationCap className="w-4 h-4 text-purple-600 mt-0.5 shrink-0" />
               <div>
-                <span className="text-gray-500 dark:text-purple-300 block text-[10px] font-black uppercase tracking-wider">Program</span>
+                <span className="text-slate-700 dark:text-purple-300 block text-[10px] font-black uppercase tracking-wider">Program</span>
                 <span className="neo-badge px-2 py-0.5 bg-purple-200 text-[#0f172a] text-[9px] font-black mt-0.5 inline-block">
                   {siswa.pilihan_program}
                 </span>
@@ -153,7 +153,7 @@ export const PortalOrtu: React.FC<PortalOrtuProps> = ({
             <div className="flex items-start gap-2.5">
               <ShieldCheck className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
               <div>
-                <span className="text-gray-500 dark:text-purple-300 block text-[10px] font-black uppercase tracking-wider">Masa Akses</span>
+                <span className="text-slate-700 dark:text-purple-300 block text-[10px] font-black uppercase tracking-wider">Masa Akses</span>
                 <span className={`neo-badge px-2 py-0.5 text-[9px] font-black mt-0.5 inline-block ${
                   aksesCheck.valid ? 'bg-emerald-300 text-[#0f172a]' : 'bg-rose-400 text-white'
                 }`}>
@@ -225,9 +225,9 @@ export const PortalOrtu: React.FC<PortalOrtuProps> = ({
         </div>
 
         {/* Footer */}
-        <footer className="text-center text-xs font-bold text-gray-500 dark:text-purple-300 py-6 border-t-2 border-[#0f172a]/20">
-          <div>AnalisaKu 2027 by {settings.NAMA_LEMBAGA} • High School Edition</div>
-          <div className="mt-0.5">Portal Pendampingan Orang Tua • Terhubung Real-Time ke Cloud Firestore</div>
+        <footer className="text-center text-xs font-bold text-[#0f172a] dark:text-purple-200 py-6 border-t-2 border-[#0f172a]/20 bg-purple-100/60 dark:bg-[#160E2E] rounded-2xl">
+          <div className="font-black text-sm text-[#0f172a] dark:text-amber-300">© 2027 AnalisaKu by. Pak GuruAI</div>
+          <div className="mt-1 text-xs text-slate-700 dark:text-purple-300">Dikelola oleh {settings.NAMA_LEMBAGA} • Portal Pendampingan Orang Tua Real-Time</div>
         </footer>
       </div>
     </div>
