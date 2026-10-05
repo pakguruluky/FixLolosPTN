@@ -87,7 +87,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   const faqs = [
     {
       q: 'Bagaimana cara kerja formula rasionalisasi SNBT 60 : 40?',
-      a: 'Formula AnalisaKu 2027 membagi skor UTBK secara presisi: 60% Tes Potensi Skolastik (PU, PBM, PPU, PK masing-masing berbobot 15%) dan 40% Literasi & Penalaran Matematika (LBI 13.33%, LBE 13.33%, PM 13.34%). Skor tertimbang ini dikomparasikan langsung dengan target Nilai Akhir Masuk (NAM) prodi tujuan.',
+      a: 'Formula AnalisaKu 2027 membagi skor UTBK secara presisi: 60% Tes Potensi Skolastik (PU, PBM, PPU, PK masing-masing berbobot 15%) dan 40% Literasi & Penalaran Matematika. Skor tertimbang ini dikomparasikan langsung dengan target Nilai Akhir Masuk (NAM) prodi tujuan.',
     },
     {
       q: 'Apakah saya bisa mengikuti simulasi SNBP dan SNBT sekaligus?',
@@ -240,7 +240,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             ⚡ Algoritma IRT &amp; Rapor Terbobot
           </span>
           <span className="neo-badge px-3 py-1 bg-pink-200 text-[#0f172a] text-xs font-black rotate-[-1deg]">
-            🛡️ Akses Fleksibel 1 Hari - 1 Tahun
+            🛡️ Akses Fleksibel
           </span>
         </div>
 
@@ -254,7 +254,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         </h1>
 
         <p className="mt-6 text-sm sm:text-base lg:text-lg font-bold text-slate-800 dark:text-purple-100 max-w-2xl mx-auto leading-relaxed">
-          Kombinasi analisis komprehensif nilai rapor semester 1–5 terbobot, skor Uji TKA IRT, dan formula UTBK 60:40 dengan database ribuan prodi PTN se-Indonesia.
+          Kombinasi analisis komprehensif nilai rapor, skor Uji TKA IRT, dan UTBK dengan database ribuan prodi PTN se-Indonesia.
         </p>
 
         {/* Main CTA Buttons */}
@@ -286,7 +286,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </div>
             <h3 className="font-black text-base text-[#0f172a] dark:text-white mb-1">SNBP Akademik</h3>
             <p className="text-xs font-bold text-slate-800 dark:text-purple-200 leading-relaxed">
-              Formulasi 3 pilar: 50% Rapor (Sem 1-5), 30% Prestasi &amp; TKA, 20% Rekam Jejak Sekolah, plus poin keketatan prodi favorit.
+              Formulasi 3 pilar: Rapor (Sem 1-5), Prestasi &amp; TKA, Rekam Jejak Sekolah, plus poin keketatan prodi favorit.
             </p>
             <div className="mt-4 pt-3 border-t-2 border-[#0f172a]/20 dark:border-purple-700/50 flex justify-between items-center text-[11px] font-black text-purple-900 dark:text-purple-300">
               <span>Maksimal 100 Poin</span>
@@ -304,7 +304,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </div>
             <h3 className="font-black text-base text-[#0f172a] dark:text-white mb-1">SNBT Formula 60:40</h3>
             <p className="text-xs font-bold text-slate-800 dark:text-rose-200 leading-relaxed">
-              Perhitungan 60% Tes Potensi Skolastik (PU, PBM, PPU, PK) + 40% Literasi &amp; Penalaran Mat dari 9 seri Try Out berkala.
+              Perhitungan Tes Potensi Skolastik (PU, PBM, PPU, PK) + Literasi &amp; Penalaran Mat dari 9 seri Try Out berkala.
             </p>
             <div className="mt-4 pt-3 border-t-2 border-[#0f172a]/20 dark:border-rose-800/50 flex justify-between items-center text-[11px] font-black text-rose-900 dark:text-rose-300">
               <span>9 Seri Try Out</span>
@@ -415,14 +415,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 color: 'bg-teal-200',
                 badge: 'REALTIME CLOUD',
                 title: 'Database Terkoneksi',
-                desc: 'Semua hasil tersimpan dan tersinkronisasi otomatis ke cloud backend aman tanpa hilang saat ganti perangkat.',
+                desc: 'Semua hasil tersimpan dan tersinkronisasi otomatis ke cloud.',
               },
               {
                 icon: Zap,
                 color: 'bg-pink-200',
                 badge: '4 PAKET MASA AKTIF',
                 title: 'Pilihan Masa Akses',
-                desc: 'Mendukung paket 1 Hari, 1 Bulan, 6 Bulan, dan 1 Tahun dengan sistem kedaluwarsa otomatis.',
+                desc: 'Mendukung paket 1 Hari, 1 Bulan, 6 Bulan, dan 1 Tahun.',
               },
             ].map((f, i) => {
               const Icon = f.icon;
