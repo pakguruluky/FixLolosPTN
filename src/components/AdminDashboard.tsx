@@ -734,7 +734,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
-                  Token Pendaftaran Mandiri
+                  Token Pendaftaran
                 </h2>
                 <p className="text-xs font-bold text-gray-600 dark:text-purple-300">
                   Format XXXX-XXXX-XXXX, berlaku 24 jam, langsung aktif otomatis saat siswa mendaftar.

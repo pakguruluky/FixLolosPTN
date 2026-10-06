@@ -235,11 +235,6 @@ export const SNBPAnalisa: React.FC<SNBPAnalisaProps> = ({ siswa }) => {
                       {pil.tier}
                     </span>
                   )}
-                  {pil.isCustom && (
-                    <span className="neo-badge px-2 py-0.5 bg-pink-200 text-[#0f172a] text-[9px] font-black">
-                      ✏️ Mandiri
-                    </span>
-                  )}
                 </div>
                 <span className={`text-xs font-black px-2.5 py-1 rounded-lg border-2 border-[#0f172a] ${pil.color_peluang} bg-gray-50 dark:bg-[#1E1540]`}>
                   {pil.label_peluang} ({pil.peluang_prodi}%)

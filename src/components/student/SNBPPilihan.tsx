@@ -440,7 +440,7 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
                   >
                     <option value="Tier 1">Tier 1 (Top Elite Nasional)</option>
                     <option value="Tier 2">Tier 2 (Unggulan Regional)</option>
-                    <option value="Tier 3">Tier 3 (Potensial &amp; Mandiri)</option>
+                    <option value="Tier 3">Tier 3 (Potensial &amp; Berkembang)</option>
                     <option value="Vokasi">Vokasi / Politeknik Negeri</option>
                   </select>
                 </div>
@@ -622,7 +622,7 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
                   >
                     <option value="Tier 1">Tier 1 (Top Elite Nasional)</option>
                     <option value="Tier 2">Tier 2 (Unggulan Regional)</option>
-                    <option value="Tier 3">Tier 3 (Potensial &amp; Mandiri)</option>
+                    <option value="Tier 3">Tier 3 (Potensial &amp; Berkembang)</option>
                     <option value="Vokasi">Vokasi / Politeknik Negeri</option>
                   </select>
                 </div>

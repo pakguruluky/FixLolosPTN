@@ -181,7 +181,7 @@ export const SNBTPilihan: React.FC<SNBTPilihanProps> = ({ siswa, onRefreshData }
     setEditingSlotIdx(null);
     setFeedback({
       type: 'success',
-      message: `Pilihan ${slotIndex + 1} (${customProdi.trim()}) berhasil diisi secara mandiri!`,
+      message: `Pilihan ${slotIndex + 1} (${customProdi.trim()}) berhasil disimpan!`,
     });
     setTimeout(() => setFeedback(null), 3000);
   };
@@ -232,13 +232,13 @@ export const SNBTPilihan: React.FC<SNBTPilihanProps> = ({ siswa, onRefreshData }
         <div className="relative z-10 space-y-2">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-300 text-slate-900 border-2 border-slate-900 shadow-[2px_2px_0px_#0f172a] text-[11px] font-black uppercase tracking-wider">
             <Sparkles className="w-3.5 h-3.5 text-slate-900" />
-            <span>Target Pilihan UTBK-SNBT 2027 • Input Mandiri Cerdas</span>
+            <span>Target Pilihan UTBK-SNBT 2027</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
             Pilihan Program Studi UTBK-SNBT
           </h2>
           <p className="text-xs sm:text-sm text-rose-100 max-w-2xl font-bold leading-relaxed">
-            Tentukan hingga 4 pilihan kampus impian secara mandiri. <span className="font-black text-yellow-300 bg-slate-900 px-1 py-0.5 rounded">Tier PTN & Tier Prodi Auto-Lock</span>, dan target Nilai Ambang Masuk (NAM) langsung dihitung untuk mengukur peluang lolos berdasarkan rata-rata skor Try Out Anda ({avgTert > 0 ? `${avgTert.toFixed(2)}` : 'Belum isi TO'}).
+            Tentukan hingga 4 pilihan kampus impian. <span className="font-black text-yellow-300 bg-slate-900 px-1 py-0.5 rounded">Tier PTN & Tier Prodi Auto-Lock</span>, dan target Nilai Ambang Masuk (NAM) langsung dihitung untuk mengukur peluang lolos berdasarkan rata-rata skor Try Out Anda ({avgTert > 0 ? `${avgTert.toFixed(2)}` : 'Belum isi TO'}).
           </p>
         </div>
       </div>
@@ -330,9 +330,6 @@ export const SNBTPilihan: React.FC<SNBTPilihanProps> = ({ siswa, onRefreshData }
                   <div className="mt-4 p-4 sm:p-5 rounded-2xl bg-rose-50 dark:bg-[#201538] border-2 border-slate-900 shadow-[3px_3px_0px_#0f172a] space-y-3">
                     <div className="flex items-start justify-between">
                       <div>
-                        <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-600 text-white border border-slate-900 shadow-[1px_1px_0px_#0f172a] mb-1.5">
-                          ✏️ Input Mandiri
-                        </span>
                         <h3 className="text-lg font-black text-slate-900 dark:text-white leading-tight">
                           {slot.prodi}
                         </h3>
@@ -394,7 +391,7 @@ export const SNBTPilihan: React.FC<SNBTPilihanProps> = ({ siswa, onRefreshData }
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-black text-rose-700 dark:text-purple-300 flex items-center gap-1">
                         <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-                        <span>Input Mandiri Pilihan {idx + 1}</span>
+                        <span>Input Pilihan {idx + 1}</span>
                       </span>
                       <button
                         type="button"
@@ -552,7 +549,7 @@ export const SNBTPilihan: React.FC<SNBTPilihanProps> = ({ siswa, onRefreshData }
                       onClick={() => handleOpenEditSlot(idx)}
                       className="neo-btn px-5 py-2.5 bg-rose-500 hover:bg-rose-600 text-white font-black text-xs inline-flex items-center gap-1.5"
                     >
-                      <span>+ Input Mandiri Pilihan {idx + 1}</span>
+                      <span>+ Isi Pilihan {idx + 1}</span>
                     </button>
                   </div>
                 )}

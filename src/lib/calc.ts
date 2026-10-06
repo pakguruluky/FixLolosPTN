@@ -807,7 +807,7 @@ export function getTierDefaultsSNBP(tier?: string): { nrm: number; ketetatan: st
     case 'Tier 2':
       return { nrm: 86.5, ketetatan: '3.5%', label: '🌟 Tier 2 (Unggulan Regional)' };
     case 'Tier 3':
-      return { nrm: 81.5, ketetatan: '6.2%', label: '🎯 Tier 3 (Potensial & Mandiri)' };
+      return { nrm: 81.5, ketetatan: '6.2%', label: '🎯 Tier 3 (Potensial & Berkembang)' };
     case 'Vokasi':
       return { nrm: 80.0, ketetatan: '4.8%', label: '🛠️ Vokasi / Politeknik Negeri' };
     default:
@@ -2384,7 +2384,7 @@ export function generateKesimpulanStrategiSNBP(
           : 'Sertifikat prestasi Anda sudah maksimal (20/20 poin). Pastikan sertifikat legalisir siap saat verifikasi.',
         peluang.hasTKA
           ? 'Pertahankan konsistensi nilai TKA agar tidak terjadi diskrepansi (gap) dengan nilai rapor sekolah.'
-          : 'Lakukan try out atau tes TKA untuk mengukur skala IRT mandiri agar hasil rasionalisasi semakin akurat.',
+          : 'Lakukan try out atau tes TKA untuk mengukur skala IRT agar hasil rasionalisasi semakin akurat.',
       ],
     },
     {
