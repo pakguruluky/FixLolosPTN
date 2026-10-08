@@ -16,7 +16,7 @@ export const SNBTTryOut: React.FC<SNBTTryOutProps> = ({ siswa, onRefreshData }) 
   const [selectedTOKe, setSelectedTOKe] = useState<number>(1);
   const [selectedBulan, setSelectedBulan] = useState<string>('AGS');
 
-  // Input states (0-800)
+  // Input states (200-1000)
   const [pu, setPu] = useState<number | ''>('');
   const [pbm, setPbm] = useState<number | ''>('');
   const [ppu, setPpu] = useState<number | ''>('');
@@ -106,20 +106,23 @@ export const SNBTTryOut: React.FC<SNBTTryOutProps> = ({ siswa, onRefreshData }) 
     setSaving(true);
     setFeedback(null);
 
-    // Validate 0-800
+    // Validate 200-1000
     const vals = [
-      { name: 'PU', val: Number(pu) },
-      { name: 'PBM', val: Number(pbm) },
-      { name: 'PPU', val: Number(ppu) },
-      { name: 'PK', val: Number(pk) },
-      { name: 'LBI', val: Number(lbi) },
-      { name: 'LBE', val: Number(lbe) },
-      { name: 'PM', val: Number(pm) },
+      { name: 'Penalaran Umum (PU)', val: Number(pu) },
+      { name: 'Pemahaman Bacaan & Menulis (PBM)', val: Number(pbm) },
+      { name: 'Pengetahuan & Pemahaman Umum (PPU)', val: Number(ppu) },
+      { name: 'Pengetahuan Kuantitatif (PK)', val: Number(pk) },
+      { name: 'Literasi Bahasa Indonesia (LBI)', val: Number(lbi) },
+      { name: 'Literasi Bahasa Inggris (LBE)', val: Number(lbe) },
+      { name: 'Penalaran Matematika (PM)', val: Number(pm) },
     ];
 
     for (const v of vals) {
-      if (v.val < 0 || v.val > 800) {
-        setFeedback({ type: 'error', message: `Skor ${v.name} harus di antara 0 s.d. 800.` });
+      if (v.val > 0 && (v.val < 200 || v.val > 1000)) {
+        setFeedback({
+          type: 'error',
+          message: `Skor ${v.name} harus berada dalam rentang skor 200 s.d. 1000 (atau kosongkan bila belum diikuti).`,
+        });
         setSaving(false);
         return;
       }
@@ -174,7 +177,7 @@ export const SNBTTryOut: React.FC<SNBTTryOutProps> = ({ siswa, onRefreshData }) 
             <span>Input Nilai Try Out UTBK</span>
           </h2>
           <p className="text-xs font-bold text-gray-700 dark:text-purple-300 mt-1 max-w-xl">
-            Ketik perolehan nilai Try Out 1 s.d. 9 (skala 0–800). Skor tertimbang dihitung secara real-time pada setiap ketikan berdasarkan bobot resmi TPS 60% &amp; Literasi/PM 40%.
+            Ketik perolehan nilai Try Out 1 s.d. 9 untuk masing-masing subtes (skor 200–1000). Skor tertimbang dihitung secara real-time pada setiap ketikan berdasarkan bobot resmi TPS 60% &amp; Literasi/PM 40%.
           </p>
         </div>
 
@@ -195,7 +198,7 @@ export const SNBTTryOut: React.FC<SNBTTryOutProps> = ({ siswa, onRefreshData }) 
               {liveCalc.skor_tertimbang > 0 ? liveCalc.skor_tertimbang.toFixed(2) : '0.00'}
             </div>
             <div className="text-xs font-black text-rose-200">
-              / 800
+              / 1000
             </div>
           </div>
 
@@ -280,7 +283,7 @@ export const SNBTTryOut: React.FC<SNBTTryOutProps> = ({ siswa, onRefreshData }) 
               <span className="w-3 h-3 rounded-full bg-purple-600 border border-[#0f172a]" />
               <span>Tes Potensi Skolastik (TPS) — Total Bobot 60%</span>
             </h3>
-            <span className="text-[10px] font-bold text-gray-600 dark:text-purple-300">PU, PBM, PPU, PK (@15% bobot)</span>
+            <span className="text-[10px] font-bold text-gray-600 dark:text-purple-300">PU, PBM, PPU, PK (@15% bobot) • Rentang 200–1000</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -289,25 +292,25 @@ export const SNBTTryOut: React.FC<SNBTTryOutProps> = ({ siswa, onRefreshData }) 
                 label: 'Penalaran Umum (PU)',
                 val: pu,
                 set: setPu,
-                placeholder: '0 - 800',
+                placeholder: '200 - 1000',
               },
               {
                 label: 'Pemahaman Bacaan & Menulis (PBM)',
                 val: pbm,
                 set: setPbm,
-                placeholder: '0 - 800',
+                placeholder: '200 - 1000',
               },
               {
                 label: 'Pengetahuan & Pemahaman Umum (PPU)',
                 val: ppu,
                 set: setPpu,
-                placeholder: '0 - 800',
+                placeholder: '200 - 1000',
               },
               {
                 label: 'Pengetahuan Kuantitatif (PK)',
                 val: pk,
                 set: setPk,
-                placeholder: '0 - 800',
+                placeholder: '200 - 1000',
               },
             ].map((sub, i) => (
               <div key={i} className="neo-card-sm p-3.5 bg-white dark:bg-[#181133] space-y-1.5 shadow-[2px_2px_0px_#0f172a]">
@@ -316,8 +319,8 @@ export const SNBTTryOut: React.FC<SNBTTryOutProps> = ({ siswa, onRefreshData }) 
                 </label>
                 <input
                   type="number"
-                  min="0"
-                  max="800"
+                  min="200"
+                  max="1000"
                   step="1"
                   value={sub.val}
                   onChange={(e) => sub.set(e.target.value === '' ? '' : parseFloat(e.target.value))}
@@ -336,7 +339,7 @@ export const SNBTTryOut: React.FC<SNBTTryOutProps> = ({ siswa, onRefreshData }) 
               <span className="w-3 h-3 rounded-full bg-rose-600 border border-[#0f172a]" />
               <span>Literasi &amp; Penalaran Matematika — Total Bobot 40%</span>
             </h3>
-            <span className="text-[10px] font-bold text-gray-600 dark:text-rose-300">LBI (13.33%), LBE (13.33%), PM (13.34%)</span>
+            <span className="text-[10px] font-bold text-gray-600 dark:text-rose-300">LBI (13.33%), LBE (13.33%), PM (13.34%) • Rentang 200–1000</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -345,19 +348,19 @@ export const SNBTTryOut: React.FC<SNBTTryOutProps> = ({ siswa, onRefreshData }) 
                 label: 'Literasi Bahasa Indonesia (LBI)',
                 val: lbi,
                 set: setLbi,
-                placeholder: '0 - 800',
+                placeholder: '200 - 1000',
               },
               {
                 label: 'Literasi Bahasa Inggris (LBE)',
                 val: lbe,
                 set: setLbe,
-                placeholder: '0 - 800',
+                placeholder: '200 - 1000',
               },
               {
                 label: 'Penalaran Matematika (PM)',
                 val: pm,
                 set: setPm,
-                placeholder: '0 - 800',
+                placeholder: '200 - 1000',
               },
             ].map((sub, i) => (
               <div key={i} className="neo-card-sm p-3.5 bg-white dark:bg-[#181133] space-y-1.5 shadow-[2px_2px_0px_#0f172a]">
@@ -366,8 +369,8 @@ export const SNBTTryOut: React.FC<SNBTTryOutProps> = ({ siswa, onRefreshData }) 
                 </label>
                 <input
                   type="number"
-                  min="0"
-                  max="800"
+                  min="200"
+                  max="1000"
                   step="1"
                   value={sub.val}
                   onChange={(e) => sub.set(e.target.value === '' ? '' : parseFloat(e.target.value))}

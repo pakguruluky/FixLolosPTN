@@ -52,6 +52,7 @@ export interface NilaiRapor {
 
 export interface TKAData {
   nis: string;
+  skala_mode?: 'IRT' | '100';
   tka_indo: number;
   tka_ing: number;
   tka_mat: number;

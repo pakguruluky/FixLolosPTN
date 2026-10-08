@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Save, AlertCircle, CheckCircle2, Award, Info } from 'lucide-react';
+import { Save, AlertCircle, CheckCircle2, Award, Info, Sliders, ArrowRightLeft } from 'lucide-react';
 import { Siswa, TKAData } from '../../types';
 import { getTKA, saveTKA } from '../../services/api';
 import {
   TKA_MAPEL_PILIHAN,
   RATA_NASIONAL_TKA,
   convertIRTto100,
+  convert100toIRT,
   getKategoriTKA,
 } from '../../lib/calc';
 
@@ -15,6 +16,8 @@ interface SNBPTKAProps {
 }
 
 export const SNBPTKA: React.FC<SNBPTKAProps> = ({ siswa, onRefreshData }) => {
+  const [skalaMode, setSkalaMode] = useState<'IRT' | '100'>('IRT');
+
   const [tkaIndo, setTkaIndo] = useState<number | ''>('');
   const [tkaIng, setTkaIng] = useState<number | ''>('');
   const [tkaMat, setTkaMat] = useState<number | ''>('');
@@ -38,6 +41,17 @@ export const SNBPTKA: React.FC<SNBPTKAProps> = ({ siswa, onRefreshData }) => {
     try {
       const data = await getTKA(siswa.nis);
       if (data) {
+        // Deteksi mode skala jika tersimpan atau berdasarkan rentang nilai
+        const values = [data.tka_indo, data.tka_ing, data.tka_mat, data.nilai_tka1, data.nilai_tka2].filter(
+          (v) => typeof v === 'number' && v > 0
+        );
+        const isSavedIn100 =
+          data.skala_mode === '100' ||
+          (values.length > 0 && values.every((v) => v <= 100));
+
+        const activeMode = isSavedIn100 ? '100' : 'IRT';
+        setSkalaMode(activeMode);
+
         setTkaIndo(data.tka_indo || '');
         setTkaIng(data.tka_ing || '');
         setTkaMat(data.tka_mat || '');
@@ -51,10 +65,32 @@ export const SNBPTKA: React.FC<SNBPTKAProps> = ({ siswa, onRefreshData }) => {
     }
   };
 
+  // Konversi otomatis ketika beralih antar mode skala
+  const handleSwitchMode = (targetMode: 'IRT' | '100') => {
+    if (targetMode === skalaMode) return;
+
+    if (targetMode === '100') {
+      // Dari IRT ke 0-100: konversi nilai IRT (200-800) ke skala 0-100
+      if (typeof tkaIndo === 'number' && tkaIndo > 100) setTkaIndo(convertIRTto100(tkaIndo));
+      if (typeof tkaIng === 'number' && tkaIng > 100) setTkaIng(convertIRTto100(tkaIng));
+      if (typeof tkaMat === 'number' && tkaMat > 100) setTkaMat(convertIRTto100(tkaMat));
+      if (typeof nilaiTka1 === 'number' && nilaiTka1 > 100) setNilaiTka1(convertIRTto100(nilaiTka1));
+      if (typeof nilaiTka2 === 'number' && nilaiTka2 > 100) setNilaiTka2(convertIRTto100(nilaiTka2));
+    } else {
+      // Dari 0-100 ke IRT: konversi nilai 0-100 ke rentang skala IRT (200-800)
+      if (typeof tkaIndo === 'number' && tkaIndo <= 100 && tkaIndo > 0) setTkaIndo(convert100toIRT(tkaIndo));
+      if (typeof tkaIng === 'number' && tkaIng <= 100 && tkaIng > 0) setTkaIng(convert100toIRT(tkaIng));
+      if (typeof tkaMat === 'number' && tkaMat <= 100 && tkaMat > 0) setTkaMat(convert100toIRT(tkaMat));
+      if (typeof nilaiTka1 === 'number' && nilaiTka1 <= 100 && nilaiTka1 > 0) setNilaiTka1(convert100toIRT(nilaiTka1));
+      if (typeof nilaiTka2 === 'number' && nilaiTka2 <= 100 && nilaiTka2 > 0) setNilaiTka2(convert100toIRT(nilaiTka2));
+    }
+
+    setSkalaMode(targetMode);
+  };
+
   const handleSave = async () => {
     setFeedback(null);
 
-    // Validasi UI: tolak simpan bila ada nilai > 0 di luar 200–800
     const vals = [
       { name: 'Bahasa Indonesia', val: Number(tkaIndo) },
       { name: 'Bahasa Inggris', val: Number(tkaIng) },
@@ -63,13 +99,25 @@ export const SNBPTKA: React.FC<SNBPTKAProps> = ({ siswa, onRefreshData }) => {
       { name: mapelPilihan2, val: Number(nilaiTka2) },
     ];
 
-    for (const item of vals) {
-      if (item.val > 0 && (item.val < 200 || item.val > 800)) {
-        setFeedback({
-          type: 'error',
-          message: `Nilai TKA untuk ${item.name} harus berada dalam rentang IRT 200 s.d. 800 (atau kosongkan jika tidak mengikuti).`,
-        });
-        return;
+    if (skalaMode === 'IRT') {
+      for (const item of vals) {
+        if (item.val > 0 && (item.val < 200 || item.val > 800)) {
+          setFeedback({
+            type: 'error',
+            message: `Nilai TKA untuk ${item.name} harus berada dalam rentang IRT 200 s.d. 800 (atau kosongkan jika tidak mengikuti).`,
+          });
+          return;
+        }
+      }
+    } else {
+      for (const item of vals) {
+        if (item.val > 0 && (item.val < 0 || item.val > 100)) {
+          setFeedback({
+            type: 'error',
+            message: `Nilai TKA untuk ${item.name} harus berada dalam rentang skala 0 s.d. 100 (atau kosongkan jika tidak mengikuti).`,
+          });
+          return;
+        }
       }
     }
 
@@ -77,6 +125,7 @@ export const SNBPTKA: React.FC<SNBPTKAProps> = ({ siswa, onRefreshData }) => {
     try {
       const payload: TKAData = {
         nis: siswa.nis,
+        skala_mode: skalaMode,
         tka_indo: Number(tkaIndo) || 0,
         tka_ing: Number(tkaIng) || 0,
         tka_mat: Number(tkaMat) || 0,
@@ -88,7 +137,13 @@ export const SNBPTKA: React.FC<SNBPTKAProps> = ({ siswa, onRefreshData }) => {
       };
 
       await saveTKA(payload);
-      setFeedback({ type: 'success', message: 'Nilai TKA berhasil disimpan!' });
+      setFeedback({
+        type: 'success',
+        message:
+          skalaMode === 'IRT'
+            ? 'Nilai TKA berhasil disimpan dalam Skala IRT (dikonversi otomatis ke Skala 0–100 untuk rasionalisasi)!'
+            : 'Nilai TKA berhasil disimpan dalam Skala 0–100 (langsung digunakan tanpa konversi)!',
+      });
       if (onRefreshData) onRefreshData();
       setTimeout(() => setFeedback(null), 3800);
     } catch {
@@ -107,8 +162,10 @@ export const SNBPTKA: React.FC<SNBPTKAProps> = ({ siswa, onRefreshData }) => {
     pilihanSelector?: React.ReactNode
   ) => {
     const num = Number(val) || 0;
-    const skala100 = convertIRTto100(num);
-    const kat = getKategoriTKA(num);
+    // Jika input dengan skor IRT konversikan ke skala 0-100; jika input dengan skala 0-100 tidak perlu dikonversi
+    const skala100 = skalaMode === 'IRT' ? convertIRTto100(num) : num;
+    const irtEquivalent = skalaMode === '100' ? convert100toIRT(num) : num;
+    const kat = getKategoriTKA(skala100);
     const rataNas = RATA_NASIONAL_TKA[mapelKey] || 55.0;
     const diffNas = num > 0 ? (skala100 - rataNas).toFixed(1) : null;
 
@@ -119,8 +176,14 @@ export const SNBPTKA: React.FC<SNBPTKAProps> = ({ siswa, onRefreshData }) => {
             <span className="text-xs font-black text-[#0f172a] dark:text-white">
               {isPilihan ? 'Mapel Pilihan' : title}
             </span>
-            <span className="neo-badge px-2 py-0.5 bg-amber-300 text-[#0f172a] text-[9px] font-black">
-              IRT 200–800
+            <span
+              className={`neo-badge px-2 py-0.5 text-[9px] font-black ${
+                skalaMode === 'IRT'
+                  ? 'bg-amber-300 text-[#0f172a]'
+                  : 'bg-cyan-300 text-[#0f172a]'
+              }`}
+            >
+              {skalaMode === 'IRT' ? 'IRT 200–800' : 'Skala 0–100'}
             </span>
           </div>
 
@@ -129,24 +192,61 @@ export const SNBPTKA: React.FC<SNBPTKAProps> = ({ siswa, onRefreshData }) => {
           <div className="mt-2.5">
             <input
               type="number"
-              min="200"
-              max="800"
+              min={skalaMode === 'IRT' ? '200' : '0'}
+              max={skalaMode === 'IRT' ? '800' : '100'}
+              step={skalaMode === 'IRT' ? '1' : '0.1'}
               value={val}
               onChange={(e) => onChange(e.target.value === '' ? '' : parseFloat(e.target.value))}
-              placeholder="0 (kosongkan bila tidak ikut)"
+              placeholder={
+                skalaMode === 'IRT'
+                  ? '200 - 800 (kosongkan jika tidak ikut)'
+                  : '0 - 100 (kosongkan jika tidak ikut)'
+              }
               className="w-full px-3 py-2 text-sm neo-input font-mono font-bold"
             />
           </div>
         </div>
 
-        {/* Live conversion under input */}
+        {/* Live conversion / status under input */}
         <div className="mt-3 pt-3 border-t-2 border-[#0f172a]/15 text-xs font-bold space-y-1.5">
-          <div className="flex justify-between items-center">
-            <span className="text-gray-600 dark:text-purple-300">Konversi Skala 100:</span>
-            <span className="font-mono font-black text-purple-700 dark:text-purple-300 text-sm">
-              {num > 0 ? skala100.toFixed(2) : '-'}
-            </span>
-          </div>
+          {skalaMode === 'IRT' ? (
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600 dark:text-purple-300">Konversi ke Skala 100:</span>
+              <span className="font-mono font-black text-purple-700 dark:text-purple-300 text-sm">
+                {num > 0 ? (
+                  <span className="inline-flex items-center gap-1">
+                    <span>{skala100.toFixed(2)}</span>
+                    <span className="text-[10px] text-gray-500 font-normal">(dikonversi)</span>
+                  </span>
+                ) : (
+                  '-'
+                )}
+              </span>
+            </div>
+          ) : (
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600 dark:text-purple-300">Skala 0–100:</span>
+              <span className="font-mono font-black text-emerald-700 dark:text-emerald-300 text-sm">
+                {num > 0 ? (
+                  <span className="inline-flex items-center gap-1">
+                    <span>{skala100.toFixed(2)}</span>
+                    <span className="text-[10px] text-gray-500 font-normal">(tanpa konversi)</span>
+                  </span>
+                ) : (
+                  '-'
+                )}
+              </span>
+            </div>
+          )}
+
+          {skalaMode === '100' && num > 0 && (
+            <div className="flex justify-between items-center text-[11px]">
+              <span className="text-gray-500">Estimasi Ekuivalen IRT:</span>
+              <span className="font-mono font-black text-purple-700 dark:text-purple-300">
+                ~{irtEquivalent.toFixed(1)} IRT
+              </span>
+            </div>
+          )}
 
           <div className="flex justify-between items-center">
             <span className="text-gray-600 dark:text-purple-300">Kategori:</span>
@@ -183,12 +283,74 @@ export const SNBPTKA: React.FC<SNBPTKAProps> = ({ siswa, onRefreshData }) => {
             Input Nilai Tes Kemampuan Akademik (TKA)
           </h2>
           <p className="text-xs font-bold text-gray-700 dark:text-purple-300 mt-1">
-            Nilai diinput dalam skala <strong>IRT (200 – 800)</strong>. TKA digunakan untuk memvalidasi kewajaran nilai rapor dan menambah bobot peluang SNBP Anda.
+            Mendukung input dalam <strong>Skala IRT (200 – 800)</strong> maupun <strong>Skala 0 – 100</strong>. Jika diinput dengan skala IRT, sistem mengonversikannya ke skala 0–100. Jika diinput dengan skala 0–100, nilai langsung digunakan tanpa konversi.
           </p>
         </div>
 
         <div className="neo-card-sm px-4 py-3 bg-cyan-300 text-[#0f172a] text-xs font-black shadow-[2.5px_2.5px_0px_#0f172a] self-start md:self-auto flex items-center gap-2">
-          <span>⚡ Standar Resmi IRT 2027</span>
+          <span>⚡ Fleksibel Dual-Skala (IRT &amp; 0-100)</span>
+        </div>
+      </div>
+
+      {/* Mode Selector Neo-Brutalism */}
+      <div className="neo-card p-4 bg-white dark:bg-[#181133] shadow-[3px_3px_0px_#0f172a]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div className="flex items-center gap-2">
+              <Sliders className="w-4 h-4 text-purple-600 dark:text-purple-300" />
+              <span className="text-xs font-black text-[#0f172a] dark:text-white uppercase tracking-wider">
+                Pilih Skala Penginputan Nilai TKA:
+              </span>
+            </div>
+            <p className="text-[11px] font-bold text-gray-600 dark:text-purple-300 mt-0.5">
+              Klik salah satu tombol di samping untuk berganti skala input. Nilai yang telah diketik akan terkonversi otomatis.
+            </p>
+          </div>
+
+          <div className="inline-flex p-1 bg-slate-100 dark:bg-purple-950/70 rounded-xl border-2 border-[#0f172a] shadow-[2px_2px_0px_#0f172a] self-start sm:self-auto">
+            <button
+              type="button"
+              onClick={() => handleSwitchMode('IRT')}
+              className={`px-3 sm:px-4 py-2 text-xs font-black rounded-lg transition-all flex items-center gap-1.5 ${
+                skalaMode === 'IRT'
+                  ? 'bg-amber-300 text-[#0f172a] shadow-[2px_2px_0px_#0f172a] font-black'
+                  : 'text-slate-700 dark:text-purple-200 hover:text-black dark:hover:text-white'
+              }`}
+            >
+              <span>🌟 Skala IRT (200 – 800)</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleSwitchMode('100')}
+              className={`px-3 sm:px-4 py-2 text-xs font-black rounded-lg transition-all flex items-center gap-1.5 ${
+                skalaMode === '100'
+                  ? 'bg-purple-600 text-white shadow-[2px_2px_0px_#0f172a] font-black'
+                  : 'text-slate-700 dark:text-purple-200 hover:text-black dark:hover:text-white'
+              }`}
+            >
+              <span>📊 Skala 0 – 100</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Status Mode Box */}
+        <div className="mt-3 pt-2.5 border-t-2 border-[#0f172a]/10 flex items-center justify-between text-xs">
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600 dark:text-purple-300 font-bold">Mode Aktif:</span>
+            {skalaMode === 'IRT' ? (
+              <span className="neo-badge px-2 py-0.5 bg-amber-300 text-[#0f172a] font-black text-[11px]">
+                Skala IRT 200 s.d. 800 → Dikonversi ke Skala 0–100
+              </span>
+            ) : (
+              <span className="neo-badge px-2 py-0.5 bg-purple-600 text-white font-black text-[11px]">
+                Skala 0 s.d. 100 → Nilai Asli (Tanpa Konversi)
+              </span>
+            )}
+          </div>
+          <span className="text-[11px] text-gray-500 font-mono hidden md:inline">
+            {skalaMode === 'IRT' ? 'Formula: ((IRT - 200) / 600) × 100' : 'Formula: Nilai Asli 1:1'}
+          </span>
         </div>
       </div>
 
@@ -271,7 +433,7 @@ export const SNBPTKA: React.FC<SNBPTKAProps> = ({ siswa, onRefreshData }) => {
           className="w-full sm:w-auto px-6 py-3 neo-btn bg-purple-600 hover:bg-purple-700 text-white font-black text-xs shadow-[3px_3px_0px_#0f172a] flex items-center justify-center gap-2 disabled:opacity-50"
         >
           <Save className="w-4 h-4" />
-          <span>{saving ? 'Menyimpan...' : '💾 Simpan Nilai TKA'}</span>
+          <span>{saving ? 'Menyimpan...' : `💾 Simpan Nilai TKA (${skalaMode === 'IRT' ? 'Skala IRT' : 'Skala 0–100'})`}</span>
         </button>
       </div>
 
@@ -280,7 +442,7 @@ export const SNBPTKA: React.FC<SNBPTKAProps> = ({ siswa, onRefreshData }) => {
         <div className="p-4 bg-purple-200 dark:bg-purple-950/60 border-b-2.5 border-[#0f172a]">
           <h4 className="text-xs font-black text-[#0f172a] dark:text-purple-200 flex items-center gap-1.5">
             <Info className="w-4 h-4 text-purple-700" />
-            <span>Tabel Kategori Penguasaan TKA Berdasarkan Standar IRT</span>
+            <span>Tabel Kategori Penguasaan TKA Berdasarkan Standar IRT &amp; Skala 0–100</span>
           </h4>
         </div>
         <div className="overflow-x-auto">
@@ -325,3 +487,4 @@ export const SNBPTKA: React.FC<SNBPTKAProps> = ({ siswa, onRefreshData }) => {
     </div>
   );
 };
+

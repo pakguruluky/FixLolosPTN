@@ -40,22 +40,26 @@ export function runCalculationUnitTests(): { passed: number; failed: number; log
   const tb = calcNilaiMapelTerbobot(80, 80, 80, 80, 100);
   assert(tb === 90, `Bobot semester kalkulasi tepat (harus 90, dapat ${tb})`);
 
-  // 2. Konversi IRT ke Skala 100: skala100 = (IRT - 200) / 600 * 100
+  // 2. Konversi IRT ke Skala 100 dan Sebaliknya
   // IRT 500 -> (300/600)*100 = 50
   // IRT 800 -> 100
   // IRT 200 -> 0
+  // Skala 0-100 tidak perlu dikonversi (misal 85 -> tetap 85)
   const c500 = convertIRTto100(500);
   const c800 = convertIRTto100(800);
   const c200 = convertIRTto100(200);
+  const c85 = convertIRTto100(85);
   assert(c500 === 50, `Konversi IRT 500 -> 50 (dapat ${c500})`);
   assert(c800 === 100, `Konversi IRT 800 -> 100 (dapat ${c800})`);
   assert(c200 === 0, `Konversi IRT 200 -> 0 (dapat ${c200})`);
+  assert(c85 === 85, `Input skala 0-100 tidak dikonversi (harus 85, dapat ${c85})`);
 
-  // 3. Validasi TKA vs Rapor
+  // 3. Validasi TKA vs Rapor (Mode IRT & Mode 0-100)
   // Formula: validasi = 1.6 * TKA100 - 0.6 * (TKA100^2 / raporVal)
   // TKA100 = 80, raporVal = 80 -> 1.6*80 - 0.6*(6400/80) = 128 - 48 = 80
   const dummyTka: TKAData = {
     nis: 'TEST1',
+    skala_mode: 'IRT',
     tka_indo: 680,
     tka_ing: 500,
     tka_mat: 680,
@@ -72,6 +76,23 @@ export function runCalculationUnitTests(): { passed: number; failed: number; log
   assert(tkaRes.hasTKA === true, 'Validasi TKA terdeteksi');
   assert(tkaRes.items.length === 3, 'TKA 3 mapel wajib dihitung');
 
+  // Uji input TKA skala 0-100 langsung
+  const dummyTka100: TKAData = {
+    nis: 'TEST2',
+    skala_mode: '100',
+    tka_indo: 85,
+    tka_ing: 75,
+    tka_mat: 90,
+    mapel_pilihan1: '',
+    nilai_tka1: 0,
+    mapel_pilihan2: '',
+    nilai_tka2: 0,
+    timestamp: '2026-09-01',
+  };
+  const tkaRes100 = calcValidasiTKA(dummyTka100, dummyRapor, 80);
+  assert(tkaRes100.hasTKA === true, 'Validasi TKA skala 0-100 terdeteksi');
+  assert(tkaRes100.items[0].skala100 === 85, 'TKA skala 0-100 tidak perlu dikonversi (nilai tetap 85)');
+
   // 4. Mapel Pendukung Prodi
   const [m1, m2] = getMapelPendukungProdi('Teknik Informatika');
   assert(m1 === 'Matematika Tingkat Lanjut' && m2 === 'Fisika', 'Mapel pendukung Teknik Informatika tepat');
@@ -85,11 +106,15 @@ export function runCalculationUnitTests(): { passed: number; failed: number; log
   const ptOlimp = getPrestasiPoin('Olimpiade & Penelitian', 'Perorangan', 'Terakreditasi', 'Nasional', 'Juara 1');
   assert(ptOlimp === 80.66, `Prestasi Olimpiade Perorangan Akred Nasional J1 = 80.66 (dapat ${ptOlimp})`);
 
-  // 6. SNBT Formula 60:40
+  // 6. SNBT Formula 60:40 (Rentang 200–1000)
   // TPS (0.15 * 4 = 0.60), Lit (0.1333, 0.1333, 0.1334 = 0.40)
   // Semua 700 -> hasil tertimbang harus 700
   const toAll700 = calcSkorTO(700, 700, 700, 700, 700, 700, 700);
   assert(Math.round(toAll700.skor_tertimbang) === 700, `SNBT lengkap semua 700 menghasilkan 700 (dapat ${toAll700.skor_tertimbang})`);
+
+  // Uji skor tinggi rentang 200-1000 (misal 850)
+  const toAll850 = calcSkorTO(850, 850, 850, 850, 850, 850, 850);
+  assert(Math.round(toAll850.skor_tertimbang) === 850, `SNBT lengkap skor 850 menghasilkan 850 (dapat ${toAll850.skor_tertimbang})`);
 
   // Parsial: hanya TPS diisi (semua 600)
   const toPartial = calcSkorTO(600, 600, 600, 600, 0, 0, 0);

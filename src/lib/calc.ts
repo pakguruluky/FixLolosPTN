@@ -127,21 +127,31 @@ export function calcRataRapor(nilaiRaporList: NilaiRapor[]): {
   return { terbobotPerMapel, rata_rapor };
 }
 
-// 5.2 Konversi IRT ke Skala 100
-export function convertIRTto100(irt: number): number {
-  if (!irt || irt <= 0) return 0;
-  if (irt <= 100) return Number(irt.toFixed(2));
-  const sanitized = Math.min(800, Math.max(200, irt));
+// 5.2 Konversi IRT ke Skala 100 dan Sebaliknya
+// Jika input dengan skor IRT (200-800) dikonversi ke skala 0-100: ((IRT - 200) / 600) * 100
+// Jika input dengan skala 0-100, tidak perlu dikonversi (langsung gunakan nilai asli)
+export function convertIRTto100(val: number): number {
+  if (!val || val <= 0) return 0;
+  if (val <= 100) return Number(val.toFixed(2)); // Skala 0-100: tidak perlu dikonversi
+  const sanitized = Math.min(800, Math.max(200, val));
   const skala100 = ((sanitized - 200) / 600) * 100;
   return Number(Math.max(0, Math.min(100, skala100)).toFixed(2));
 }
 
-export function getKategoriTKA(irt: number): { label: string; rentang100: string; deskripsi: string; color: string } {
-  if (!irt || irt <= 0) {
+export function convert100toIRT(val: number): number {
+  if (!val || val <= 0) return 0;
+  if (val > 100) return Number(val.toFixed(1)); // Sudah dalam format IRT
+  const sanitized = Math.min(100, Math.max(0, val));
+  const irt = 200 + (sanitized / 100) * 600;
+  return Number(irt.toFixed(1));
+}
+
+export function getKategoriTKA(val: number): { label: string; rentang100: string; deskripsi: string; color: string } {
+  if (!val || val <= 0) {
     return { label: 'Belum Ada', rentang100: '-', deskripsi: 'Belum mengikuti TKA', color: 'text-gray-400' };
   }
-  const sanitized = Math.min(800, Math.max(200, irt));
-  if (sanitized >= 725) {
+  const skala100 = val <= 100 ? val : convertIRTto100(val);
+  if (skala100 >= 87.5) {
     return {
       label: 'Istimewa',
       rentang100: '87.50 – 100.00',
@@ -149,7 +159,7 @@ export function getKategoriTKA(irt: number): { label: string; rentang100: string
       color: 'text-purple-600 dark:text-purple-400',
     };
   }
-  if (sanitized >= 625) {
+  if (skala100 >= 70.83) {
     return {
       label: 'Baik',
       rentang100: '70.83 – 87.33',
@@ -157,7 +167,7 @@ export function getKategoriTKA(irt: number): { label: string; rentang100: string
       color: 'text-emerald-600 dark:text-emerald-400',
     };
   }
-  if (sanitized >= 500) {
+  if (skala100 >= 50.0) {
     return {
       label: 'Memadai',
       rentang100: '50.00 – 70.67',
@@ -241,20 +251,24 @@ export function calcValidasiTKA(
     const gap = Number(Math.abs(skala100 - raporVal).toFixed(2));
     sumGap += gap;
 
+    const irtDisplay = t.irt <= 100 ? convert100toIRT(t.irt) : t.irt;
+
     return {
       mapel: t.mapel,
-      irt: t.irt,
+      irt: irtDisplay,
       skala100,
       raporVal,
       validasi,
       nilai_digunakan,
-      kategori: getKategoriTKA(t.irt).label,
+      kategori: getKategoriTKA(skala100).label,
       gap,
       rataNasional: RATA_NASIONAL_TKA[t.mapel] || 55.0,
     };
   });
 
-  const rata_tka_irt = Number((activeTKA.reduce((acc, x) => acc + x.irt, 0) / activeTKA.length).toFixed(2));
+  const rata_tka_irt = Number(
+    (activeTKA.reduce((acc, x) => acc + (x.irt <= 100 ? convert100toIRT(x.irt) : x.irt), 0) / activeTKA.length).toFixed(2)
+  );
   const rata_tka_100 = Number((items.reduce((acc, x) => acc + x.skala100, 0) / items.length).toFixed(2));
 
   return {
@@ -2187,14 +2201,40 @@ export function calcKesesuaianMapelRaporTKA(
 
   const tkaMapels: { mapel: string; irt: number; skala100: number }[] = [];
   if (tka) {
-    if (tka.tka_indo) tkaMapels.push({ mapel: 'Bahasa Indonesia', irt: tka.tka_indo, skala100: convertIRTto100(tka.tka_indo) });
-    if (tka.tka_ing) tkaMapels.push({ mapel: 'Bahasa Inggris', irt: tka.tka_ing, skala100: convertIRTto100(tka.tka_ing) });
-    if (tka.tka_mat) tkaMapels.push({ mapel: 'Matematika', irt: tka.tka_mat, skala100: convertIRTto100(tka.tka_mat) });
+    if (tka.tka_indo) {
+      tkaMapels.push({
+        mapel: 'Bahasa Indonesia',
+        irt: tka.tka_indo <= 100 ? convert100toIRT(tka.tka_indo) : tka.tka_indo,
+        skala100: convertIRTto100(tka.tka_indo),
+      });
+    }
+    if (tka.tka_ing) {
+      tkaMapels.push({
+        mapel: 'Bahasa Inggris',
+        irt: tka.tka_ing <= 100 ? convert100toIRT(tka.tka_ing) : tka.tka_ing,
+        skala100: convertIRTto100(tka.tka_ing),
+      });
+    }
+    if (tka.tka_mat) {
+      tkaMapels.push({
+        mapel: 'Matematika',
+        irt: tka.tka_mat <= 100 ? convert100toIRT(tka.tka_mat) : tka.tka_mat,
+        skala100: convertIRTto100(tka.tka_mat),
+      });
+    }
     if (tka.mapel_pilihan1 && tka.nilai_tka1) {
-      tkaMapels.push({ mapel: tka.mapel_pilihan1, irt: tka.nilai_tka1, skala100: convertIRTto100(tka.nilai_tka1) });
+      tkaMapels.push({
+        mapel: tka.mapel_pilihan1,
+        irt: tka.nilai_tka1 <= 100 ? convert100toIRT(tka.nilai_tka1) : tka.nilai_tka1,
+        skala100: convertIRTto100(tka.nilai_tka1),
+      });
     }
     if (tka.mapel_pilihan2 && tka.nilai_tka2) {
-      tkaMapels.push({ mapel: tka.mapel_pilihan2, irt: tka.nilai_tka2, skala100: convertIRTto100(tka.nilai_tka2) });
+      tkaMapels.push({
+        mapel: tka.mapel_pilihan2,
+        irt: tka.nilai_tka2 <= 100 ? convert100toIRT(tka.nilai_tka2) : tka.nilai_tka2,
+        skala100: convertIRTto100(tka.nilai_tka2),
+      });
     }
   }
 

@@ -256,8 +256,8 @@ export const SNBTAnalisa: React.FC<SNBTAnalisaProps> = ({ siswa }) => {
               borderDash: [6, 6],
             },
           ]}
-          minVal={500}
-          maxVal={800}
+          minVal={200}
+          maxVal={1000}
         />
 
         {/* Radar Chart */}
@@ -265,7 +265,7 @@ export const SNBTAnalisa: React.FC<SNBTAnalisaProps> = ({ siswa }) => {
           title="Analisis Kekuatan 7 Subtes (TPS Ungu & Literasi Merah)"
           labels={radarLabels}
           values={radarValues}
-          maxVal={800}
+          maxVal={1000}
         />
       </div>
 

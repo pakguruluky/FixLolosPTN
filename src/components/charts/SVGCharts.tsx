@@ -186,7 +186,7 @@ export interface RadarChartProps {
 export const RadarChartSVG: React.FC<RadarChartProps> = ({
   labels,
   values,
-  maxVal = 800,
+  maxVal = 1000,
   title,
   size = 320,
 }) => {
