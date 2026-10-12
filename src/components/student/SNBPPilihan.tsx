@@ -24,6 +24,7 @@ import {
   inferProdiTier,
   calcPredictedNRMSNBP,
   getMapelPendukungProdi,
+  calcIndeksSekolah,
 } from '../../lib/calc';
 import { PROVINSI_LIST, PTN_MASTER_LIST, PRODI_TIER_OPTIONS } from '../../data/mockPTN';
 
@@ -48,6 +49,7 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
   // Data Tambahan Sekolah
   const [rankingKelas, setRankingKelas] = useState<number | ''>('');
   const [rankingSekolah, setRankingSekolah] = useState<number | ''>('');
+  const [rankingTop1000, setRankingTop1000] = useState<number | ''>('');
   const [alumniJurusan, setAlumniJurusan] = useState<number | ''>('');
   const [alumniPTN, setAlumniPTN] = useState<number | ''>('');
 
@@ -69,6 +71,49 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
   const [saving, setSaving] = useState(false);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error' | 'warn'; message: string } | null>(null);
 
+  // Kalkulasi Real-time Indeks Sekolah
+  const livePilihanList: PilihanPTNSNBP[] = [];
+  if (ptn1.trim() && prodi1.trim()) {
+    livePilihanList.push({
+      nis: siswa.nis,
+      pilihan_ke: 1,
+      ptn: ptn1.trim(),
+      prodi: prodi1.trim(),
+      provinsi_ptn: prov1,
+      jenjang: jenjang1,
+      ptnTier: ptnTier1,
+      prodiTier: prodiTier1,
+      timestamp: '',
+    });
+  }
+  if (ptn2.trim() && prodi2.trim()) {
+    livePilihanList.push({
+      nis: siswa.nis,
+      pilihan_ke: 2,
+      ptn: ptn2.trim(),
+      prodi: prodi2.trim(),
+      provinsi_ptn: prov2,
+      jenjang: jenjang2,
+      ptnTier: ptnTier2,
+      prodiTier: prodiTier2,
+      timestamp: '',
+    });
+  }
+
+  const liveIndeksSekolah = calcIndeksSekolah(
+    siswa,
+    {
+      nis: siswa.nis,
+      ranking_kelas: Number(rankingKelas) || 0,
+      ranking_sekolah: Number(rankingSekolah) || 0,
+      ranking_top_1000: Number(rankingTop1000) || 0,
+      alumni_jurusan: Number(alumniJurusan) || 0,
+      alumni_ptn: Number(alumniPTN) || 0,
+      timestamp: '',
+    },
+    livePilihanList
+  );
+
   useEffect(() => {
     loadData();
   }, [siswa]);
@@ -78,6 +123,7 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
     if (t) {
       setRankingKelas(t.ranking_kelas || '');
       setRankingSekolah(t.ranking_sekolah || '');
+      setRankingTop1000(t.ranking_top_1000 || '');
       setAlumniJurusan(t.alumni_jurusan || '');
       setAlumniPTN(t.alumni_ptn || '');
     }
@@ -256,6 +302,7 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
         nis: siswa.nis,
         ranking_kelas: Number(rankingKelas) || 0,
         ranking_sekolah: Number(rankingSekolah) || 0,
+        ranking_top_1000: Number(rankingTop1000) || 0,
         alumni_jurusan: Number(alumniJurusan) || 0,
         alumni_ptn: Number(alumniPTN) || 0,
         timestamp: new Date().toISOString(),
@@ -711,7 +758,7 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
           <div className="neo-card-sm p-3.5 bg-white dark:bg-[#1E1540] border-2 border-[#0f172a]">
             <label className="block text-xs font-black text-[#0f172a] dark:text-purple-200 mb-1">
               Ranking Kelas Paralel
@@ -746,6 +793,22 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
 
           <div className="neo-card-sm p-3.5 bg-white dark:bg-[#1E1540] border-2 border-[#0f172a]">
             <label className="block text-xs font-black text-[#0f172a] dark:text-purple-200 mb-1">
+              Top 1000 LTMPT Nasional
+            </label>
+            <input
+              type="number"
+              min="0"
+              max="1000"
+              value={rankingTop1000}
+              onChange={(e) => setRankingTop1000(e.target.value === '' ? '' : parseInt(e.target.value))}
+              placeholder="1-1000 (Opsional)"
+              className="w-full px-3 py-2 text-xs neo-input font-mono font-bold"
+            />
+            <span className="text-[10px] font-bold text-gray-600 dark:text-purple-300 mt-1 block">Rilis UTBK Top 1000 (Bobot 35%)</span>
+          </div>
+
+          <div className="neo-card-sm p-3.5 bg-white dark:bg-[#1E1540] border-2 border-[#0f172a]">
+            <label className="block text-xs font-black text-[#0f172a] dark:text-purple-200 mb-1">
               Alumni di Jurusan Pilihan
             </label>
             <input
@@ -774,6 +837,42 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
               className="w-full px-3 py-2 text-xs neo-input font-mono font-bold"
             />
             <span className="text-[10px] font-bold text-gray-600 dark:text-purple-300 mt-1 block">&gt;=30: 10 poin | 1-29: 5 poin</span>
+          </div>
+        </div>
+
+        {/* Live Indeks Sekolah Banner */}
+        <div className="p-4 rounded-xl bg-white dark:bg-[#160E2E] border-2 border-[#0f172a] shadow-[2.5px_2.5px_0px_#0f172a] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-black uppercase tracking-wider text-purple-700 dark:text-purple-300">
+                🏛️ Indeks Sekolah Real-time (School Index)
+              </span>
+              <span className="neo-badge px-2 py-0.5 bg-purple-600 text-white text-[10px] font-black">
+                {liveIndeksSekolah.tierSekolah}
+              </span>
+            </div>
+            <p className="text-gray-700 dark:text-purple-200 font-bold mt-1 text-[11px] leading-relaxed">
+              {liveIndeksSekolah.ringkasanPengaruh}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3 shrink-0">
+            <div className="text-right">
+              <span className="text-[10px] text-gray-500 font-bold block">Skor Indeks</span>
+              <span className="text-2xl font-black font-mono text-purple-700 dark:text-purple-300">
+                {liveIndeksSekolah.indeksTotal.toFixed(1)}
+              </span>
+              <span className="text-[10px] font-bold text-gray-500"> / 100</span>
+            </div>
+            <span className={`neo-badge px-3 py-1.5 text-xs font-black shadow-[2px_2px_0px_#0f172a] ${
+              liveIndeksSekolah.indeksTotal >= 80
+                ? 'bg-emerald-300 text-[#0f172a]'
+                : liveIndeksSekolah.indeksTotal >= 65
+                ? 'bg-amber-300 text-[#0f172a]'
+                : 'bg-rose-300 text-[#0f172a]'
+            }`}>
+              {liveIndeksSekolah.kategori}
+            </span>
           </div>
         </div>
       </div>

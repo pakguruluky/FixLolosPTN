@@ -18,6 +18,9 @@ import {
   Layers,
   ListChecks,
   Scale,
+  School,
+  MapPin,
+  Building2,
 } from 'lucide-react';
 import { Siswa } from '../../types';
 import { getAnalisaLengkap } from '../../services/api';
@@ -25,6 +28,7 @@ import { BarChartSVG, PieChartSVG, ChartJSLine } from '../charts/SVGCharts';
 import {
   calcKesesuaianMapelRaporTKA,
   generateKesimpulanStrategiSNBP,
+  calcIndeksSekolah,
 } from '../../lib/calc';
 
 interface SNBPAnalisaProps {
@@ -81,7 +85,12 @@ export const SNBPAnalisa: React.FC<SNBPAnalisaProps> = ({ siswa }) => {
     pilihan,
     nilaiRapor,
     tka,
+    indeksSekolah: rawIndeksSekolah,
+    tambahan,
   } = data;
+
+  const indeksSekolah =
+    rawIndeksSekolah || peluang?.indeksSekolah || calcIndeksSekolah(siswa, tambahan, pilihan);
 
   const kesesuaianMapel =
     data.kesesuaianMapel || calcKesesuaianMapelRaporTKA(pilihan, nilaiRapor, tka);
@@ -281,6 +290,34 @@ export const SNBPAnalisa: React.FC<SNBPAnalisaProps> = ({ siswa }) => {
                   </div>
                 </div>
               )}
+
+              {/* Indeks Sekolah Spesifik untuk PTN Ini */}
+              {indeksSekolah?.analisisPilihan && (() => {
+                const indPil = indeksSekolah.analisisPilihan.find((ap: any) => ap.pilihan_ke === pil.pilihan_ke);
+                if (!indPil) return null;
+                return (
+                  <div className="p-3 rounded-xl bg-purple-100/80 dark:bg-[#1E1540] border-2 border-[#0f172a] text-xs font-bold space-y-1.5 shadow-[2px_2px_0px_#0f172a]">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[#0f172a] dark:text-purple-200 flex items-center gap-1.5 font-black text-[11px]">
+                        <School className="w-3.5 h-3.5 text-purple-700" />
+                        <span>Indeks Sekolah di {pil.ptn}:</span>
+                      </span>
+                      <span className="font-mono font-black text-purple-800 dark:text-purple-200">
+                        {indPil.indeksSekolahPilihan.toFixed(1)} / 100 ({indPil.indeksDesimal.toFixed(2)})
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-[10px]">
+                      <span className="text-gray-600 dark:text-purple-300">Daya Dukung Kelulusan:</span>
+                      <span className="neo-badge px-2 py-0.5 bg-emerald-200 text-[#0f172a] font-black">
+                        {indPil.peluangKelulusanIndeks}
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-slate-700 dark:text-purple-200 font-bold leading-snug pt-0.5">
+                      {indPil.rekomendasiStrategi}
+                    </p>
+                  </div>
+                );
+              })()}
             </div>
           ))}
         </div>
@@ -290,6 +327,215 @@ export const SNBPAnalisa: React.FC<SNBPAnalisaProps> = ({ siswa }) => {
           <span>Anda belum memilih PTN pada menu Pilihan PTN SNBP. Silakan tentukan pilihan Anda.</span>
         </div>
       )}
+
+      {/* ======================================================== */}
+      {/* SECTION: ANALISIS & PERHITUNGAN INDEKS SEKOLAH (SCHOOL INDEX) */}
+      {/* Berdasarkan Data & Regulasi Resmi SNBP PTN di Indonesia */}
+      {/* ======================================================== */}
+      <div className="neo-card p-6 sm:p-7 bg-white dark:bg-[#181133] shadow-[5px_5px_0px_#0f172a] space-y-5">
+        {/* Header Indeks Sekolah */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b-2 border-[#0f172a]/20 pb-4">
+          <div className="flex items-start gap-3">
+            <div className="w-12 h-12 rounded-xl bg-purple-700 text-white flex items-center justify-center border-2 border-[#0f172a] shadow-[2.5px_2.5px_0px_#0f172a] shrink-0">
+              <School className="w-6 h-6" />
+            </div>
+            <div>
+              <div className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-purple-700 dark:text-purple-300">
+                <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                <span>Indikator Resmi Seleksi Nasional • Standar PTN se-Indonesia</span>
+              </div>
+              <h3 className="text-xl sm:text-2xl font-black text-[#0f172a] dark:text-white">
+                Analisis &amp; Perhitungan Indeks Sekolah (School Index)
+              </h3>
+              <p className="text-xs text-slate-700 dark:text-purple-200 font-bold max-w-2xl mt-1 leading-relaxed">
+                Di jalur SNBP, PTN tidak hanya menilai rapor siswa melainkan mengalikannya dengan <strong className="text-purple-700 dark:text-purple-300">Indeks Prestasi Sekolah</strong> asal ({siswa.asal_sekolah || 'SMA Siswa'}). Dihitung dari 4 pilar data resmi: Akreditasi BAN-PDM (20%), Mutu Nilai UTBK Top 1000 LTMPT (35%), Rekam Jejak Alumni di Jurusan/PTN (30%), dan Afirmasi Domisili Wilayah (15%).
+              </p>
+            </div>
+          </div>
+
+          {/* Badge Skor Indeks Sekolah */}
+          <div className="flex items-center gap-3 shrink-0 neo-card-sm px-4 py-3 bg-purple-100 dark:bg-[#1E1540] self-start lg:self-auto shadow-[3px_3px_0px_#0f172a]">
+            <div className="text-right">
+              <div className="text-[10px] font-black text-slate-700 dark:text-purple-300 uppercase tracking-wider">
+                Tingkat Reputasi
+              </div>
+              <div className={`text-xs font-black neo-badge px-3 py-0.5 mt-1 inline-block ${
+                indeksSekolah.indeksTotal >= 75
+                  ? 'bg-emerald-300 text-[#0f172a]'
+                  : indeksSekolah.indeksTotal >= 55
+                  ? 'bg-amber-300 text-[#0f172a]'
+                  : 'bg-rose-300 text-[#0f172a]'
+              }`}>
+                {indeksSekolah.kategori}
+              </div>
+              <div className="text-[10px] font-bold text-gray-500 mt-0.5">
+                {indeksSekolah.tierSekolah}
+              </div>
+            </div>
+
+            <div className="min-w-[6.2rem] px-3.5 py-2.5 rounded-xl bg-purple-700 text-white font-mono text-center border-2 border-[#0f172a] shadow-[2px_2px_0px_#0f172a] shrink-0">
+              <div className="text-[9px] uppercase font-black text-purple-200 tracking-wider">Skor Indeks</div>
+              <div className="text-2xl sm:text-3xl font-black leading-tight text-white">
+                {indeksSekolah.indeksTotal.toFixed(1)}
+              </div>
+              <div className="text-[9px] text-purple-200 font-bold">
+                Desimal: {indeksSekolah.indeksDesimal.toFixed(2)} / 1.00
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 4 Komponen Utama Pembentuk Indeks Sekolah (Cards Grid) */}
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-black uppercase tracking-wider text-[#0f172a] dark:text-purple-200 flex items-center gap-1.5">
+              <Layers className="w-4 h-4 text-purple-700 dark:text-purple-300" />
+              <span>4 Parameter Resmi Pembentuk Indeks Sekolah di Indonesia</span>
+            </span>
+            <span className="neo-badge px-2.5 py-0.5 bg-amber-300 text-[#0f172a] text-[10px] font-black">
+              Total Bobot: 100 Poin
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 text-xs">
+            {indeksSekolah.komponen.map((kom: any) => (
+              <div
+                key={kom.key}
+                className="neo-card-sm p-4 bg-purple-50 dark:bg-[#1E1540] border-2 border-[#0f172a] flex flex-col justify-between shadow-[2.5px_2.5px_0px_#0f172a] space-y-2.5"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="neo-badge px-2 py-0.5 bg-purple-200 text-[#0f172a] text-[9px] font-black">
+                      Bobot {kom.bobotPersen}%
+                    </span>
+                    <span className={`neo-badge px-2 py-0.5 text-[9px] font-black ${
+                      kom.status === 'Baik'
+                        ? 'bg-emerald-200 text-[#0f172a]'
+                        : kom.status === 'Cukup'
+                        ? 'bg-amber-200 text-[#0f172a]'
+                        : 'bg-rose-200 text-[#0f172a]'
+                    }`}>
+                      {kom.status}
+                    </span>
+                  </div>
+
+                  <h4 className="font-black text-sm text-[#0f172a] dark:text-white leading-tight">
+                    {kom.nama}
+                  </h4>
+
+                  <div className="flex items-baseline gap-1 mt-2">
+                    <span className="text-2xl font-black font-mono text-purple-800 dark:text-purple-200">
+                      {kom.skorDidapat}
+                    </span>
+                    <span className="text-xs font-bold text-gray-500">/ {kom.skorMaks} Poin</span>
+                  </div>
+
+                  {/* Progress Bar */}
+                  <div className="w-full bg-slate-200 dark:bg-purple-950 h-2 rounded-full mt-1.5 overflow-hidden border border-[#0f172a]/20">
+                    <div
+                      className="bg-purple-600 h-full rounded-full transition-all duration-300"
+                      style={{ width: `${Math.min(100, (kom.skorDidapat / kom.skorMaks) * 100)}%` }}
+                    />
+                  </div>
+                </div>
+
+                <p className="text-[11px] text-slate-700 dark:text-purple-200 font-bold pt-2 border-t border-[#0f172a]/10 leading-snug">
+                  {kom.keterangan}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Matriks Dampak Indeks Sekolah Terhadap Pilihan PTN & Prodi Siswa */}
+        {indeksSekolah.analisisPilihan && indeksSekolah.analisisPilihan.length > 0 && (
+          <div className="space-y-3 pt-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-black uppercase tracking-wider text-[#0f172a] dark:text-purple-200 flex items-center gap-1.5">
+                <Target className="w-4 h-4 text-purple-700 dark:text-purple-300" />
+                <span>Besar Peluang Diterima Berdasarkan Indeks Sekolah di PTN Tujuan</span>
+              </span>
+              <span className="text-[11px] font-bold text-gray-600 dark:text-purple-300">
+                Peluang Kelulusan Realistis Siswa
+              </span>
+            </div>
+
+            <div className="overflow-x-auto rounded-xl border-2 border-[#0f172a]">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-[#0f172a] text-white font-black text-[11px]">
+                  <tr>
+                    <th className="py-2.5 px-3">Pilihan</th>
+                    <th className="py-2.5 px-3">PTN &amp; Program Studi</th>
+                    <th className="py-2.5 px-2 text-center">Indeks di PTN Ini</th>
+                    <th className="py-2.5 px-3 text-center">Faktor Wilayah</th>
+                    <th className="py-2.5 px-3 text-center">Daya Dukung Sekolah</th>
+                    <th className="py-2.5 px-3">Rekomendasi Strategis</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y-2 divide-[#0f172a]/15 bg-white dark:bg-[#160E2E]">
+                  {indeksSekolah.analisisPilihan.map((ap: any) => (
+                    <tr key={ap.pilihan_ke} className="hover:bg-purple-50/50">
+                      <td className="py-3 px-3 font-black">
+                        <span className="neo-badge px-2.5 py-1 bg-purple-200 text-[#0f172a] text-[10px] font-black">
+                          Pilihan {ap.pilihan_ke}
+                        </span>
+                      </td>
+                      <td className="py-3 px-3 font-bold">
+                        <div className="font-black text-slate-900 dark:text-white text-xs">{ap.prodi}</div>
+                        <div className="text-purple-700 dark:text-purple-300 text-[11px] font-black">{ap.ptn} ({ap.provinsi_ptn})</div>
+                      </td>
+                      <td className="py-3 px-2 text-center font-mono font-black text-purple-800 dark:text-purple-200 text-sm">
+                        {ap.indeksSekolahPilihan.toFixed(1)}
+                        <span className="text-[10px] block text-gray-500 font-bold">
+                          Desimal {ap.indeksDesimal.toFixed(2)}
+                        </span>
+                      </td>
+                      <td className="py-3 px-3 text-center">
+                        <span className={`neo-badge px-2 py-0.5 text-[10px] font-black ${
+                          ap.statusWilayah.includes('Seprovinsi')
+                            ? 'bg-emerald-200 text-[#0f172a]'
+                            : 'bg-indigo-100 text-[#0f172a]'
+                        }`}>
+                          {ap.statusWilayah}
+                        </span>
+                      </td>
+                      <td className="py-3 px-3 text-center">
+                        <span className={`neo-badge px-2.5 py-1 text-xs font-black shadow-[1.5px_1.5px_0px_#0f172a] ${
+                          ap.peluangKelulusanIndeks === 'Sangat Besar'
+                            ? 'bg-emerald-300 text-[#0f172a]'
+                            : ap.peluangKelulusanIndeks === 'Besar'
+                            ? 'bg-teal-200 text-[#0f172a]'
+                            : ap.peluangKelulusanIndeks === 'Sedang'
+                            ? 'bg-amber-200 text-[#0f172a]'
+                            : 'bg-rose-200 text-[#0f172a]'
+                        }`}>
+                          {ap.peluangKelulusanIndeks}
+                        </span>
+                      </td>
+                      <td className="py-3 px-3 text-slate-800 dark:text-purple-200 font-bold text-[11px] leading-relaxed max-w-sm">
+                        {ap.rekomendasiStrategi}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* Ringkasan Edukasi Cara Kerja Indeks Sekolah di PTN */}
+        <div className="neo-card-sm p-4 bg-purple-100 dark:bg-purple-950/50 flex items-start gap-3 text-xs shadow-[2.5px_2.5px_0px_#0f172a]">
+          <Info className="w-5 h-5 text-purple-800 dark:text-purple-300 flex-shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <span className="font-black text-purple-950 dark:text-white text-xs block">
+              Bagaimana Indeks Sekolah Mempengaruhi Peluang Siswa di SNBP?
+            </span>
+            <p className="text-purple-950 dark:text-purple-100 font-bold leading-relaxed text-[11px]">
+              Setiap PTN menetapkan kuota kelulusan per sekolah berdasarkan histori keberhasilan studi alumni sebelumnya. Nilai rata-rata rapor Anda yang tinggi akan dilindungi dan memiliki konversi kelulusan lebih optimal apabila sekolah asal memiliki <span className="underline decoration-purple-600 font-black">Indeks Sekolah tinggi di PTN tersebut</span>. Bila memilih PTN baru yang belum memiliki riwayat alumni, siswa wajib memiliki sertifikat prestasi juara atau memilih PTN seprovinsi pada Pilihan 2 sebagai jaring pengaman kuota daerah.
+            </p>
+          </div>
+        </div>
+      </div>
 
       {/* EVALUASI KESESUAIAN MAPEL RAPOR & NILAI TKA DENGAN PILIHAN SISWA (Realtime) */}
       {kesesuaianMapel.length > 0 && (

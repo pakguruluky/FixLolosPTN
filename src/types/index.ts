@@ -83,6 +83,46 @@ export interface Tambahan {
   alumni_jurusan: number;
   alumni_ptn: number;
   timestamp: string;
+  ranking_top_1000?: number;
+  rata_utbk_sekolah?: number;
+}
+
+export interface KomponenIndeksSekolah {
+  key: 'akreditasi' | 'utbk_peringkat' | 'alumni_track' | 'wilayah_zonasi';
+  nama: string;
+  bobotPersen: number;
+  skorMaks: number;
+  skorDidapat: number;
+  nilaiSkala100: number;
+  keterangan: string;
+  status: 'Baik' | 'Cukup' | 'Tingkatkan';
+}
+
+export interface AnalisisIndeksPilihan {
+  pilihan_ke: number;
+  ptn: string;
+  prodi: string;
+  provinsi_ptn: string;
+  indeksSekolahPilihan: number;
+  indeksDesimal: number;
+  kategoriPilihan: 'Sangat Tinggi (Elite)' | 'Tinggi (Unggul)' | 'Sedang (Kompetitif)' | 'Cukup (Perintis)';
+  statusWilayah: 'Seprovinsi (Prioritas Kuota Lokal)' | 'Luar Provinsi';
+  skorWilayah: number;
+  skorAlumniSpesifik: number;
+  peluangKelulusanIndeks: 'Sangat Besar' | 'Besar' | 'Sedang' | 'Ketat / Terbatas';
+  rekomendasiStrategi: string;
+}
+
+export interface IndeksSekolahResult {
+  indeksTotal: number;
+  indeksDesimal: number;
+  kategori: 'Sangat Tinggi (Elite)' | 'Tinggi (Unggul)' | 'Sedang (Kompetitif)' | 'Cukup (Perintis)';
+  tierSekolah: 'Tier 1 (Top Nasional)' | 'Tier 2 (Unggulan Daerah)' | 'Tier 3 (Reguler Kompetitif)' | 'Tier 4 (Perintis)';
+  color: string;
+  hex: string;
+  komponen: KomponenIndeksSekolah[];
+  analisisPilihan: AnalisisIndeksPilihan[];
+  ringkasanPengaruh: string;
 }
 
 export interface PilihanPTNSNBP {

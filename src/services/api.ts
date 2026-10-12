@@ -29,6 +29,7 @@ import {
 } from '../data/mockPTN';
 import {
   calcPeluangSNBP,
+  calcIndeksSekolah,
   calcNilaiAkhirSNBP,
   calcRekomendasiSemester,
   calcRekomendasiPTNSNBP,
@@ -1196,6 +1197,7 @@ export async function getAnalisaLengkap(nis: string) {
     rekomendasiAlternatif,
     kesesuaianMapel,
     kesimpulanStrategi,
+    indeksSekolah: peluangResult.indeksSekolah,
   };
 }
 

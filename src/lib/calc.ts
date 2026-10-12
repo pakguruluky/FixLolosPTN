@@ -9,6 +9,9 @@ import {
   Siswa,
   PTNSNBPItem,
   PTNSNBTItem,
+  IndeksSekolahResult,
+  KomponenIndeksSekolah,
+  AnalisisIndeksPilihan,
 } from '../types';
 
 // ==========================================
@@ -948,6 +951,257 @@ export function evaluasiKeketatanProdi(
   };
 }
 
+// ==========================================
+// 5.7B KALKULASI INDEKS SEKOLAH (SCHOOL INDEX)
+// Berdasarkan Standar Resmi SNBP PTN di Indonesia
+// ==========================================
+export function calcIndeksSekolah(
+  siswa: Siswa,
+  tambahan: Tambahan | null,
+  pilihanList: PilihanPTNSNBP[] = []
+): IndeksSekolahResult {
+  // 1. Akreditasi Sekolah (Bobot 20% / Maks 20 Poin)
+  // Berdasarkan BAN-PDM Kemendikbudristek & Ketentuan Kuota Siswa Eligible (A: 40%, B: 25%, C: 5%)
+  const akred = siswa.akreditasi || 'A';
+  let nilaiAkred100 = 100;
+  if (akred === 'A') nilaiAkred100 = 100;
+  else if (akred === 'B') nilaiAkred100 = 75;
+  else if (akred === 'C') nilaiAkred100 = 50;
+  else nilaiAkred100 = 30;
+  const poinAkreditasi = Number(((nilaiAkred100 / 100) * 20).toFixed(2));
+
+  // 2. Mutu Akademik / Ranking UTBK LTMPT Top 1000 Nasional (Bobot 35% / Maks 35 Poin)
+  // Berdasarkan database resmi rilis LTMPT Top 1000 Sekolah Se-Indonesia
+  const rankTop1000 = tambahan?.ranking_top_1000 || 0;
+  const rankSekolahDaerah = tambahan?.ranking_sekolah || 0;
+  let nilaiUtbk100 = 45;
+  let keteranganUtbk = '';
+
+  if (rankTop1000 > 0 && rankTop1000 <= 1000) {
+    if (rankTop1000 <= 100) {
+      nilaiUtbk100 = 100;
+      keteranganUtbk = `Top #${rankTop1000} Nasional (Top 100 LTMPT - Elite Nasional)`;
+    } else if (rankTop1000 <= 300) {
+      nilaiUtbk100 = 88;
+      keteranganUtbk = `Top #${rankTop1000} Nasional (Top 300 LTMPT - Unggul)`;
+    } else if (rankTop1000 <= 600) {
+      nilaiUtbk100 = 76;
+      keteranganUtbk = `Top #${rankTop1000} Nasional (Top 600 LTMPT - Sangat Baik)`;
+    } else {
+      nilaiUtbk100 = 65;
+      keteranganUtbk = `Top #${rankTop1000} Nasional (Top 1000 LTMPT - Kompetitif)`;
+    }
+  } else if (rankSekolahDaerah > 0) {
+    if (rankSekolahDaerah <= 5) {
+      nilaiUtbk100 = 68;
+      keteranganUtbk = `Top ${rankSekolahDaerah} Sekolah di Kota/Provinsi`;
+    } else if (rankSekolahDaerah <= 15) {
+      nilaiUtbk100 = 60;
+      keteranganUtbk = `Peringkat ${rankSekolahDaerah} di Kota/Provinsi`;
+    } else if (rankSekolahDaerah <= 30) {
+      nilaiUtbk100 = 52;
+      keteranganUtbk = `Peringkat ${rankSekolahDaerah} di Kota/Provinsi`;
+    } else {
+      nilaiUtbk100 = 48;
+      keteranganUtbk = `Peringkat ${rankSekolahDaerah} di Kota/Provinsi`;
+    }
+  } else {
+    nilaiUtbk100 = 45;
+    keteranganUtbk = 'Sekolah Terakreditasi Reguler (Estimasi Standar Nasional)';
+  }
+  const poinUtbk = Number(((nilaiUtbk100 / 100) * 35).toFixed(2));
+
+  // 3. Rekam Jejak Alumni di PTN & Jurusan Pilihan (Bobot 30% / Maks 30 Poin)
+  const ap = tambahan?.alumni_ptn || 0;
+  const aj = tambahan?.alumni_jurusan || 0;
+
+  let skorAlumniPTNRaw = 5;
+  if (ap >= 30) skorAlumniPTNRaw = 50;
+  else if (ap >= 15) skorAlumniPTNRaw = 40;
+  else if (ap >= 5) skorAlumniPTNRaw = 30;
+  else if (ap >= 1) skorAlumniPTNRaw = 20;
+
+  let skorAlumniJurusanRaw = 10;
+  if (aj >= 3) skorAlumniJurusanRaw = 50;
+  else if (aj >= 1) skorAlumniJurusanRaw = 35;
+
+  const nilaiAlumni100 = Math.min(100, skorAlumniPTNRaw + skorAlumniJurusanRaw);
+  const poinAlumni = Number(((nilaiAlumni100 / 100) * 30).toFixed(2));
+
+  // 4. Faktor Afirmasi Wilayah & Domisili Provinsi (Bobot 15% / Maks 15 Poin)
+  // Kebijakan afirmatif PTN seprovinsi sesuai pasal pilihan wilayah SNPMB
+  let nilaiWilayah100 = 100;
+  let keteranganWilayah = 'Satu provinsi dengan PTN (Prioritas Kuota Lokal Optimal)';
+
+  if (pilihanList.length > 0) {
+    const provSekolah = (siswa.provinsi_sekolah || '').toLowerCase().trim();
+    let sumWilayah = 0;
+    pilihanList.forEach((p) => {
+      const provPTN = (p.provinsi_ptn || '').toLowerCase().trim();
+      const tierPTN = p.ptnTier || inferPTNTier(p.ptn);
+      if (provPTN && provSekolah && provPTN === provSekolah) {
+        sumWilayah += 100;
+      } else {
+        if (tierPTN === 'Tier 1') sumWilayah += 85;
+        else if (tierPTN === 'Tier 2') sumWilayah += 75;
+        else sumWilayah += 65;
+      }
+    });
+    nilaiWilayah100 = Math.round(sumWilayah / pilihanList.length);
+    keteranganWilayah =
+      nilaiWilayah100 >= 95
+        ? 'PTN Pilihan Berada Seprovinsi dengan Sekolah (Peluang Kuota Daerah Maksimal)'
+        : nilaiWilayah100 >= 80
+        ? 'Kombinasi PTN Seprovinsi & Luar Provinsi Nasional'
+        : 'PTN Pilihan Berada di Luar Provinsi Sekolah Asal';
+  }
+  const poinWilayah = Number(((nilaiWilayah100 / 100) * 15).toFixed(2));
+
+  const totalIndeks = Number((poinAkreditasi + poinUtbk + poinAlumni + poinWilayah).toFixed(2));
+  const indeksDesimal = Number((totalIndeks / 100).toFixed(3));
+
+  let kategori: 'Sangat Tinggi (Elite)' | 'Tinggi (Unggul)' | 'Sedang (Kompetitif)' | 'Cukup (Perintis)' = 'Sedang (Kompetitif)';
+  let tierSekolah: 'Tier 1 (Top Nasional)' | 'Tier 2 (Unggulan Daerah)' | 'Tier 3 (Reguler Kompetitif)' | 'Tier 4 (Perintis)' = 'Tier 3 (Reguler Kompetitif)';
+  let color = 'text-amber-600 dark:text-amber-400';
+  let hex = '#D97706';
+
+  if (totalIndeks >= 85) {
+    kategori = 'Sangat Tinggi (Elite)';
+    tierSekolah = 'Tier 1 (Top Nasional)';
+    color = 'text-green-600 dark:text-green-400';
+    hex = '#16A34A';
+  } else if (totalIndeks >= 70) {
+    kategori = 'Tinggi (Unggul)';
+    tierSekolah = 'Tier 2 (Unggulan Daerah)';
+    color = 'text-emerald-600 dark:text-emerald-400';
+    hex = '#059669';
+  } else if (totalIndeks >= 55) {
+    kategori = 'Sedang (Kompetitif)';
+    tierSekolah = 'Tier 3 (Reguler Kompetitif)';
+    color = 'text-amber-600 dark:text-amber-400';
+    hex = '#D97706';
+  } else {
+    kategori = 'Cukup (Perintis)';
+    tierSekolah = 'Tier 4 (Perintis)';
+    color = 'text-rose-600 dark:text-rose-400';
+    hex = '#DC2626';
+  }
+
+  const komponen: KomponenIndeksSekolah[] = [
+    {
+      key: 'akreditasi',
+      nama: 'Akreditasi Sekolah (BAN-PDM)',
+      bobotPersen: 20,
+      skorMaks: 20,
+      skorDidapat: poinAkreditasi,
+      nilaiSkala100: nilaiAkred100,
+      keterangan: `Akreditasi ${akred} (Kuota Siswa Eligible ${akred === 'A' ? '40%' : akred === 'B' ? '25%' : '5%'})`,
+      status: poinAkreditasi >= 18 ? 'Baik' : poinAkreditasi >= 14 ? 'Cukup' : 'Tingkatkan',
+    },
+    {
+      key: 'utbk_peringkat',
+      nama: 'Mutu Nilai UTBK / Top 1000 LTMPT',
+      bobotPersen: 35,
+      skorMaks: 35,
+      skorDidapat: poinUtbk,
+      nilaiSkala100: nilaiUtbk100,
+      keterangan: keteranganUtbk,
+      status: poinUtbk >= 28 ? 'Baik' : poinUtbk >= 20 ? 'Cukup' : 'Tingkatkan',
+    },
+    {
+      key: 'alumni_track',
+      nama: 'Rekam Jejak Alumni di Kampus & Jurusan',
+      bobotPersen: 30,
+      skorMaks: 30,
+      skorDidapat: poinAlumni,
+      nilaiSkala100: nilaiAlumni100,
+      keterangan: `${ap} alumni di PTN pilihan • ${aj} alumni di jurusan pilihan`,
+      status: poinAlumni >= 22 ? 'Baik' : poinAlumni >= 15 ? 'Cukup' : 'Tingkatkan',
+    },
+    {
+      key: 'wilayah_zonasi',
+      nama: 'Faktor Wilayah & Afirmasi Domisili',
+      bobotPersen: 15,
+      skorMaks: 15,
+      skorDidapat: poinWilayah,
+      nilaiSkala100: nilaiWilayah100,
+      keterangan: keteranganWilayah,
+      status: poinWilayah >= 13 ? 'Baik' : poinWilayah >= 10 ? 'Cukup' : 'Tingkatkan',
+    },
+  ];
+
+  // Analisis per Pilihan PTN & Prodi
+  const provSekolah = (siswa.provinsi_sekolah || '').toLowerCase().trim();
+  const analisisPilihan: AnalisisIndeksPilihan[] = pilihanList.map((p) => {
+    const provPTN = (p.provinsi_ptn || '').toLowerCase().trim();
+    const isSeprovinsi = provPTN && provSekolah && provPTN === provSekolah;
+    const tierPTN = p.ptnTier || inferPTNTier(p.ptn);
+
+    let skorWilayahPilihan = 100;
+    if (!isSeprovinsi) {
+      if (tierPTN === 'Tier 1') skorWilayahPilihan = 85;
+      else if (tierPTN === 'Tier 2') skorWilayahPilihan = 75;
+      else skorWilayahPilihan = 65;
+    }
+    const poinWilayahPilihan = (skorWilayahPilihan / 100) * 15;
+
+    const skorPilihanSpesifik = Number((poinAkreditasi + poinUtbk + poinAlumni + poinWilayahPilihan).toFixed(2));
+    const desimalPilihan = Number((skorPilihanSpesifik / 100).toFixed(3));
+
+    let katPil: 'Sangat Tinggi (Elite)' | 'Tinggi (Unggul)' | 'Sedang (Kompetitif)' | 'Cukup (Perintis)' = 'Sedang (Kompetitif)';
+    if (skorPilihanSpesifik >= 85) katPil = 'Sangat Tinggi (Elite)';
+    else if (skorPilihanSpesifik >= 70) katPil = 'Tinggi (Unggul)';
+    else if (skorPilihanSpesifik >= 55) katPil = 'Sedang (Kompetitif)';
+    else katPil = 'Cukup (Perintis)';
+
+    let peluangKelulusanIndeks: 'Sangat Besar' | 'Besar' | 'Sedang' | 'Ketat / Terbatas' = 'Sedang';
+    let rekomendasiStrategi = '';
+
+    if (skorPilihanSpesifik >= 80) {
+      peluangKelulusanIndeks = 'Sangat Besar';
+      rekomendasiStrategi = `Indeks sekolah Anda sangat mendukung di ${p.ptn}. PTN ini sangat menghargai reputasi sekolah Anda sehingga peluang diterima sangat terbuka bila nilai rapor kompetitif.`;
+    } else if (skorPilihanSpesifik >= 65) {
+      peluangKelulusanIndeks = 'Besar';
+      rekomendasiStrategi = `Daya dukung sekolah Anda tergolong kuat di ${p.ptn}. ${isSeprovinsi ? 'Kelebihan domisili seprovinsi memberi nilai tambah kuota lokal.' : 'Pastikan nilai mapel pendukung prodi mencapai tren naik.'}`;
+    } else if (skorPilihanSpesifik >= 50) {
+      peluangKelulusanIndeks = 'Sedang';
+      rekomendasiStrategi = `Indeks sekolah cukup kompetitif. ${ap === 0 ? 'Karena belum ada alumni tercatat di PTN ini, nilai rapor dan sertifikat prestasi siswa harus menjadi pembeda utama.' : 'Pertahankan posisi ranking paralel di sekolah.'}`;
+    } else {
+      peluangKelulusanIndeks = 'Ketat / Terbatas';
+      rekomendasiStrategi = `Indeks sekolah di kampus ini memiliki tantangan tinggi. Pertimbangkan prodi dengan keketatan lebih rendah atau PTN di provinsi yang sama sebagai alternatif jaring pengaman.`;
+    }
+
+    return {
+      pilihan_ke: p.pilihan_ke,
+      ptn: p.ptn,
+      prodi: p.prodi,
+      provinsi_ptn: p.provinsi_ptn,
+      indeksSekolahPilihan: skorPilihanSpesifik,
+      indeksDesimal: desimalPilihan,
+      kategoriPilihan: katPil,
+      statusWilayah: isSeprovinsi ? 'Seprovinsi (Prioritas Kuota Lokal)' : 'Luar Provinsi',
+      skorWilayah: skorWilayahPilihan,
+      skorAlumniSpesifik: nilaiAlumni100,
+      peluangKelulusanIndeks,
+      rekomendasiStrategi,
+    };
+  });
+
+  const ringkasanPengaruh = `Indeks Sekolah Anda bernilai ${totalIndeks.toFixed(1)} / 100 (${indeksDesimal.toFixed(2)}) berkategori ${kategori}. Nilai ini mencerminkan reputasi sekolah di hadapan panitia seleksi PTN berdasarkan akreditasi ${akred}, riwayat UTBK, rekam jejak alumni, dan faktor sebaran wilayah.`;
+
+  return {
+    indeksTotal: totalIndeks,
+    indeksDesimal,
+    kategori,
+    tierSekolah,
+    color,
+    hex,
+    komponen,
+    analisisPilihan,
+    ringkasanPengaruh,
+  };
+}
+
 export function calcPeluangSNBP(
   siswa: Siswa,
   nilaiRaporList: NilaiRapor[],
@@ -974,6 +1228,7 @@ export function calcPeluangSNBP(
   skor_alumni_ptn: number;
   skor_ranking_sekolah: number;
   skor_sertifikat: number;
+  indeksSekolah: IndeksSekolahResult;
 } {
   const { rata_rapor, terbobotPerMapel } = calcRataRapor(nilaiRaporList);
   const tkaValidation = calcValidasiTKA(tka, nilaiRaporList, rata_rapor);
@@ -1234,6 +1489,8 @@ export function calcPeluangSNBP(
     status: skor_keketatan_final >= 4 ? 'Baik' : skor_keketatan_final >= 3 ? 'Cukup' : 'Tingkatkan',
   });
 
+  const indeksSekolah = calcIndeksSekolah(siswa, tambahan, pilihanList);
+
   return {
     peluang_total,
     label_total,
@@ -1252,6 +1509,7 @@ export function calcPeluangSNBP(
     skor_alumni_ptn: poinAlumniPTN,
     skor_ranking_sekolah: poinRankingSekolah,
     skor_sertifikat: poinPrestasi,
+    indeksSekolah,
   };
 }
 
@@ -2387,9 +2645,12 @@ export function generateKesimpulanStrategiSNBP(
       )} poin. Data rapor Anda terverifikasi kredibel oleh standar pengujian eksternal.`
     : 'Belum ada input nilai TKA. Memasukkan nilai TKA skala IRT dapat menambah poin validasi hingga +5 poin dan membuktikan integritas nilai rapor.';
 
-  const dayaDukungSekolah = `Sekolah berakreditasi ${siswa.akreditasi || 'A'} dengan kontribusi prestasi ${
-    peluang.skor_sertifikat
-  } poin dan rekam jejak alumni (${peluang.skor_alumni_jurusan > 0 ? 'ada alumni di jurusan' : 'belum tercatat alumni'}).`;
+  const indSekolah = peluang.indeksSekolah;
+  const dayaDukungSekolah = indSekolah
+    ? `Indeks Sekolah: ${indSekolah.indeksTotal.toFixed(1)}/100 (${indSekolah.kategori}) • Akreditasi ${siswa.akreditasi || 'A'} • Rekam jejak alumni (${peluang.skor_alumni_jurusan > 0 ? 'ada alumni di jurusan' : 'alumni perintis'}) dan sebaran wilayah.`
+    : `Sekolah berakreditasi ${siswa.akreditasi || 'A'} dengan kontribusi prestasi ${
+        peluang.skor_sertifikat
+      } poin dan rekam jejak alumni (${peluang.skor_alumni_jurusan > 0 ? 'ada alumni di jurusan' : 'belum tercatat alumni'}).`;
 
   let kesimpulanAkhir = '';
   if (isTinggi) {

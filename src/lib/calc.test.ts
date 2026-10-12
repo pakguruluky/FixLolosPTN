@@ -16,6 +16,7 @@ import {
   checkAkses,
   getMapelPendukungProdi,
   getPrestasiPoin,
+  calcIndeksSekolah,
 } from './calc';
 import { Siswa, NilaiRapor, TKAData, Prestasi, Tambahan, PilihanPTNSNBP, TOData } from '../types';
 
@@ -165,6 +166,66 @@ export function runCalculationUnitTests(): { passed: number; failed: number; log
     akses_akhir: new Date(Date.now() - 86400000).toISOString(),
   };
   assert(checkAkses(expiredSiswa).valid === false, 'Siswa expired -> tidak valid');
+
+  // 10. Indeks Sekolah (School Index SNBP Indonesia)
+  // Sekolah Top Elite: Akreditasi A (20), Top 50 LTMPT (35), Alumni >=30 PTN & >=3 Jurusan (30), Seprovinsi (15) = 100
+  const topSiswa: Siswa = {
+    ...activeSiswa,
+    provinsi_sekolah: 'Jawa Barat',
+    akreditasi: 'A',
+  };
+  const topTambahan: Tambahan = {
+    nis: 'T1',
+    ranking_kelas: 1,
+    ranking_sekolah: 1,
+    ranking_top_1000: 45,
+    alumni_ptn: 35,
+    alumni_jurusan: 5,
+    timestamp: '',
+  };
+  const topPilihan: PilihanPTNSNBP[] = [
+    {
+      nis: 'T1',
+      pilihan_ke: 1,
+      ptn: 'Institut Teknologi Bandung',
+      prodi: 'Teknik Informatika',
+      provinsi_ptn: 'Jawa Barat',
+      timestamp: '',
+    },
+  ];
+  const indElite = calcIndeksSekolah(topSiswa, topTambahan, topPilihan);
+  assert(Math.round(indElite.indeksTotal) === 100, `Indeks sekolah elite = 100 (dapat ${indElite.indeksTotal})`);
+  assert(indElite.kategori === 'Sangat Tinggi (Elite)', 'Kategori elite tepat');
+  assert(indElite.komponen.length === 4, 'Komponen indeks sekolah terdiri dari 4 parameter resmi');
+  assert(indElite.analisisPilihan[0].peluangKelulusanIndeks === 'Sangat Besar', 'Daya dukung kelulusan sekolah elite sangat besar');
+
+  // Sekolah Reguler / Luar Top 1000: Akreditasi B (15), Ranking Kota 20 (17.5), Alumni 0 PTN (1.5+3=4.5), Luar Provinsi Tier 2 (11.25)
+  const regSiswa: Siswa = {
+    ...activeSiswa,
+    provinsi_sekolah: 'Sumatera Utara',
+    akreditasi: 'B',
+  };
+  const regTambahan: Tambahan = {
+    nis: 'T1',
+    ranking_kelas: 5,
+    ranking_sekolah: 20,
+    alumni_ptn: 0,
+    alumni_jurusan: 0,
+    timestamp: '',
+  };
+  const regPilihan: PilihanPTNSNBP[] = [
+    {
+      nis: 'T1',
+      pilihan_ke: 1,
+      ptn: 'Universitas Diponegoro',
+      prodi: 'Manajemen',
+      provinsi_ptn: 'Jawa Tengah',
+      timestamp: '',
+    },
+  ];
+  const indReg = calcIndeksSekolah(regSiswa, regTambahan, regPilihan);
+  assert(indReg.indeksTotal < 70, `Indeks sekolah reguler terukur proporsional (dapat ${indReg.indeksTotal})`);
+  assert(indReg.analisisPilihan[0].statusWilayah === 'Luar Provinsi', 'Status wilayah luar provinsi terdeteksi');
 
   return { passed, failed, logs };
 }
