@@ -53,7 +53,7 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
   const [alumniJurusan, setAlumniJurusan] = useState<number | ''>('');
   const [alumniPTN, setAlumniPTN] = useState<number | ''>('');
 
-  // 2 Pilihan PTN (Input Mandiri)
+  // 2 Pilihan PTN (Input Pilihan)
   const [ptn1, setPtn1] = useState('');
   const [prov1, setProv1] = useState(siswa.provinsi_sekolah || 'DKI Jakarta');
   const [prodi1, setProdi1] = useState('');
@@ -377,7 +377,7 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
         ))}
       </datalist>
 
-      {/* 2 PILIHAN PTN CARDS (INPUT MANDIRI DENGAN AUTO-TIER) */}
+      {/* 2 PILIHAN PTN CARDS (DENGAN AUTO-TIER) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* PILIHAN 1 */}
         <div className="neo-card p-6 bg-white dark:bg-[#181133] flex flex-col justify-between space-y-4">
@@ -404,7 +404,7 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
               )}
             </div>
 
-            {/* Form Input Mandiri Slot 1 */}
+            {/* Form Input Slot 1 */}
             <div className="space-y-3.5">
               <div>
                 <label className="block text-xs font-black text-[#0f172a] dark:text-purple-200 mb-1">
@@ -586,7 +586,7 @@ export const SNBPPilihan: React.FC<SNBPPilihanProps> = ({ siswa, onRefreshData }
               )}
             </div>
 
-            {/* Form Input Mandiri Slot 2 */}
+            {/* Form Input Slot 2 */}
             <div className="space-y-3.5">
               <div>
                 <label className="block text-xs font-black text-[#0f172a] dark:text-purple-200 mb-1">

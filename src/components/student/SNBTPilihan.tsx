@@ -34,7 +34,7 @@ export const SNBTPilihan: React.FC<SNBTPilihanProps> = ({ siswa, onRefreshData }
   // Active editing slot modal or inline drawer
   const [editingSlotIdx, setEditingSlotIdx] = useState<number | null>(null);
 
-  // Form input mandiri states for the active editing slot
+  // Form input custom states for the active editing slot
   const [customPtn, setCustomPtn] = useState('');
   const [customProdi, setCustomProdi] = useState('');
   const [customJenjang, setCustomJenjang] = useState<'S1' | 'D4' | 'D3'>('S1');
@@ -386,7 +386,7 @@ export const SNBTPilihan: React.FC<SNBTPilihanProps> = ({ siswa, onRefreshData }
                     )}
                   </div>
                 ) : isSlotEditing ? (
-                  /* Form Input Mandiri Cerdas Dalam Slot */
+                  /* Form Input Pilihan Cerdas Dalam Slot */
                   <div className="mt-4 p-4 rounded-2xl bg-rose-50 dark:bg-[#201538] border-2 border-slate-900 shadow-[3px_3px_0px_#0f172a] space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-black text-rose-700 dark:text-purple-300 flex items-center gap-1">
