@@ -587,7 +587,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </span>
           </div>
           <p className="text-xs font-extrabold text-[#0f172a] dark:text-purple-200 max-w-md mx-auto">
-            Sistem Rasionalisasi Peluang SNBP &amp; SNBT Terlengkap • Dikelola oleh {settings.NAMA_LEMBAGA}
+            Sistem Rasionalisasi Peluang SNBP &amp; SNBT Terlengkap • Dikelola oleh {settings.NAMA_LEMBAGA && settings.NAMA_LEMBAGA !== 'Bimbel Prestasi Indonesia' ? settings.NAMA_LEMBAGA : 'FixLolosPTN'}
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
             <button
@@ -614,7 +614,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               © 2027 AnalisaKu by. Pak GuruAI
             </p>
             <p className="text-xs font-bold text-slate-800 dark:text-purple-300 mt-1">
-              Hak Cipta Dilindungi Undang-Undang • Platform Resmi Persiapan Lolos PTN 2027
+              Dikelola oleh {settings.NAMA_LEMBAGA && settings.NAMA_LEMBAGA !== 'Bimbel Prestasi Indonesia' ? settings.NAMA_LEMBAGA : 'FixLolosPTN'} • Hak Cipta Dilindungi Undang-Undang
             </p>
           </div>
         </div>

@@ -99,7 +99,17 @@ function save<T>(key: string, value: T): void {
 
 // Inisialisasi awal database lokal & sinkronisasi dengan Firebase Cloud Firestore
 export function initDB(): void {
-  if (!localStorage.getItem(K_SETTINGS)) save(K_SETTINGS, DEFAULT_SETTINGS);
+  if (!localStorage.getItem(K_SETTINGS)) {
+    save(K_SETTINGS, DEFAULT_SETTINGS);
+  } else {
+    try {
+      const s = JSON.parse(localStorage.getItem(K_SETTINGS) || '{}');
+      if (s && (s.NAMA_LEMBAGA === 'Bimbel Prestasi Indonesia' || !s.NAMA_LEMBAGA)) {
+        s.NAMA_LEMBAGA = 'FixLolosPTN';
+        save(K_SETTINGS, s);
+      }
+    } catch {}
+  }
   if (!localStorage.getItem(K_CABANG)) save(K_CABANG, DEFAULT_CABANG);
   if (!localStorage.getItem(K_MODUL)) save(K_MODUL, SAMPLE_MODUL);
   if (!localStorage.getItem(K_PTN_SNBP)) save(K_PTN_SNBP, DATA_PTN_SNBP);
@@ -294,14 +304,19 @@ export async function updateCabang(oldNama: string, newNama: string): Promise<Ca
 }
 
 export async function getSettings(): Promise<AppSettings> {
+  let res: AppSettings = load<AppSettings>(K_SETTINGS, DEFAULT_SETTINGS);
   try {
     const cloud = await fsGetDoc<AppSettings>('settings', 'app_settings');
     if (cloud) {
+      res = cloud;
       save(K_SETTINGS, cloud);
-      return cloud;
     }
   } catch {}
-  return load<AppSettings>(K_SETTINGS, DEFAULT_SETTINGS);
+  if (res.NAMA_LEMBAGA === 'Bimbel Prestasi Indonesia' || !res.NAMA_LEMBAGA) {
+    res.NAMA_LEMBAGA = 'FixLolosPTN';
+    save(K_SETTINGS, res);
+  }
+  return res;
 }
 
 export async function saveSetting(key: keyof AppSettings, val: string): Promise<AppSettings> {

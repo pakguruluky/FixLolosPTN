@@ -227,7 +227,9 @@ export const PortalOrtu: React.FC<PortalOrtuProps> = ({
         {/* Footer */}
         <footer className="text-center text-xs font-bold text-[#0f172a] dark:text-purple-200 py-6 border-t-2 border-[#0f172a]/20 bg-purple-100/60 dark:bg-[#160E2E] rounded-2xl">
           <div className="font-black text-sm text-[#0f172a] dark:text-amber-300">© 2027 AnalisaKu by. Pak GuruAI</div>
-          <div className="mt-1 text-xs text-slate-700 dark:text-purple-300">Dikelola oleh {settings.NAMA_LEMBAGA} • Portal Pendampingan Orang Tua Real-Time</div>
+          <div className="mt-1 text-xs text-slate-700 dark:text-purple-300">
+            Dikelola oleh {settings.NAMA_LEMBAGA && settings.NAMA_LEMBAGA !== 'Bimbel Prestasi Indonesia' ? settings.NAMA_LEMBAGA : 'FixLolosPTN'} • Hak Cipta Dilindungi Undang-Undang
+          </div>
         </footer>
       </div>
     </div>

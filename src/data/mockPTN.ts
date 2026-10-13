@@ -1,7 +1,7 @@
 import { PTNSNBPItem, PTNSNBTItem, AppSettings, Cabang, Modul, Siswa, NilaiRapor, TKAData, Prestasi, Tambahan, PilihanPTNSNBP, TOData, PilihanPTNSNBT } from '../types';
 
 export const DEFAULT_SETTINGS: AppSettings = {
-  NAMA_LEMBAGA: 'Bimbel Prestasi Indonesia',
+  NAMA_LEMBAGA: 'FixLolosPTN',
   WA_ADMIN: '6281234567890',
   SNBP_DATE: '2027-02-14T08:00:00+07:00',
   SNBT_DATE: '2027-04-26T07:30:00+07:00',
